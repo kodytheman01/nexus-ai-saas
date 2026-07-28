@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Source_Serif_4, DM_Sans } from "next/font/google";
 import "./globals.css";
 import { DisclaimerFooter, SiteNav } from "./components/SiteChrome";
+import { GoogleAnalytics } from "./components/GoogleAnalytics";
 
 const display = Source_Serif_4({
   variable: "--font-display",
@@ -48,6 +49,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${display.variable} ${sans.variable} h-full`}>
       <body className="min-h-full flex flex-col bg-[#f7f5f0] text-[#1c2230] antialiased">
+        <GoogleAnalytics />
         <SiteNav />
         <main className="flex-1">{children}</main>
         <DisclaimerFooter />
