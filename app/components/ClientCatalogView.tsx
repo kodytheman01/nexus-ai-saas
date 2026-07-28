@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export type CatalogEngine = {
   slug: string;
@@ -18,7 +18,6 @@ export function ClientCatalogView({
   initialEngines: CatalogEngine[];
   categories: string[];
 }) {
-  const router = useRouter();
   const [activeCategory, setActiveCategory] = useState("all");
   const [search, setSearch] = useState("");
 
@@ -64,11 +63,10 @@ export function ClientCatalogView({
           </div>
         ) : (
           filtered.map((engine) => (
-            <button
+            <Link
               key={engine.slug}
-              type="button"
-              onClick={() => router.push(`/engine/${engine.slug}`)}
-              className="rounded-lg border border-[#0b1f3a]/10 bg-white p-5 text-left shadow-sm transition hover:-translate-y-0.5 hover:border-[#c9a227]/50 hover:shadow-md"
+              href={`/engine/${engine.slug}`}
+              className="block rounded-lg border border-[#0b1f3a]/10 bg-white p-5 text-left shadow-sm transition hover:-translate-y-0.5 hover:border-[#c9a227]/50 hover:shadow-md"
             >
               <div className="mb-2 flex items-start justify-between gap-3">
                 <h3 className="text-sm font-bold leading-snug text-[#0b1f3a]">
@@ -87,7 +85,7 @@ export function ClientCatalogView({
                   USD
                 </span>
               </div>
-            </button>
+            </Link>
           ))
         )}
       </div>
