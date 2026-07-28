@@ -1,6 +1,6 @@
-# Nexus Engines — Problem-to-Asset Factory
+# Apex Capital Admin Services — Automated Advisory & Deliverable Engines
 
-Turn specialized knowledge engines into paid micro-assets.
+Specialized knowledge engines that convert client inputs into professional-grade deliverables.
 
 ## Quick start
 
@@ -36,7 +36,7 @@ Copy `.env.example` to `.env`:
 
 - `npm run dev` — Next.js
 - `npm run db:push` — sync Prisma schema
-- `npm run db:seed` — seed Engines 1–10
+- `npm run db:seed` — seed engine catalog
 - `npm run build` — production build
 
 ## Disclaimer

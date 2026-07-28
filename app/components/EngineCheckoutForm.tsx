@@ -47,7 +47,7 @@ export function EngineCheckoutForm({
   return (
     <form onSubmit={onSubmit} className="space-y-4">
       <div>
-        <label className="mb-1 block text-xs font-bold uppercase tracking-wider text-zinc-600">
+        <label className="mb-1 block text-xs font-bold uppercase tracking-wider text-[#0b1f3a]/60">
           Email (optional in demo mode)
         </label>
         <input
@@ -55,11 +55,11 @@ export function EngineCheckoutForm({
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="you@company.com"
-          className="w-full rounded-xl border border-zinc-200 bg-white px-3 py-2.5 text-sm text-zinc-900"
+          className="w-full rounded-lg border border-[#0b1f3a]/15 bg-white px-3 py-2.5 text-sm text-[#0b1f3a]"
         />
       </div>
       <div>
-        <label className="mb-1 block text-xs font-bold uppercase tracking-wider text-zinc-600">
+        <label className="mb-1 block text-xs font-bold uppercase tracking-wider text-[#0b1f3a]/60">
           {inputLabel}
         </label>
         <textarea
@@ -68,7 +68,7 @@ export function EngineCheckoutForm({
           value={userInput}
           onChange={(e) => setUserInput(e.target.value)}
           placeholder={inputPlaceholder}
-          className="w-full rounded-xl border border-zinc-200 bg-zinc-50 px-3 py-3 text-sm leading-relaxed text-zinc-900 outline-none focus:ring-2 focus:ring-emerald-600/30"
+          className="w-full rounded-lg border border-[#0b1f3a]/15 bg-[#f7f5f0] px-3 py-3 text-sm leading-relaxed text-[#0b1f3a] outline-none focus:ring-2 focus:ring-[#c9a227]/40"
         />
       </div>
       {error ? (
@@ -79,13 +79,13 @@ export function EngineCheckoutForm({
       <button
         type="submit"
         disabled={submitting || userInput.trim().length < 10}
-        className="w-full rounded-xl bg-emerald-700 px-4 py-3 text-sm font-bold text-white shadow-sm transition hover:bg-emerald-800 disabled:bg-zinc-300"
+        className="w-full rounded-lg bg-[#0b1f3a] px-4 py-3 text-sm font-bold text-[#f7f5f0] shadow-sm transition hover:bg-[#14335c] disabled:bg-[#0b1f3a]/30"
       >
         {submitting
           ? "Starting checkout..."
-          : `Unlock asset — $${priceInUSD}`}
+          : `Unlock deliverable — $${priceInUSD}`}
       </button>
-      <p className="text-[11px] leading-relaxed text-zinc-400">
+      <p className="text-[11px] leading-relaxed text-[#1c2230]/40">
         Without STRIPE_SECRET_KEY, checkout runs in local demo mode and
         generates immediately. With Stripe configured, payment is required
         first.

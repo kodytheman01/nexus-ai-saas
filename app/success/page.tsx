@@ -76,7 +76,7 @@ function SuccessContent() {
 
   if (!sessionId) {
     return (
-      <div className="mx-auto my-16 max-w-md rounded-xl border border-red-200 bg-red-50 p-6 text-center">
+      <div className="mx-auto my-16 max-w-md rounded-lg border border-red-200 bg-red-50 p-6 text-center">
         <h3 className="font-bold text-red-800">Missing session</h3>
         <p className="mt-2 text-sm text-red-600">
           No checkout session id was found in the URL.
@@ -92,23 +92,23 @@ function SuccessContent() {
   }
 
   return (
-    <div className="mx-auto my-10 max-w-3xl rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
+    <div className="mx-auto my-10 max-w-3xl rounded-lg border border-[#0b1f3a]/10 bg-white p-6 shadow-sm">
       {(status === "pending" || status === "processing") && (
         <div className="flex flex-col items-center justify-center space-y-4 py-16">
-          <div className="h-12 w-12 animate-spin rounded-full border-b-2 border-emerald-700" />
-          <h2 className="text-xl font-bold text-zinc-800">
-            Running compute engine...
+          <div className="h-12 w-12 animate-spin rounded-full border-b-2 border-[#c9a227]" />
+          <h2 className="text-xl font-bold text-[#0b1f3a]">
+            Running your engine...
           </h2>
-          <p className="max-w-sm text-center text-sm text-zinc-500">
-            Payment/demo session verified. Generating your asset now.
+          <p className="max-w-sm text-center text-sm text-[#1c2230]/60">
+            Payment verified. Generating your deliverable now.
           </p>
         </div>
       )}
 
       {status === "failed" && (
         <div className="space-y-4 py-10 text-center">
-          <h2 className="text-xl font-bold text-zinc-800">Generation failed</h2>
-          <pre className="whitespace-pre-wrap rounded-xl bg-zinc-950 p-4 text-left text-xs text-red-200">
+          <h2 className="text-xl font-bold text-[#0b1f3a]">Generation failed</h2>
+          <pre className="whitespace-pre-wrap rounded-lg bg-[#0b1f3a] p-4 text-left text-xs text-red-200">
             {output}
           </pre>
         </div>
@@ -116,13 +116,13 @@ function SuccessContent() {
 
       {status === "completed" && (
         <div className="space-y-6">
-          <div className="flex items-start justify-between gap-4 border-b border-zinc-100 pb-4">
+          <div className="flex items-start justify-between gap-4 border-b border-[#0b1f3a]/10 pb-4">
             <div>
-              <span className="rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-semibold text-emerald-800">
+              <span className="rounded-full bg-[#c9a227]/10 px-2.5 py-0.5 text-xs font-semibold text-[#8a6d13]">
                 Complete
               </span>
-              <h1 className="mt-2 text-2xl font-bold text-zinc-900">
-                Your engine output
+              <h1 className="mt-2 text-2xl font-bold text-[#0b1f3a]">
+                Your deliverable is ready
               </h1>
             </div>
             <button
@@ -131,34 +131,34 @@ function SuccessContent() {
                 setCopied(true);
                 setTimeout(() => setCopied(false), 2000);
               }}
-              className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-semibold text-white hover:bg-zinc-800"
+              className="rounded-lg bg-[#0b1f3a] px-4 py-2 text-sm font-semibold text-white hover:bg-[#14335c]"
             >
               {copied ? "Copied" : "Copy"}
             </button>
           </div>
 
-          <div className="overflow-x-auto rounded-xl border border-zinc-800 bg-zinc-950 p-5">
-            <pre className="whitespace-pre-wrap font-mono text-sm leading-relaxed text-zinc-100">
+          <div className="overflow-x-auto rounded-lg border border-[#0b1f3a] bg-[#0b1f3a] p-5">
+            <pre className="whitespace-pre-wrap font-mono text-sm leading-relaxed text-white/90">
               {output}
             </pre>
           </div>
 
           {allowanceTokens > 0 ? (
-            <div className="space-y-3 rounded-xl border border-zinc-200 bg-zinc-50 p-4">
-              <h3 className="text-sm font-bold text-zinc-800">
-                One free regenerate left
+            <div className="space-y-3 rounded-lg border border-[#0b1f3a]/10 bg-[#f7f5f0] p-4">
+              <h3 className="text-sm font-bold text-[#0b1f3a]">
+                One complimentary regeneration remaining
               </h3>
               <textarea
                 rows={4}
                 value={regenInput}
                 onChange={(e) => setRegenInput(e.target.value)}
                 placeholder="Correct your input and regenerate..."
-                className="w-full rounded-lg border border-zinc-200 bg-white p-3 text-sm"
+                className="w-full rounded-lg border border-[#0b1f3a]/15 bg-white p-3 text-sm"
               />
               <button
                 disabled={regenBusy || regenInput.trim().length < 10}
                 onClick={regenerate}
-                className="rounded-lg bg-emerald-700 px-4 py-2 text-sm font-semibold text-white disabled:bg-zinc-300"
+                className="rounded-lg bg-[#0b1f3a] px-4 py-2 text-sm font-semibold text-white disabled:bg-[#0b1f3a]/30"
               >
                 {regenBusy ? "Queuing..." : "Regenerate"}
               </button>
@@ -174,7 +174,7 @@ export default function SuccessPage() {
   return (
     <Suspense
       fallback={
-        <div className="mx-auto max-w-3xl p-12 text-center text-sm text-zinc-500">
+        <div className="mx-auto max-w-3xl p-12 text-center text-sm text-[#1c2230]/50">
           Loading session...
         </div>
       }

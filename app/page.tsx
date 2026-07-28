@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { db } from "@/lib/db";
 import { ClientCatalogView } from "./components/ClientCatalogView";
 
@@ -19,31 +20,66 @@ export default async function CatalogPage() {
   const categories = Array.from(new Set(engines.map((e) => e.category)));
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-12">
-      <div className="mx-auto mb-10 max-w-2xl text-center">
-        <p className="mb-3 text-xs font-extrabold uppercase tracking-[0.2em] text-emerald-700">
-          Knowledge → Micro-Asset → Stripe
-        </p>
-        <h1 className="font-display text-4xl font-bold tracking-tight text-zinc-900 sm:text-5xl">
-          Nexus Engines
-        </h1>
-        <p className="mt-3 text-base text-zinc-600">
-          Pick a problem engine, describe your situation, unlock a turnkey
-          blueprint, script, or checklist.
-        </p>
+    <>
+      <section className="border-b border-[#0b1f3a]/10 bg-white">
+        <div className="mx-auto max-w-6xl px-4 py-16 sm:py-20">
+          <div className="mx-auto max-w-2xl text-center">
+            <p className="mb-4 text-xs font-semibold uppercase tracking-[0.25em] text-[#c9a227]">
+              Automated Advisory &amp; Deliverable Engines
+            </p>
+            <h1 className="font-display text-4xl font-semibold tracking-tight text-[#0b1f3a] sm:text-5xl">
+              Apex Capital Admin Services
+            </h1>
+            <p className="mt-4 text-base leading-relaxed text-[#1c2230]/70">
+              Specialized knowledge engines that convert your inputs into
+              professional-grade deliverables — secured by Stripe payments,
+              generated instantly by our engine layer.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <div className="mx-auto max-w-6xl px-4 py-12">
+        {engines.length === 0 ? (
+          <div className="rounded-lg border border-dashed border-[#0b1f3a]/20 bg-white p-10 text-center">
+            <p className="font-semibold text-[#0b1f3a]">
+              No engines available yet.
+            </p>
+            <p className="mt-2 text-sm text-[#1c2230]/60">
+              Run{" "}
+              <code className="rounded bg-[#0b1f3a]/5 px-1.5 py-0.5">
+                npx prisma db seed
+              </code>{" "}
+              then refresh.
+            </p>
+          </div>
+        ) : (
+          <ClientCatalogView initialEngines={engines} categories={categories} />
+        )}
       </div>
 
-      {engines.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-zinc-300 bg-white p-10 text-center">
-          <p className="font-semibold text-zinc-800">No engines seeded yet.</p>
-          <p className="mt-2 text-sm text-zinc-500">
-            Run <code className="rounded bg-zinc-100 px-1.5 py-0.5">npx prisma db seed</code>{" "}
-            then refresh.
+      <section className="border-t border-[#0b1f3a]/10 bg-white">
+        <div className="mx-auto max-w-4xl px-4 py-16 text-center">
+          <p className="mb-3 text-xs font-semibold uppercase tracking-[0.25em] text-[#c9a227]">
+            Operating Model
           </p>
+          <h2 className="font-display text-2xl font-semibold text-[#0b1f3a] sm:text-3xl">
+            A disciplined, deliverable-driven engine layer
+          </h2>
+          <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-[#1c2230]/70">
+            Each engine on this platform pairs a defined intake process with a
+            purpose-built generation pipeline, secured payment processing, and
+            an auditable output record. Clients describe their situation once
+            and receive a structured, ready-to-use deliverable in return.
+          </p>
+          <Link
+            href="/about"
+            className="mt-6 inline-block text-sm font-semibold text-[#0b1f3a] underline decoration-[#c9a227] decoration-2 underline-offset-4 transition hover:text-[#0b1f3a]/70"
+          >
+            Learn more about our platform
+          </Link>
         </div>
-      ) : (
-        <ClientCatalogView initialEngines={engines} categories={categories} />
-      )}
-    </div>
+      </section>
+    </>
   );
 }
