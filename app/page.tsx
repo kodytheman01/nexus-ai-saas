@@ -91,6 +91,15 @@ export default async function CatalogPage() {
       </section>
 
       <div className="mx-auto max-w-6xl px-4 py-12">
+        <div className="mb-6">
+          <h2 className="font-display text-2xl font-semibold text-[#0b1f3a]">
+            Find your deliverable
+          </h2>
+          <p className="mt-1 text-sm text-[#1c2230]/60">
+            Search 500+ engines — your recent searches stay on this device, and
+            anonymous query trends help us decide what to build next.
+          </p>
+        </div>
         {engines.length === 0 ? (
           <div className="rounded-lg border border-dashed border-[#0b1f3a]/20 bg-white p-10 text-center">
             <p className="font-semibold text-[#0b1f3a]">

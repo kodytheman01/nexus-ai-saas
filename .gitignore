@@ -54,6 +54,7 @@ next-env.d.ts
 
 # generated video ad output + render working files (run `npm run generate-video-ads` to regenerate)
 /video-ads-output/
+/video-ads-premium/
 /.video-ads-tmp/
 /ad-launch-kits/
 /video-ads-progress.log

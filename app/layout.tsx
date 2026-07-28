@@ -5,6 +5,8 @@ import { DisclaimerFooter, SiteNav } from "./components/SiteChrome";
 import { GoogleAnalytics } from "./components/GoogleAnalytics";
 import { MetaPixel } from "./components/MetaPixel";
 import { AttributionCapture } from "./components/AttributionCapture";
+import { SupportChatWidget } from "./components/SupportChatWidget";
+import { OrganizationJsonLd } from "./components/JsonLd";
 
 const display = Source_Serif_4({
   variable: "--font-display",
@@ -28,6 +30,15 @@ export const metadata: Metadata = {
     template: "%s | Apex Capital Admin Services",
   },
   description: siteDescription,
+  keywords: [
+    "Apex Capital Admin Services",
+    "automated deliverables",
+    "business document generator",
+    "NDA generator",
+    "Stripe checkout engines",
+    "instant professional templates",
+    "AI business tools",
+  ],
   openGraph: {
     title: siteTitle,
     description: siteDescription,
@@ -57,9 +68,11 @@ export default function RootLayout({
         <GoogleAnalytics />
         <MetaPixel />
         <AttributionCapture />
+        <OrganizationJsonLd />
         <SiteNav />
         <main className="flex-1">{children}</main>
         <DisclaimerFooter />
+        <SupportChatWidget />
       </body>
     </html>
   );

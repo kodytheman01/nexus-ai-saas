@@ -60,6 +60,15 @@ export default function PrivacyPage() {
               pages visited, device/browser type, approximate location),
               used in aggregate to understand site performance.
             </li>
+            <li>
+              Site search queries (what you type into the catalog search),
+              stored so we can improve which engines to add next. Recent
+              searches may also be kept in your browser&apos;s local storage.
+            </li>
+            <li>
+              Optional support-chat messages you send to Apex Concierge
+              (used to answer your question and improve support quality).
+            </li>
           </ul>
           <p className="mt-2 text-sm leading-relaxed text-[#1c2230]/70">
             We do not directly collect or store your payment card number,

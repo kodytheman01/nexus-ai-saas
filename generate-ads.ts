@@ -1,10 +1,9 @@
 /**
- * generate-ads.js (run via tsx, matching this repo's prisma/seed.ts convention)
+ * generate-ads.ts
  *
- * Generates ad creative scripts (voiceover, on-screen overlay text, social caption)
- * for every engine in config/engines.ts, for use in paid video ad production.
- *
- * Output: 500_video_ads_export.json (gitignored — this is generated data, not source)
+ * Generates short-form, platform-ready ad scripts for every engine.
+ * Optimized for TikTok / Reels / Shorts: punchy hooks, clean overlays
+ * (no "HOOK:" / "SERVICE:" labels), and ~12–18s voiceovers.
  *
  * Usage: npm run generate-ads
  */
@@ -23,52 +22,15 @@ type AdScript = {
 
 const SITE_URL = "https://apexcapitaladmin.com";
 
-// A few rotating phrasing variants so 500 ads aren't near-identical (ad platforms
-// can flag repetitive/duplicate creative). Chosen deterministically per engine below.
-const HOOKS = [
-  (category: string) => `Stop chasing outcomes in ${category} through raw effort alone.`,
-  (category: string) => `Tired of ${category} work that eats your week for pennies of progress?`,
-  (category: string) => `Most people overcomplicate ${category}. It doesn't have to be this hard.`,
-  (category: string) => `What if ${category} results took seconds, not weeks?`,
-];
-
-const BODIES = [
-  (title: string, description: string) =>
-    `Real scale doesn't come from pushing harder—it comes from stepping into systems built for instant execution. Introducing the ${title}. ${description} Plug your details in, sign, and let automated pipelines handle post-purchase delivery in seconds.`,
-  (title: string, description: string) =>
-    `Meet the ${title}. ${description} No guesswork, no waiting on a specialist—just enter your inputs and get a production-ready result back immediately.`,
-  (title: string, description: string) =>
-    `The ${title} was built for exactly this. ${description} Sign once, submit your details, and receive your output the moment it's ready.`,
-  (title: string, description: string) =>
-    `That's what the ${title} solves. ${description} Enter your details, confirm your order, and the system takes it from there.`,
-];
-
-const CLOSERS = [
-  "The architecture is built. Claim your outcome now.",
-  "The system is already running. All you have to do is start it.",
-  "It's ready when you are. Get instant access below.",
-  "No waiting list, no onboarding call—just go.",
-];
-
-const OVERLAY_HOOKS = [
-  (category: string) => `HOOK: Eliminate ${category} Friction`,
-  (category: string) => `HOOK: ${capitalize(category)}, Solved`,
-  (category: string) => `HOOK: Skip the ${category} Grind`,
-  (category: string) => `HOOK: Instant ${capitalize(category)} Results`,
-];
-
-const CTA_LINES = [
-  (category: string, title: string) => `Stop working against friction. Command your ${category} operations with the ${title}.`,
-  (category: string, title: string) => `Why fight ${category} manually when the ${title} does it in seconds?`,
-  (category: string, title: string) => `${title}: built to make ${category} effortless.`,
-  (category: string, title: string) => `Your ${category} bottleneck ends here — meet the ${title}.`,
-];
+/** Strip catalog prefixes like "Engine 185: " so creatives read like a real brand. */
+function cleanTitle(title: string): string {
+  return title.replace(/^Engine\s+\d+:\s*/i, "").trim();
+}
 
 function capitalize(s: string): string {
   return s.length ? s[0].toUpperCase() + s.slice(1) : s;
 }
 
-/** Deterministic hash of a string to a non-negative integer, so variant selection is reproducible. */
 function hashString(input: string): number {
   let hash = 0;
   for (let i = 0; i < input.length; i++) {
@@ -79,48 +41,92 @@ function hashString(input: string): number {
 }
 
 function formatPrice(priceInUSD: number): string {
-  return priceInUSD.toFixed(2);
+  return Number.isInteger(priceInUSD) ? String(priceInUSD) : priceInUSD.toFixed(2);
 }
 
+/** One-sentence benefit from description, truncated for VO length. */
+function shortBenefit(description: string): string {
+  const cleaned = description.replace(/\s+/g, " ").trim();
+  const sentence = cleaned.split(/(?<=[.!?])\s+/)[0] || cleaned;
+  return sentence.length > 140 ? `${sentence.slice(0, 137).trim()}…` : sentence;
+}
+
+const HOOKS = [
+  (category: string) => `Stop wasting hours on ${category}.`,
+  (category: string) => `${capitalize(category)} shouldn't eat your whole week.`,
+  (category: string) => `There's a faster way to handle ${category}.`,
+  (category: string) => `Still doing ${category} the hard way?`,
+];
+
+const OVERLAY_HOOKS = [
+  (category: string) => `Eliminate ${capitalize(category)} Friction`,
+  (category: string) => `${capitalize(category)}. Solved.`,
+  (category: string) => `Skip the ${capitalize(category)} Grind`,
+  (category: string) => `Instant ${capitalize(category)} Results`,
+];
+
+const CAPTION_OPENERS = [
+  (category: string, title: string) =>
+    `${title} — built to remove ${category} friction in seconds.`,
+  (category: string, title: string) =>
+    `Why grind through ${category} manually? Use ${title}.`,
+  (category: string, title: string) =>
+    `${title}: professional ${category} output, delivered instantly.`,
+  (category: string, title: string) =>
+    `Your ${category} bottleneck ends here. Meet ${title}.`,
+];
+
 function buildAdScript(engine: EngineSeed): AdScript {
-  const title = engine.title || "Execution Engine";
-  const category = engine.category || "operations";
-  const description = engine.description || "High-utility automated business logic.";
+  const title = cleanTitle(engine.title || "Execution Engine");
+  const category = (engine.category || "operations").toLowerCase();
+  const description = engine.description || "Professional deliverable, generated instantly.";
   const slug = engine.slug || "app";
   const price = formatPrice(engine.priceInUSD ?? 29.99);
+  const benefit = shortBenefit(description);
 
-  const variantIndex = hashString(slug) % HOOKS.length;
-  const hook = HOOKS[variantIndex](category);
-  const body = BODIES[variantIndex](title, description);
-  const closer = CLOSERS[variantIndex];
-  const overlayHook = OVERLAY_HOOKS[variantIndex](category);
-  const ctaLine = CTA_LINES[variantIndex](category, title);
-
+  const v = hashString(slug) % HOOKS.length;
+  const hook = HOOKS[v](category);
+  const overlayHook = OVERLAY_HOOKS[v](category);
+  const captionOpen = CAPTION_OPENERS[v](category, title);
   const targetUrl = `${SITE_URL}/engine/${slug}`;
+
+  // Keep VO short enough for Reels/TikTok (~12–18s spoken).
+  const voiceoverScript = [
+    hook,
+    `This is ${title}.`,
+    benefit,
+    "Enter your details, check out, and get delivery by email in seconds.",
+    "Link in the caption — start now.",
+  ].join(" ");
 
   return {
     engineTitle: title,
     slug,
     targetUrl,
-    voiceoverScript: `${hook} ${body} ${closer}`,
+    voiceoverScript,
+    // Clean on-screen lines — no HOOK:/SERVICE:/CTA: labels (those look amateur).
     screenOverlayText: [
       overlayHook,
-      `SERVICE: ${title}`,
-      `PRICE: $${price} USD`,
-      `DELIVERY: Instant via Email & Google Drive`,
-      `CTA: apexcapitaladmin.com/engine/${slug}`,
+      title,
+      `$${price}`,
+      "Instant email delivery",
+      "apexcapitaladmin.com",
     ],
-    socialCaption: `${ctaLine}\n\n⚡ Instant Output\n🔒 Secured E-Sign Agreement\n📁 Automated Delivery to Gmail & Drive\n\n👉 Claim Execution: ${targetUrl}`,
+    socialCaption: `${captionOpen}
+
+Instant output
+Secured checkout
+Delivered to your inbox
+
+${targetUrl}`,
   };
 }
 
 function main() {
   const ads = ENGINES_SEED_DATA.map(buildAdScript);
-
   const outputPath = path.join(__dirname, "500_video_ads_export.json");
   fs.writeFileSync(outputPath, JSON.stringify(ads, null, 2), "utf-8");
-
-  console.log(`Generated ${ads.length} ad scripts -> ${outputPath}`);
+  console.log(`Generated ${ads.length} premium ad scripts → ${outputPath}`);
 }
 
 main();

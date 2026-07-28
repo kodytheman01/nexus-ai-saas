@@ -66,3 +66,29 @@ model EphemeralPayload {
 
   @@map("ephemeral_payloads")
 }
+
+/// Site search queries — used to decide which engines/features to add next.
+model SearchQuery {
+  id         String   @id @default(cuid())
+  query      String
+  resultCount Int     @default(0) @map("result_count")
+  source     String   @default("catalog") // catalog | nav | support
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  @@index([createdAt])
+  @@index([query])
+  @@map("search_queries")
+}
+
+/// Optional support-chat transcripts for ops review (no PII required).
+model SupportMessage {
+  id        String   @id @default(cuid())
+  sessionId String   @map("session_id")
+  role      String   // user | assistant
+  content   String
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([sessionId])
+  @@index([createdAt])
+  @@map("support_messages")
+}

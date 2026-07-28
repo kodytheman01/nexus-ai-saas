@@ -14,11 +14,14 @@
  *
  * Usage:
  *   npm run generate-video-ads                  # render all 500 (resumable — skips existing .mp4s)
- *   npm run generate-video-ads -- --limit 10     # render only the first 10 not-yet-rendered ads
+ *   npm run generate-video-ads -- --premium --limit 12   # institutional motion template + Aria VO
+ *   npm run generate-video-ads -- --premium --force       # rebuild all premium (slow, high quality)
  *   npm run generate-video-ads -- --slugs a,b,c  # render only specific slugs
  *   npm run generate-video-ads -- --voice en-US-AriaNeural
  *
- * Output: video-ads-output/{slug}.mp4 (gitignored — generated binary output, not source)
+ * Output:
+ *   video-ads-output/{slug}.mp4          (standard)
+ *   video-ads-premium/{slug}.mp4         (--premium)
  */
 import fs from "fs";
 import path from "path";
@@ -66,10 +69,12 @@ const NAVY = "#0b1f3a";
 const NAVY_LIGHT = "#15294a";
 const GOLD = "#c9a227";
 
-const DEFAULT_VOICE = "en-US-GuyNeural";
-const MIN_STAGE_SEC = 1.7;
-const END_PAD_SEC = 0.6;
+const DEFAULT_VOICE = "en-US-AriaNeural"; // premium neural voice (clearer than Guy)
+const MIN_STAGE_SEC = 1.9;
+const END_PAD_SEC = 0.8;
 const MAX_TEXT_WIDTH_PX = WIDTH - 160; // 80px margin each side
+const PREMIUM_OUTPUT_DIR = path.join(ROOT, "video-ads-premium");
+const PREMIUM_BG_PATH = path.join(TMP_DIR, "background-premium-1080x1920.png");
 
 const FONT_CANDIDATES = [
   "C:/Windows/Fonts/seguisb.ttf", // Segoe UI Semibold
@@ -124,23 +129,64 @@ function escapeXml(text: string): string {
 
 function parseArgs() {
   const args = process.argv.slice(2);
-  const opts: { limit?: number; slugs?: string[]; voice: string } = { voice: DEFAULT_VOICE };
+  const opts: {
+    limit?: number;
+    slugs?: string[];
+    voice: string;
+    premium: boolean;
+    force: boolean;
+  } = { voice: DEFAULT_VOICE, premium: false, force: false };
   for (let i = 0; i < args.length; i++) {
     if (args[i] === "--limit") opts.limit = parseInt(args[++i], 10);
     else if (args[i] === "--slugs") opts.slugs = args[++i].split(",").map((s) => s.trim());
     else if (args[i] === "--voice") opts.voice = args[++i];
+    else if (args[i] === "--premium") opts.premium = true;
+    else if (args[i] === "--force") opts.force = true;
+  }
+  // Premium defaults to Aria unless user overrides --voice after/before; keep Aria as default.
+  if (opts.premium && opts.voice === DEFAULT_VOICE) {
+    opts.voice = "en-US-AriaNeural";
   }
   return opts;
 }
 
-async function ensureBackground(): Promise<string> {
+async function ensureBackground(premium: boolean): Promise<string> {
   fs.mkdirSync(TMP_DIR, { recursive: true });
-  if (fs.existsSync(BG_PATH)) return BG_PATH;
+  const outPath = premium ? PREMIUM_BG_PATH : BG_PATH;
+  if (fs.existsSync(outPath)) return outPath;
 
-  // Text is intentionally NOT rendered here — sharp's SVG rasterizer has flaky font
-  // resolution on Windows. All text (including the brand mark) is rendered later via
-  // ffmpeg drawtext with an explicit font file, which we've verified works reliably.
-  const svg = `
+  // Richer institutional frame for premium: deep navy field, soft vignette,
+  // gold ring, thin rule, subtle corner brackets — still brand-safe, not "AI purple".
+  const svg = premium
+    ? `
+<svg width="${WIDTH}" height="${HEIGHT}" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="glow" cx="50%" cy="28%" r="65%">
+      <stop offset="0%" stop-color="#1a3358"/>
+      <stop offset="55%" stop-color="${NAVY}"/>
+      <stop offset="100%" stop-color="#070f1c"/>
+    </radialGradient>
+    <linearGradient id="sheen" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.06"/>
+      <stop offset="40%" stop-color="#ffffff" stop-opacity="0"/>
+      <stop offset="100%" stop-color="${GOLD}" stop-opacity="0.05"/>
+    </linearGradient>
+  </defs>
+  <rect width="${WIDTH}" height="${HEIGHT}" fill="url(#glow)"/>
+  <rect width="${WIDTH}" height="${HEIGHT}" fill="url(#sheen)"/>
+  <circle cx="${WIDTH / 2}" cy="210" r="70" fill="none" stroke="${GOLD}" stroke-width="2.5" opacity="0.85"/>
+  <circle cx="${WIDTH / 2}" cy="210" r="52" fill="none" stroke="${GOLD}" stroke-width="1" opacity="0.35"/>
+  <rect x="72" y="72" width="48" height="2" fill="${GOLD}" opacity="0.55"/>
+  <rect x="72" y="72" width="2" height="48" fill="${GOLD}" opacity="0.55"/>
+  <rect x="${WIDTH - 120}" y="72" width="48" height="2" fill="${GOLD}" opacity="0.55"/>
+  <rect x="${WIDTH - 74}" y="72" width="2" height="48" fill="${GOLD}" opacity="0.55"/>
+  <rect x="72" y="${HEIGHT - 74}" width="48" height="2" fill="${GOLD}" opacity="0.4"/>
+  <rect x="72" y="${HEIGHT - 120}" width="2" height="48" fill="${GOLD}" opacity="0.4"/>
+  <rect x="${WIDTH - 120}" y="${HEIGHT - 74}" width="48" height="2" fill="${GOLD}" opacity="0.4"/>
+  <rect x="${WIDTH - 74}" y="${HEIGHT - 120}" width="2" height="48" fill="${GOLD}" opacity="0.4"/>
+  <rect x="${WIDTH / 2 - 120}" y="${HEIGHT - 168}" width="240" height="1.5" fill="${GOLD}" opacity="0.55"/>
+</svg>`.trim()
+    : `
 <svg width="${WIDTH}" height="${HEIGHT}" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="0.25" y2="1">
@@ -153,8 +199,8 @@ async function ensureBackground(): Promise<string> {
   <rect x="${WIDTH / 2 - 90}" y="${HEIGHT - 172}" width="180" height="2" fill="${GOLD}" opacity="0.6"/>
 </svg>`.trim();
 
-  await sharp(Buffer.from(svg)).png().toFile(BG_PATH);
-  return BG_PATH;
+  await sharp(Buffer.from(svg)).png().toFile(outPath);
+  return outPath;
 }
 
 /** Split a single "word" with no natural break points (e.g. a bare URL/slug) into maxChars-sized chunks. */
@@ -225,20 +271,42 @@ async function getAudioDurationSeconds(file: string): Promise<number> {
   return seconds;
 }
 
-async function synthesizeVoiceover(tts: MsEdgeTTS, text: string, dirPath: string): Promise<string> {
+async function synthesizeVoiceover(
+  tts: MsEdgeTTS,
+  text: string,
+  dirPath: string,
+  opts: { force?: boolean; premium?: boolean } = {},
+): Promise<string> {
   fs.mkdirSync(dirPath, { recursive: true });
-  const existing = path.join(dirPath, "audio.mp3");
-  if (fs.existsSync(existing) && fs.statSync(existing).size > 0) {
+  const filename = opts.premium ? "audio-premium.mp3" : "audio.mp3";
+  const existing = path.join(dirPath, filename);
+  if (!opts.force && fs.existsSync(existing) && fs.statSync(existing).size > 0) {
     return existing;
   }
+  // Clear stale TTS output so msedge-tts writes a fresh file with our name.
+  for (const stale of fs.readdirSync(dirPath)) {
+    if (stale.endsWith(".mp3") && (opts.force || opts.premium)) {
+      try {
+        fs.unlinkSync(path.join(dirPath, stale));
+      } catch {
+        /* ignore */
+      }
+    }
+  }
 
-  // Edge TTS is free but will throttle under sustained load — retry with
-  // exponential backoff on 429/quota/network errors before giving up.
   return withExponentialBackoff(
     async () => {
-      const { audioFilePath } = await tts.toFile(dirPath, escapeXml(text));
+      const { audioFilePath } = await tts.toFile(
+        dirPath,
+        escapeXml(text),
+        opts.premium ? { rate: 0.92, pitch: "-1Hz" } : undefined,
+      );
       if (!audioFilePath || !fs.existsSync(audioFilePath) || fs.statSync(audioFilePath).size === 0) {
         throw new Error("Edge TTS returned empty audio file");
+      }
+      if (path.basename(audioFilePath) !== filename) {
+        fs.copyFileSync(audioFilePath, existing);
+        return existing;
       }
       return audioFilePath;
     },
@@ -251,78 +319,146 @@ async function synthesizeVoiceover(tts: MsEdgeTTS, text: string, dirPath: string
   );
 }
 
-async function renderVideo(ad: AdScript, voicePath: string, fontFile: string, outPath: string): Promise<void> {
+/** Fade alpha expression for drawtext: ease in/out over ~0.35s within [start,end]. */
+function fadeAlphaExpr(start: number, end: number): string {
+  const fade = 0.35;
+  // ffmpeg enable already gates visibility; alpha softens the cut.
+  return `if(lt(t\\,${start.toFixed(2)}+${fade})\\,(t-${start.toFixed(2)})/${fade}\\,if(gt(t\\,${end.toFixed(2)}-${fade})\\,(${end.toFixed(2)}-t)/${fade}\\,1))`;
+}
+
+function stageFontSize(index: number, base: number, premium: boolean): number {
+  if (!premium) return base;
+  // Hierarchy: hook huge → title → price punchy → delivery → URL quiet
+  const boosts = [1.15, 1.05, 1.35, 0.9, 0.85];
+  return Math.round(base * (boosts[index] ?? 1));
+}
+
+async function renderVideo(
+  ad: AdScript,
+  voicePath: string,
+  fontFile: string,
+  outPath: string,
+  opts: { premium?: boolean; bgPath?: string } = {},
+): Promise<void> {
+  const premium = !!opts.premium;
+  const bgPath = opts.bgPath || BG_PATH;
   const audioDuration = await getAudioDurationSeconds(voicePath);
   const stageCount = ad.screenOverlayText.length;
-  const stageDuration = Math.max(audioDuration / stageCount, MIN_STAGE_SEC);
+  const stageDuration = Math.max(audioDuration / stageCount, premium ? 2.1 : MIN_STAGE_SEC);
+  const totalDuration = stageDuration * stageCount + (premium ? 1.0 : END_PAD_SEC);
 
   const fontFileRel = toFilterPath(fontFile);
   const dirForTmp = path.dirname(voicePath);
-
   const filters: string[] = [];
-  let prevLabel = "0:v";
 
-  // Monogram "A" centered inside the gold ring drawn in the background image.
+  // Ken Burns: slow push-in on a still frame → feels like a designed motion graphic.
+  if (premium) {
+    const frames = Math.max(1, Math.ceil(totalDuration * 30));
+    filters.push(
+      `[0:v]scale=1200:2133:force_original_aspect_ratio=increase,` +
+        `crop=1080:1920,zoompan=z='min(1.08\\,1+0.00035*on)':x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':` +
+        `d=${frames}:s=1080x1920:fps=30[vbase]`,
+    );
+  }
+
+  let prevLabel = premium ? "vbase" : "0:v";
+
   const monogramFile = path.join(dirForTmp, "monogram.txt");
   fs.writeFileSync(monogramFile, "A", "utf-8");
   const monogramFileRel = toFilterPath(monogramFile);
+  const monoY = premium ? 210 : 230;
   filters.push(
     `[${prevLabel}]drawtext=fontfile=${fontFileRel}:textfile=${monogramFileRel}:fontcolor=${GOLD}:` +
-      `fontsize=64:x=(w-text_w)/2:y=230-(text_h/2)[vmono]`
+      `fontsize=${premium ? 72 : 64}:x=(w-text_w)/2:y=${monoY}-(text_h/2)[vmono]`,
   );
   prevLabel = "vmono";
 
   for (let i = 0; i < stageCount; i++) {
-    const { fontSize, text } = layoutLine(ad.screenOverlayText[i]);
+    const layout = layoutLine(ad.screenOverlayText[i]);
+    const fontSize = stageFontSize(i, layout.fontSize, premium);
     const lineFile = path.join(dirForTmp, `line${i}.txt`);
-    fs.writeFileSync(lineFile, text, "utf-8");
+    fs.writeFileSync(lineFile, layout.text, "utf-8");
     const lineFileRel = toFilterPath(lineFile);
 
     const start = i * stageDuration;
-    const end = i === stageCount - 1 ? stageDuration * stageCount + END_PAD_SEC : (i + 1) * stageDuration;
+    const end =
+      i === stageCount - 1
+        ? stageDuration * stageCount + (premium ? 1.0 : END_PAD_SEC)
+        : (i + 1) * stageDuration;
     const outLabel = i === stageCount - 1 ? "vout" : `v${i}`;
+    const color = i === 2 && premium ? "#f0d78c" : GOLD; // price line slightly brighter
+    const alpha = premium ? `:alpha='${fadeAlphaExpr(start, end)}'` : "";
 
     filters.push(
-      `[${prevLabel}]drawtext=fontfile=${fontFileRel}:textfile=${lineFileRel}:fontcolor=${GOLD}:` +
-        `fontsize=${fontSize}:line_spacing=14:x=(w-text_w)/2:y=(h-text_h)/2:` +
-        `enable='between(t,${start.toFixed(2)},${end.toFixed(2)})'[${outLabel}]`
+      `[${prevLabel}]drawtext=fontfile=${fontFileRel}:textfile=${lineFileRel}:fontcolor=${color}:` +
+        `fontsize=${fontSize}:line_spacing=${premium ? 18 : 14}:x=(w-text_w)/2:y=(h-text_h)/2:` +
+        `enable='between(t\\,${start.toFixed(2)}\\,${end.toFixed(2)})'${alpha}[${outLabel}]`,
     );
     prevLabel = outLabel;
   }
 
-  // Brand mark: small persistent text near the bottom, inside the gold rule drawn in the background.
   const brandFile = path.join(dirForTmp, "brand.txt");
   fs.writeFileSync(brandFile, "APEX CAPITAL ADMIN SERVICES", "utf-8");
   const brandFileRel = toFilterPath(brandFile);
   filters.push(
     `[vout]drawtext=fontfile=${fontFileRel}:textfile=${brandFileRel}:fontcolor=${GOLD}:` +
-      `fontsize=26:x=(w-text_w)/2:y=h-130:alpha=0.85[vfinal]`
+      `fontsize=${premium ? 28 : 26}:x=(w-text_w)/2:y=h-130:alpha=${premium ? 0.9 : 0.85}[vbrand]`,
   );
 
-  const totalDuration = stageDuration * stageCount + END_PAD_SEC;
+  // Soft bottom vignette bar feel via a second faint rule label for premium end card clarity.
+  if (premium) {
+    const tagFile = path.join(dirForTmp, "tagline.txt");
+    fs.writeFileSync(tagFile, "INSTANT PROFESSIONAL DELIVERABLES", "utf-8");
+    const tagFileRel = toFilterPath(tagFile);
+    filters.push(
+      `[vbrand]drawtext=fontfile=${fontFileRel}:textfile=${tagFileRel}:fontcolor=${GOLD}:` +
+        `fontsize=20:x=(w-text_w)/2:y=h-95:alpha=0.55[vfinal]`,
+    );
+  } else {
+    filters.push(`[vbrand]null[vfinal]`);
+  }
 
   fs.mkdirSync(path.dirname(outPath), { recursive: true });
   const tmpOutPath = `${outPath}.tmp.mp4`;
 
-  await execFileAsync("ffmpeg", [
-    "-y",
-    "-loop", "1",
-    "-i", BG_PATH,
-    "-i", voicePath,
-    "-filter_complex", filters.join(";"),
-    "-map", "[vfinal]",
-    "-map", "1:a:0",
-    "-t", totalDuration.toFixed(2),
-    "-r", "30",
-    "-pix_fmt", "yuv420p",
-    "-c:v", "libx264",
-    "-preset", "veryfast",
-    "-crf", "20",
-    "-c:a", "aac",
-    "-b:a", "128k",
-    "-movflags", "+faststart",
-    tmpOutPath,
-  ], { cwd: ROOT, maxBuffer: 1024 * 1024 * 32 });
+  await execFileAsync(
+    "ffmpeg",
+    [
+      "-y",
+      "-loop",
+      "1",
+      "-i",
+      bgPath,
+      "-i",
+      voicePath,
+      "-filter_complex",
+      filters.join(";"),
+      "-map",
+      "[vfinal]",
+      "-map",
+      "1:a:0",
+      "-t",
+      totalDuration.toFixed(2),
+      "-r",
+      "30",
+      "-pix_fmt",
+      "yuv420p",
+      "-c:v",
+      "libx264",
+      "-preset",
+      premium ? "slow" : "veryfast",
+      "-crf",
+      premium ? "17" : "20",
+      "-c:a",
+      "aac",
+      "-b:a",
+      premium ? "192k" : "128k",
+      "-movflags",
+      "+faststart",
+      tmpOutPath,
+    ],
+    { cwd: ROOT, maxBuffer: 1024 * 1024 * 32 },
+  );
 
   fs.renameSync(tmpOutPath, outPath);
 }
@@ -332,17 +468,20 @@ async function main() {
 
   if (!fs.existsSync(INPUT_JSON)) {
     console.error(
-      `Could not find ${INPUT_JSON}. Run "npm run generate-ads" first to produce it.`
+      `Could not find ${INPUT_JSON}. Run "npm run generate-ads" first to produce it.`,
     );
     process.exit(1);
   }
 
   const fontFile = ensureLocalFontCopy(resolveFont());
+  const outDir = opts.premium ? PREMIUM_OUTPUT_DIR : OUTPUT_DIR;
+  console.log(`Mode: ${opts.premium ? "PREMIUM" : "standard"}`);
   console.log(`Using font: ${fontFile}`);
   console.log(`Using voice: ${opts.voice}`);
+  console.log(`Output dir: ${outDir}`);
 
-  await ensureBackground();
-  console.log(`Background ready: ${BG_PATH}`);
+  const bgPath = await ensureBackground(opts.premium);
+  console.log(`Background ready: ${bgPath}`);
 
   let ads: AdScript[] = JSON.parse(fs.readFileSync(INPUT_JSON, "utf-8"));
   if (opts.slugs) {
@@ -350,18 +489,25 @@ async function main() {
     ads = ads.filter((ad) => wanted.has(ad.slug));
   }
 
-  fs.mkdirSync(OUTPUT_DIR, { recursive: true });
+  fs.mkdirSync(outDir, { recursive: true });
 
-  const pending = ads.filter((ad) => !fs.existsSync(path.join(OUTPUT_DIR, `${ad.slug}.mp4`)));
+  const pending = ads.filter(
+    (ad) => opts.force || !fs.existsSync(path.join(outDir, `${ad.slug}.mp4`)),
+  );
   const toProcess = opts.limit ? pending.slice(0, opts.limit) : pending;
 
   console.log(
     `${ads.length} ads in input, ${ads.length - pending.length} already rendered, ` +
-      `${toProcess.length} to render this run.`
+      `${toProcess.length} to render this run.`,
   );
 
   const tts = new MsEdgeTTS();
-  await tts.setMetadata(opts.voice, OUTPUT_FORMAT.AUDIO_24KHZ_48KBITRATE_MONO_MP3);
+  await tts.setMetadata(
+    opts.voice,
+    opts.premium
+      ? OUTPUT_FORMAT.AUDIO_24KHZ_96KBITRATE_MONO_MP3
+      : OUTPUT_FORMAT.AUDIO_24KHZ_48KBITRATE_MONO_MP3,
+  );
 
   let succeeded = 0;
   let failed = 0;
@@ -369,29 +515,32 @@ async function main() {
 
   for (const [index, ad] of toProcess.entries()) {
     const startedAt = Date.now();
-    const outPath = path.join(OUTPUT_DIR, `${ad.slug}.mp4`);
-    const adTmpDir = path.join(TMP_DIR, ad.slug);
+    const outPath = path.join(outDir, `${ad.slug}.mp4`);
+    const adTmpDir = path.join(TMP_DIR, opts.premium ? `${ad.slug}-premium` : ad.slug);
     try {
-      // Throttle between Edge TTS requests so long batch runs stay under quota.
-      if (index > 0) await sleep(TTS_THROTTLE_MS);
+      if (index > 0) await sleep(opts.premium ? 1100 : TTS_THROTTLE_MS);
 
-      const voicePath = await synthesizeVoiceover(tts, ad.voiceoverScript, adTmpDir);
-      await renderVideo(ad, voicePath, fontFile, outPath);
+      const voicePath = await synthesizeVoiceover(tts, ad.voiceoverScript, adTmpDir, {
+        force: opts.force || opts.premium,
+        premium: opts.premium,
+      });
+      await renderVideo(ad, voicePath, fontFile, outPath, {
+        premium: opts.premium,
+        bgPath,
+      });
       const seconds = (Date.now() - startedAt) / 1000;
       timings.push(seconds);
       succeeded++;
       console.log(
-        `[${index + 1}/${toProcess.length}] OK  ${ad.slug}.mp4  (${seconds.toFixed(1)}s)`
+        `[${index + 1}/${toProcess.length}] OK  ${ad.slug}.mp4  (${seconds.toFixed(1)}s)`,
       );
     } catch (err) {
       failed++;
       const msg = (err as Error).message;
       if (isRateLimitError(err)) {
         console.error(
-          `[${index + 1}/${toProcess.length}] RATE-LIMIT ${ad.slug}: ${msg} — will retry on next run`
+          `[${index + 1}/${toProcess.length}] RATE-LIMIT ${ad.slug}: ${msg} — will retry on next run`,
         );
-        // Extra cool-down before continuing the batch so subsequent ads aren't
-        // immediately rate-limited too.
         await sleep(10_000);
       } else {
         console.error(`[${index + 1}/${toProcess.length}] FAIL ${ad.slug}:`, msg);
@@ -403,7 +552,9 @@ async function main() {
 
   const avg = timings.length ? timings.reduce((a, b) => a + b, 0) / timings.length : 0;
   console.log("");
-  console.log(`Done. Succeeded: ${succeeded}, Failed: ${failed}, Skipped (already existed): ${ads.length - pending.length}`);
+  console.log(
+    `Done. Succeeded: ${succeeded}, Failed: ${failed}, Skipped (already existed): ${ads.length - pending.length}`,
+  );
   if (avg > 0) {
     console.log(`Average render time this run: ${avg.toFixed(1)}s/video.`);
   }

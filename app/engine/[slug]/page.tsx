@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { db } from "@/lib/db";
 import { EngineCheckoutForm } from "@/app/components/EngineCheckoutForm";
+import { ProductJsonLd } from "@/app/components/JsonLd";
 
 export const dynamic = "force-dynamic";
 
@@ -44,6 +45,12 @@ export default async function EnginePage({ params }: Props) {
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-12">
+      <ProductJsonLd
+        name={engine.title}
+        description={engine.description}
+        slug={engine.slug}
+        priceInUSD={engine.priceInUSD}
+      />
       <div className="mb-8 space-y-3">
         <span className="inline-block rounded-full border border-[#c9a227]/30 bg-[#c9a227]/10 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[#8a6d13]">
           {engine.category}
