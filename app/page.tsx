@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { db } from "@/lib/db";
 import { FLAGSHIP_ENGINES } from "@/config/flagship";
+import { ANONYMIZED_WINS } from "@/config/wins";
 import { displayTitle } from "@/lib/display";
 import { HUMAN_REVIEW_USD } from "@/lib/offer";
 import { ClientCatalogView } from "./components/ClientCatalogView";
@@ -259,12 +260,32 @@ export default async function CatalogPage() {
           <h2 className="font-display text-2xl font-semibold text-[#0b1f3a] sm:text-3xl">
             Instant drafts. Optional human review. No fake endorsements.
           </h2>
-          <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-[#1c2230]/70">
-            Scenarios on this site are illustrative. Outputs are informational
-            drafts — not licensed legal, financial, tax, or medical advice.
-            When you need a second set of eyes, add human specialist review at
-            checkout.
-          </p>
+          {ANONYMIZED_WINS.length > 0 ? (
+            <div className="mx-auto mt-8 grid max-w-3xl gap-4 text-left sm:grid-cols-2">
+              {ANONYMIZED_WINS.map((w) => (
+                <div
+                  key={w.id}
+                  className="rounded-lg border border-[#0b1f3a]/10 bg-[#f7f5f0] p-4"
+                >
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-[#8a6d13]">
+                    {w.dateLabel} · {w.role}
+                  </p>
+                  <p className="mt-1 text-sm font-semibold text-[#0b1f3a]">
+                    {w.engineLabel}
+                  </p>
+                  <p className="mt-1 text-xs leading-relaxed text-[#1c2230]/65">
+                    {w.whatChanged}
+                  </p>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-[#1c2230]/70">
+              Scenarios on this site are illustrative. After real paid orders,
+              we publish short anonymized process notes here — never invented
+              testimonials or guaranteed awards.
+            </p>
+          )}
           <div className="mt-6 flex flex-wrap items-center justify-center gap-4">
             <Link
               href="/about"
