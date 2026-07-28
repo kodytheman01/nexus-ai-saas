@@ -5,6 +5,8 @@ import { db } from "@/lib/db";
 import { inngest } from "@/lib/inngest";
 import { processEngineExecution } from "@/lib/process-engine";
 import { runAfterResponse } from "@/lib/run-after-response";
+import type { AttributionData } from "@/lib/attribution";
+import { sendGA4Purchase, sendMetaPurchase } from "@/lib/server-conversions";
 
 export async function POST(req: Request) {
   if (!process.env.STRIPE_SECRET_KEY || !process.env.STRIPE_WEBHOOK_SECRET) {
@@ -66,6 +68,15 @@ export async function POST(req: Request) {
       where: { stripeSessionId: session.id },
     });
 
+    let attribution: AttributionData = {};
+    try {
+      attribution = session.metadata?.attribution
+        ? (JSON.parse(session.metadata.attribution) as AttributionData)
+        : {};
+    } catch {
+      attribution = {};
+    }
+
     if (!existing) {
       await db.engineRun.create({
         data: {
@@ -74,7 +85,29 @@ export async function POST(req: Request) {
           engineSlug,
           inputParameters: ephemeral.userInput,
           status: "pending",
+          attribution: session.metadata?.attribution || null,
         },
+      });
+
+      // Fire-and-forget server-side conversion events (survive ad blockers /
+      // iOS tracking prevention). Never blocks or fails order fulfillment.
+      runAfterResponse(async () => {
+        const engine = await db.calculationEngine.findUnique({
+          where: { slug: engineSlug },
+          select: { title: true },
+        });
+        const purchaseEvent = {
+          sessionId: session.id,
+          engineSlug,
+          engineTitle: engine?.title || engineSlug,
+          amountUSD: (session.amount_total || 0) / 100,
+          customerEmail,
+          attribution,
+        };
+        await Promise.all([
+          sendGA4Purchase(purchaseEvent),
+          sendMetaPurchase(purchaseEvent),
+        ]);
       });
     }
 

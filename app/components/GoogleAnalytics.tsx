@@ -6,12 +6,14 @@ import Script from "next/script";
  * (see node_modules/next/dist/docs/01-app/02-guides/scripts.md — "Analytics"
  * is listed as a recommended `afterInteractive` use case).
  *
- * No-ops entirely (renders nothing) when NEXT_PUBLIC_GA_ID is unset, so the
- * site keeps working before a real GA4 property is created.
+ * Falls back to the production GA4 property ID if neither env var is set, so
+ * analytics keeps working even if Netlify's env config is ever wiped/reset.
  */
 export function GoogleAnalytics() {
   const measurementId =
-    process.env.NEXT_PUBLIC_GA_ID || process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
+    process.env.NEXT_PUBLIC_GA_ID ||
+    process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID ||
+    "G-VRBDF096T6";
 
   if (!measurementId) {
     return null;

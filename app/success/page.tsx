@@ -1,7 +1,14 @@
 "use client";
 
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+
+declare global {
+  interface Window {
+    gtag?: (...args: unknown[]) => void;
+    fbq?: (...args: unknown[]) => void;
+  }
+}
 
 function SuccessContent() {
   const searchParams = useSearchParams();
@@ -16,6 +23,7 @@ function SuccessContent() {
   const [regenInput, setRegenInput] = useState("");
   const [copied, setCopied] = useState(false);
   const [regenBusy, setRegenBusy] = useState(false);
+  const conversionFired = useRef(false);
 
   useEffect(() => {
     if (!sessionId) return;
@@ -31,6 +39,26 @@ function SuccessContent() {
           setOutput(data.outputData || "");
           setAllowanceTokens(data.allowanceTokens ?? 0);
           clearInterval(pollInterval);
+
+          // Client-side purchase events, fired once, in addition to the
+          // server-side GA4/Meta events sent from the Stripe webhook. The
+          // shared eventID (`sessionId`) lets Meta dedup pixel vs. CAPI.
+          if (!conversionFired.current) {
+            conversionFired.current = true;
+            const value = typeof data.priceInUSD === "number" ? data.priceInUSD : undefined;
+            window.gtag?.("event", "purchase", {
+              transaction_id: sessionId,
+              currency: "USD",
+              value,
+              items: [{ item_id: data.engineSlug, item_name: data.engineTitle }],
+            });
+            window.fbq?.(
+              "track",
+              "Purchase",
+              { value, currency: "USD", content_name: data.engineTitle },
+              { eventID: sessionId },
+            );
+          }
         } else if (data.status === "failed") {
           setStatus("failed");
           setOutput(data.outputData || "");

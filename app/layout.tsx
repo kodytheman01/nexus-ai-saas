@@ -3,6 +3,8 @@ import { Source_Serif_4, DM_Sans } from "next/font/google";
 import "./globals.css";
 import { DisclaimerFooter, SiteNav } from "./components/SiteChrome";
 import { GoogleAnalytics } from "./components/GoogleAnalytics";
+import { MetaPixel } from "./components/MetaPixel";
+import { AttributionCapture } from "./components/AttributionCapture";
 
 const display = Source_Serif_4({
   variable: "--font-display",
@@ -39,6 +41,9 @@ export const metadata: Metadata = {
     title: siteTitle,
     description: siteDescription,
   },
+  ...(process.env.GOOGLE_SITE_VERIFICATION
+    ? { verification: { google: process.env.GOOGLE_SITE_VERIFICATION } }
+    : {}),
 };
 
 export default function RootLayout({
@@ -50,6 +55,8 @@ export default function RootLayout({
     <html lang="en" className={`${display.variable} ${sans.variable} h-full`}>
       <body className="min-h-full flex flex-col bg-[#f7f5f0] text-[#1c2230] antialiased">
         <GoogleAnalytics />
+        <MetaPixel />
+        <AttributionCapture />
         <SiteNav />
         <main className="flex-1">{children}</main>
         <DisclaimerFooter />

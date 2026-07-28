@@ -5,6 +5,7 @@ import { processEngineExecution } from "@/lib/process-engine";
 import { inngest } from "@/lib/inngest";
 import { runAfterResponse } from "@/lib/run-after-response";
 import { sendIntakeEmail } from "@/lib/send-intake-email";
+import { serializeAttribution, type AttributionData } from "@/lib/attribution";
 
 export async function POST(request: Request) {
   try {
@@ -12,6 +13,9 @@ export async function POST(request: Request) {
     const engineSlug = String(body.engineSlug || "").trim();
     const userInput = String(body.userInput || "").trim();
     const customerEmail = String(body.customerEmail || "").trim();
+    const attribution: AttributionData =
+      body.attribution && typeof body.attribution === "object" ? body.attribution : {};
+    const attributionJson = serializeAttribution(attribution);
 
     if (!engineSlug || !userInput) {
       return NextResponse.json(
@@ -68,6 +72,7 @@ export async function POST(request: Request) {
           engineSlug,
           inputParameters: userInput,
           status: "pending",
+          attribution: attributionJson,
         },
       });
 
@@ -124,6 +129,7 @@ export async function POST(request: Request) {
       metadata: {
         ephemeralStorageId: ephemeral.id,
         engineSlug: engine.slug,
+        attribution: attributionJson,
       },
     });
 

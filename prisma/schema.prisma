@@ -48,6 +48,7 @@ model EngineRun {
   status           RunStatus          @default(pending)
   outputData       String?            @map("output_data")
   allowanceTokens  Int                @default(1) @map("allowance_tokens")
+  attribution      String?            @map("attribution")
   createdAt        DateTime           @default(now()) @map("created_at")
   updatedAt        DateTime           @updatedAt @map("updated_at")
   engine           CalculationEngine  @relation(fields: [engineSlug], references: [slug], onDelete: Cascade)

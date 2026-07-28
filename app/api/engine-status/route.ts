@@ -20,6 +20,7 @@ export async function GET(request: Request) {
         outputData: true,
         engineSlug: true,
         allowanceTokens: true,
+        engine: { select: { title: true, priceInUSD: true } },
       },
     });
 
@@ -32,6 +33,8 @@ export async function GET(request: Request) {
       engineSlug: run.engineSlug,
       outputData: run.outputData,
       allowanceTokens: run.allowanceTokens,
+      engineTitle: run.engine?.title,
+      priceInUSD: run.engine?.priceInUSD,
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Status lookup failed";

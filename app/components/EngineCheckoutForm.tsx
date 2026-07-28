@@ -2,6 +2,11 @@
 
 import { FormEvent, useState } from "react";
 import Link from "next/link";
+import {
+  extractGAClientIdFromCookie,
+  parseAttributionCookie,
+  readCookie,
+} from "@/lib/attribution";
 
 export function EngineCheckoutForm({
   slug,
@@ -25,6 +30,14 @@ export function EngineCheckoutForm({
     setError("");
 
     try {
+      const cookies = document.cookie;
+      const attribution = {
+        ...parseAttributionCookie(cookies),
+        gaClientId: extractGAClientIdFromCookie(cookies) || undefined,
+        fbp: readCookie(cookies, "_fbp") || undefined,
+        fbc: readCookie(cookies, "_fbc") || undefined,
+      };
+
       const res = await fetch("/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -32,6 +45,7 @@ export function EngineCheckoutForm({
           engineSlug: slug,
           userInput,
           customerEmail: email,
+          attribution,
         }),
       });
       const data = await res.json();
