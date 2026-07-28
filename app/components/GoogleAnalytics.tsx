@@ -6,11 +6,12 @@ import Script from "next/script";
  * (see node_modules/next/dist/docs/01-app/02-guides/scripts.md — "Analytics"
  * is listed as a recommended `afterInteractive` use case).
  *
- * No-ops entirely (renders nothing) when NEXT_PUBLIC_GA_MEASUREMENT_ID is
- * unset, so the site keeps working before a real GA4 property is created.
+ * No-ops entirely (renders nothing) when NEXT_PUBLIC_GA_ID is unset, so the
+ * site keeps working before a real GA4 property is created.
  */
 export function GoogleAnalytics() {
-  const measurementId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
+  const measurementId =
+    process.env.NEXT_PUBLIC_GA_ID || process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
 
   if (!measurementId) {
     return null;
