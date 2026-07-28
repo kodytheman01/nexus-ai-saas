@@ -51,3 +51,7 @@ next-env.d.ts
 
 # generated ad creative export (run `npm run generate-ads` to regenerate)
 /500_video_ads_export.json
+
+# generated video ad output + render working files (run `npm run generate-video-ads` to regenerate)
+/video-ads-output/
+/.video-ads-tmp/
