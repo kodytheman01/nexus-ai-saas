@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Suspense } from "react";
 import { db } from "@/lib/db";
 import { ClientCatalogView } from "./components/ClientCatalogView";
 
@@ -114,7 +115,15 @@ export default async function CatalogPage() {
             </p>
           </div>
         ) : (
-          <ClientCatalogView initialEngines={engines} categories={categories} />
+          <Suspense
+            fallback={
+              <div className="rounded-lg border border-[#0b1f3a]/10 bg-white p-8 text-sm text-[#1c2230]/50">
+                Loading catalog…
+              </div>
+            }
+          >
+            <ClientCatalogView initialEngines={engines} categories={categories} />
+          </Suspense>
         )}
       </div>
 

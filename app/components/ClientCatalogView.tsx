@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 
 export type CatalogEngine = {
   slug: string;
@@ -26,10 +27,10 @@ function loadHistory(): string[] {
 }
 
 function pushHistory(query: string) {
-  const next = [query, ...loadHistory().filter((q) => q.toLowerCase() !== query.toLowerCase())].slice(
-    0,
-    MAX_HISTORY,
-  );
+  const next = [
+    query,
+    ...loadHistory().filter((q) => q.toLowerCase() !== query.toLowerCase()),
+  ].slice(0, MAX_HISTORY);
   localStorage.setItem(HISTORY_KEY, JSON.stringify(next));
   return next;
 }
@@ -41,6 +42,7 @@ export function ClientCatalogView({
   initialEngines: CatalogEngine[];
   categories: string[];
 }) {
+  const searchParams = useSearchParams();
   const [activeCategory, setActiveCategory] = useState("all");
   const [search, setSearch] = useState("");
   const [history, setHistory] = useState<string[]>([]);
@@ -51,6 +53,29 @@ export function ClientCatalogView({
   useEffect(() => {
     setHistory(loadHistory());
   }, []);
+
+  useEffect(() => {
+    const q = searchParams.get("q");
+    if (q != null) {
+      setSearch(q);
+      if (q.trim().length >= 2) {
+        const count = initialEngines.filter((eng) => {
+          const hay = `${eng.title} ${eng.description} ${eng.category} ${eng.slug}`.toLowerCase();
+          return hay.includes(q.toLowerCase());
+        }).length;
+        setHistory(pushHistory(q.trim()));
+        void fetch("/api/search-log", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            query: q.trim(),
+            resultCount: count,
+            source: "nav",
+          }),
+        }).catch(() => undefined);
+      }
+    }
+  }, [searchParams, initialEngines]);
 
   useEffect(() => {
     function onDocClick(e: MouseEvent) {
@@ -100,7 +125,7 @@ export function ClientCatalogView({
   }
 
   return (
-    <div className="space-y-6">
+    <div id="catalog-search" className="scroll-mt-28 space-y-6">
       <div className="flex flex-col gap-3 sm:flex-row">
         <div ref={wrapRef} className="relative flex-1">
           <label htmlFor="engine-search" className="sr-only">
@@ -171,7 +196,8 @@ export function ClientCatalogView({
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         {filtered.length === 0 ? (
           <div className="col-span-full rounded-lg border border-dashed border-[#0b1f3a]/20 bg-white py-16 text-center text-sm text-[#1c2230]/40">
-            No engines match. Try another keyword — or open Apex Concierge (chat) for a special request.
+            No engines match. Try another keyword — or open Apex Concierge (chat)
+            for a special request.
           </div>
         ) : (
           filtered.map((engine) => (

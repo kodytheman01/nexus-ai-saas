@@ -1,14 +1,16 @@
 import Link from "next/link";
+import { Suspense } from "react";
+import { NavSearch, NavSearchMobile } from "./NavSearch";
 
 export function SiteNav() {
   return (
-    <header className="border-b border-[#0b1f3a]/10 bg-white/95 backdrop-blur sticky top-0 z-40">
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
-        <Link href="/" className="flex items-center gap-2.5">
+    <header className="sticky top-0 z-40 border-b border-[#0b1f3a]/10 bg-white/95 backdrop-blur">
+      <div className="mx-auto flex max-w-6xl items-center gap-2 px-4 py-3">
+        <Link href="/" className="flex shrink-0 items-center gap-2.5">
           <span className="flex h-8 w-8 items-center justify-center rounded-md bg-[#0b1f3a] text-sm font-bold text-[#c9a227]">
             A
           </span>
-          <div className="leading-tight">
+          <div className="hidden leading-tight sm:block">
             <div className="text-sm font-bold tracking-tight text-[#0b1f3a]">
               Apex Capital
             </div>
@@ -17,17 +19,27 @@ export function SiteNav() {
             </div>
           </div>
         </Link>
-        <nav className="flex items-center gap-6 text-sm font-medium text-[#0b1f3a]/70">
-          <Link href="/" className="transition hover:text-[#0b1f3a]">
+
+        <Suspense fallback={<div className="mx-3 hidden h-9 flex-1 md:block" />}>
+          <NavSearch />
+        </Suspense>
+
+        <nav className="ml-auto flex shrink-0 items-center gap-4 text-sm font-medium text-[#0b1f3a]/70 sm:gap-6">
+          <Link href="/#catalog-search" className="transition hover:text-[#0b1f3a]">
             Engines
           </Link>
-          <Link href="/about" className="transition hover:text-[#0b1f3a]">
+          <Link href="/about" className="hidden transition hover:text-[#0b1f3a] sm:inline">
             About
           </Link>
           <Link href="/admin/engines" className="transition hover:text-[#0b1f3a]">
             Admin
           </Link>
         </nav>
+      </div>
+      <div className="border-t border-[#0b1f3a]/5 px-4 py-2 md:hidden">
+        <Suspense fallback={null}>
+          <NavSearchMobile />
+        </Suspense>
       </div>
     </header>
   );
