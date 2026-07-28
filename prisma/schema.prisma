@@ -49,6 +49,7 @@ model EngineRun {
   outputData       String?            @map("output_data")
   allowanceTokens  Int                @default(1) @map("allowance_tokens")
   attribution      String?            @map("attribution")
+  humanReview      Boolean            @default(false) @map("human_review")
   createdAt        DateTime           @default(now()) @map("created_at")
   updatedAt        DateTime           @updatedAt @map("updated_at")
   engine           CalculationEngine  @relation(fields: [engineSlug], references: [slug], onDelete: Cascade)

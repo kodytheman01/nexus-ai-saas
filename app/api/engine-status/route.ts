@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { displayTitle } from "@/lib/display";
+import { HUMAN_REVIEW_USD } from "@/lib/offer";
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -20,6 +22,7 @@ export async function GET(request: Request) {
         outputData: true,
         engineSlug: true,
         allowanceTokens: true,
+        humanReview: true,
         engine: { select: { title: true, priceInUSD: true } },
       },
     });
@@ -28,16 +31,23 @@ export async function GET(request: Request) {
       return NextResponse.json({ status: "pending" });
     }
 
+    const basePrice = run.engine?.priceInUSD ?? 0;
+    const totalValue = basePrice + (run.humanReview ? HUMAN_REVIEW_USD : 0);
+
     return NextResponse.json({
       status: run.status,
       engineSlug: run.engineSlug,
       outputData: run.outputData,
       allowanceTokens: run.allowanceTokens,
-      engineTitle: run.engine?.title,
-      priceInUSD: run.engine?.priceInUSD,
+      engineTitle: run.engine?.title
+        ? displayTitle(run.engine.title)
+        : undefined,
+      priceInUSD: totalValue,
+      humanReview: run.humanReview,
     });
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Status lookup failed";
+    const message =
+      error instanceof Error ? error.message : "Status lookup failed";
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }

@@ -21,7 +21,7 @@ const sans = DM_Sans({
 const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://apexcapitaladmin.com";
 const siteTitle = "Apex Capital Admin Services | Automated Advisory & Deliverable Engines";
 const siteDescription =
-  "Apex Capital Admin Services operates a suite of specialized knowledge engines that convert your inputs into professional-grade deliverables — secured by Stripe, generated instantly.";
+  "Apex Capital Admin Services — 500 specialized engines that turn your intake into structured drafts. Stripe checkout, instant delivery, optional human review.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(appUrl),

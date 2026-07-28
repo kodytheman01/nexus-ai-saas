@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build --webpack",
+    "build": "prisma generate && prisma db push && next build --webpack",
     "start": "next start",
     "lint": "eslint",
     "db:push": "prisma db push",
@@ -13,7 +13,9 @@
     "db:deploy": "prisma db push && prisma db seed",
     "generate-ads": "tsx generate-ads.ts",
     "generate-video-ads": "tsx generate-video-ads.ts",
-    "prepare-ad-launches": "tsx prepare-ad-launches.ts"
+    "prepare-ad-launches": "tsx prepare-ad-launches.ts",
+    "ig:queue": "tsx build-instagram-queue.ts",
+    "ig:publish": "tsx publish-instagram-queue.ts"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"

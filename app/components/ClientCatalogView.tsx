@@ -3,6 +3,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+import { displayTitle, isGrantRelated } from "@/lib/display";
+import { FLAGSHIP_SLUGS } from "@/config/flagship";
 
 export type CatalogEngine = {
   slug: string;
@@ -14,6 +16,7 @@ export type CatalogEngine = {
 
 const HISTORY_KEY = "apex_search_history";
 const MAX_HISTORY = 12;
+const FLAGSHIP_SET = new Set(FLAGSHIP_SLUGS);
 
 function loadHistory(): string[] {
   if (typeof window === "undefined") return [];
@@ -87,10 +90,17 @@ export function ClientCatalogView({
 
   const filtered = useMemo(() => {
     return initialEngines.filter((eng) => {
-      const catOk = activeCategory === "all" || eng.category === activeCategory;
+      let catOk = true;
+      if (activeCategory === "grants") {
+        catOk = isGrantRelated(eng);
+      } else if (activeCategory !== "all") {
+        catOk = eng.category === activeCategory;
+      }
       const q = search.toLowerCase().trim();
+      const name = displayTitle(eng.title).toLowerCase();
       const searchOk =
         !q ||
+        name.includes(q) ||
         eng.title.toLowerCase().includes(q) ||
         eng.description.toLowerCase().includes(q) ||
         eng.category.toLowerCase().includes(q) ||
@@ -126,6 +136,27 @@ export function ClientCatalogView({
 
   return (
     <div id="catalog-search" className="scroll-mt-28 space-y-6">
+      <div className="flex flex-wrap gap-2">
+        {[
+          { id: "all", label: "All" },
+          { id: "grants", label: "Grants & nonprofit" },
+          ...categories.map((c) => ({ id: c, label: c })),
+        ].map((chip) => (
+          <button
+            key={chip.id}
+            type="button"
+            onClick={() => setActiveCategory(chip.id)}
+            className={`rounded-full px-3 py-1.5 text-xs font-bold capitalize transition ${
+              activeCategory === chip.id
+                ? "bg-[#0b1f3a] text-[#c9a227]"
+                : "border border-[#0b1f3a]/15 bg-white text-[#0b1f3a]/70 hover:border-[#c9a227]/40"
+            }`}
+          >
+            {chip.label}
+          </button>
+        ))}
+      </div>
+
       <div className="flex flex-col gap-3 sm:flex-row">
         <div ref={wrapRef} className="relative flex-1">
           <label htmlFor="engine-search" className="sr-only">
@@ -142,7 +173,7 @@ export function ClientCatalogView({
                 setHistoryOpen(false);
               }
             }}
-            placeholder="Search what you need — NDA, invoice, automation, runway…"
+            placeholder="Search what you need — grant, NDA, invoice, runway…"
             className="w-full rounded-lg border border-[#0b1f3a]/15 bg-white px-4 py-3 text-sm text-[#0b1f3a] shadow-sm outline-none focus:ring-2 focus:ring-[#c9a227]/40"
             autoComplete="off"
           />
@@ -175,9 +206,9 @@ export function ClientCatalogView({
           ) : null}
         </div>
         <select
-          value={activeCategory}
+          value={activeCategory === "grants" ? "all" : activeCategory}
           onChange={(e) => setActiveCategory(e.target.value)}
-          className="rounded-lg border border-[#0b1f3a]/15 bg-white px-4 py-3 text-sm font-semibold capitalize text-[#0b1f3a] shadow-sm"
+          className="rounded-lg border border-[#0b1f3a]/15 bg-white px-4 py-3 text-sm font-semibold capitalize text-[#0b1f3a] shadow-sm sm:hidden"
         >
           <option value="all">All categories</option>
           {categories.map((c) => (
@@ -196,35 +227,51 @@ export function ClientCatalogView({
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         {filtered.length === 0 ? (
           <div className="col-span-full rounded-lg border border-dashed border-[#0b1f3a]/20 bg-white py-16 text-center text-sm text-[#1c2230]/40">
-            No engines match. Try another keyword — or open Apex Concierge (chat)
+            No engines match. Try Grants &amp; nonprofit, or open Apex Concierge
             for a special request.
           </div>
         ) : (
-          filtered.map((engine) => (
-            <Link
-              key={engine.slug}
-              href={`/engine/${engine.slug}`}
-              className="block rounded-lg border border-[#0b1f3a]/10 bg-white p-5 text-left shadow-sm transition hover:-translate-y-0.5 hover:border-[#c9a227]/50 hover:shadow-md"
-            >
-              <div className="mb-2 flex items-start justify-between gap-3">
-                <h3 className="text-sm font-bold leading-snug text-[#0b1f3a]">
-                  {engine.title}
-                </h3>
-                <span className="shrink-0 rounded-full border border-[#c9a227]/30 bg-[#c9a227]/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-[#8a6d13]">
-                  {engine.category}
-                </span>
-              </div>
-              <p className="mb-4 line-clamp-2 text-xs leading-relaxed text-[#1c2230]/60">
-                {engine.description}
-              </p>
-              <div className="text-right font-mono text-sm font-bold text-[#0b1f3a]">
-                ${engine.priceInUSD}
-                <span className="ml-1 text-[10px] font-bold uppercase text-[#1c2230]/40">
-                  USD
-                </span>
-              </div>
-            </Link>
-          ))
+          filtered.map((engine) => {
+            const name = displayTitle(engine.title);
+            const flagship = FLAGSHIP_SET.has(engine.slug);
+            return (
+              <Link
+                key={engine.slug}
+                href={`/engine/${engine.slug}`}
+                className="block rounded-lg border border-[#0b1f3a]/10 bg-white p-5 text-left shadow-sm transition hover:-translate-y-0.5 hover:border-[#c9a227]/50 hover:shadow-md"
+              >
+                <div className="mb-2 flex items-start justify-between gap-3">
+                  <h3 className="text-sm font-bold leading-snug text-[#0b1f3a]">
+                    {name}
+                  </h3>
+                  <div className="flex shrink-0 flex-col items-end gap-1">
+                    {flagship ? (
+                      <span className="rounded-full bg-[#0b1f3a] px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-[#c9a227]">
+                        Flagship
+                      </span>
+                    ) : null}
+                    <span className="rounded-full border border-[#c9a227]/30 bg-[#c9a227]/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-[#8a6d13]">
+                      {engine.category}
+                    </span>
+                  </div>
+                </div>
+                <p className="mb-4 line-clamp-2 text-xs leading-relaxed text-[#1c2230]/60">
+                  {engine.description}
+                </p>
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-semibold uppercase tracking-wide text-[#0b1f3a]/40">
+                    Sample on page →
+                  </span>
+                  <div className="font-mono text-sm font-bold text-[#0b1f3a]">
+                    ${engine.priceInUSD}
+                    <span className="ml-1 text-[10px] font-bold uppercase text-[#1c2230]/40">
+                      USD
+                    </span>
+                  </div>
+                </div>
+              </Link>
+            );
+          })
         )}
       </div>
     </div>

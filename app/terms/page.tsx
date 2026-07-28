@@ -47,14 +47,35 @@ export default function TermsPage() {
             description of your situation and returns a computer-generated
             deliverable (a document, blueprint, script, checklist, or
             similar output). Deliverables are generated automatically by
-            software and are not reviewed, drafted, or certified by a
-            licensed professional prior to delivery. Outputs are
-            informational and computational in nature and do not constitute
-            legal, financial, tax, medical, or certified engineering advice,
-            and no advisor-client, fiduciary, or professional relationship
-            is created by using this service. You should have any
-            deliverable reviewed by a qualified, licensed professional
-            before relying on it for a regulated or consequential decision.
+            software. Unless you purchase the optional human specialist review
+            add-on, outputs are not reviewed by a licensed professional prior
+            to delivery. Even with human review, outputs remain informational
+            drafts and do not constitute legal, financial, tax, medical, or
+            certified engineering advice, and no advisor-client, fiduciary, or
+            professional relationship is created by using this service. You
+            should have any deliverable reviewed by a qualified, licensed
+            professional before relying on it for a regulated or consequential
+            decision.
+          </p>
+        </section>
+
+        <section>
+          <h2 className="font-display text-xl font-semibold text-[#0b1f3a]">
+            1A. Human specialist review add-on
+          </h2>
+          <p className="mt-2 text-sm leading-relaxed text-[#1c2230]/70">
+            If you purchase the optional human specialist review add-on at
+            checkout, Apex Capital Admin Services operations staff will review
+            the computer-generated deliverable after delivery and email notes
+            to the address you provided, typically within one business day.
+            This review is an operational quality pass (clarity, structure,
+            obvious gaps, and suggested edits). It is not licensed legal,
+            financial, tax, medical, or engineering advice; it does not create
+            an attorney–client, CPA–client, or fiduciary relationship; and it
+            does not certify fitness for any particular filing, contract
+            execution, or regulated use. Failure to receive review notes due
+            to an incorrect email address is not grounds for a refund of the
+            underlying engine purchase.
           </p>
         </section>
 

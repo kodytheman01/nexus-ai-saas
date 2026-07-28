@@ -86,6 +86,7 @@ export async function POST(req: Request) {
           inputParameters: ephemeral.userInput,
           status: "pending",
           attribution: session.metadata?.attribution || null,
+          humanReview: session.metadata?.humanReview === "1",
         },
       });
 

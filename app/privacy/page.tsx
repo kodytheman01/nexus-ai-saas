@@ -115,6 +115,12 @@ export default function PrivacyPage() {
               directly; we never see or store your full card details.
             </li>
             <li>
+              <strong className="text-[#0b1f3a]">OpenAI</strong> — processes
+              your written intake to generate the draft deliverable. Do not
+              submit secrets, passwords, or highly sensitive personal data you
+              are not comfortable sharing with a processor.
+            </li>
+            <li>
               <strong className="text-[#0b1f3a]">Google (Gmail /
               Google Workspace)</strong> — used to send order-related and
               intake emails.
@@ -122,6 +128,12 @@ export default function PrivacyPage() {
             <li>
               <strong className="text-[#0b1f3a]">Google Analytics</strong> —
               used to measure site traffic and usage in aggregate.
+            </li>
+            <li>
+              <strong className="text-[#0b1f3a]">Meta Pixel / Conversions API</strong>{" "}
+              — used when configured to measure advertising performance
+              (including purchase events). See Meta&apos;s privacy policy for
+              details.
             </li>
           </ul>
           <p className="mt-2 text-sm leading-relaxed text-[#1c2230]/70">

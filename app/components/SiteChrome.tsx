@@ -24,15 +24,15 @@ export function SiteNav() {
           <NavSearch />
         </Suspense>
 
-        <nav className="ml-auto flex shrink-0 items-center gap-4 text-sm font-medium text-[#0b1f3a]/70 sm:gap-6">
-          <Link href="/#catalog-search" className="transition hover:text-[#0b1f3a]">
+        <nav className="ml-auto flex shrink-0 items-center gap-3 text-sm font-medium text-[#0b1f3a]/70 sm:gap-5">
+          <Link href="/#grant-mode" className="transition hover:text-[#0b1f3a]">
+            Grant Mode
+          </Link>
+          <Link href="/#catalog" className="transition hover:text-[#0b1f3a]">
             Engines
           </Link>
-          <Link href="/about" className="hidden transition hover:text-[#0b1f3a] sm:inline">
+          <Link href="/about" className="transition hover:text-[#0b1f3a]">
             About
-          </Link>
-          <Link href="/admin/engines" className="transition hover:text-[#0b1f3a]">
-            Admin
           </Link>
         </nav>
       </div>

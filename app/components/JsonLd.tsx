@@ -10,8 +10,14 @@ export function OrganizationJsonLd() {
     url: appUrl,
     email: "admin@apexcapitaladmin.com",
     description:
-      "Specialized knowledge engines that convert inputs into professional-grade deliverables.",
-    sameAs: [],
+      "Specialized knowledge engines that convert written intake into structured draft deliverables.",
+    sameAs: ["https://apexcapitaladmin.com"],
+    contactPoint: {
+      "@type": "ContactPoint",
+      email: "admin@apexcapitaladmin.com",
+      telephone: "+1-214-506-3083",
+      contactType: "customer service",
+    },
   };
 
   return (

@@ -19,6 +19,8 @@ function SuccessContent() {
     "pending",
   );
   const [output, setOutput] = useState("");
+  const [engineSlug, setEngineSlug] = useState("deliverable");
+  const [humanReview, setHumanReview] = useState(false);
   const [allowanceTokens, setAllowanceTokens] = useState(0);
   const [regenInput, setRegenInput] = useState("");
   const [copied, setCopied] = useState(false);
@@ -38,6 +40,8 @@ function SuccessContent() {
           setStatus("completed");
           setOutput(data.outputData || "");
           setAllowanceTokens(data.allowanceTokens ?? 0);
+          setHumanReview(Boolean(data.humanReview));
+          if (data.engineSlug) setEngineSlug(String(data.engineSlug));
           clearInterval(pollInterval);
 
           // Client-side purchase events, fired once, in addition to the
@@ -153,16 +157,34 @@ function SuccessContent() {
                 Your deliverable is ready
               </h1>
             </div>
-            <button
-              onClick={() => {
-                navigator.clipboard.writeText(output);
-                setCopied(true);
-                setTimeout(() => setCopied(false), 2000);
-              }}
-              className="rounded-lg bg-[#0b1f3a] px-4 py-2 text-sm font-semibold text-white hover:bg-[#14335c]"
-            >
-              {copied ? "Copied" : "Copy"}
-            </button>
+            <div className="flex shrink-0 gap-2">
+              <button
+                onClick={() => {
+                  navigator.clipboard.writeText(output);
+                  setCopied(true);
+                  setTimeout(() => setCopied(false), 2000);
+                }}
+                className="rounded-lg border border-[#0b1f3a]/15 bg-white px-4 py-2 text-sm font-semibold text-[#0b1f3a] hover:bg-[#f7f5f0]"
+              >
+                {copied ? "Copied" : "Copy"}
+              </button>
+              <button
+                onClick={() => {
+                  const blob = new Blob([output], {
+                    type: "text/markdown;charset=utf-8",
+                  });
+                  const url = URL.createObjectURL(blob);
+                  const a = document.createElement("a");
+                  a.href = url;
+                  a.download = `${engineSlug}.md`;
+                  a.click();
+                  URL.revokeObjectURL(url);
+                }}
+                className="rounded-lg bg-[#0b1f3a] px-4 py-2 text-sm font-semibold text-white hover:bg-[#14335c]"
+              >
+                Download .md
+              </button>
+            </div>
           </div>
 
           <div className="overflow-x-auto rounded-lg border border-[#0b1f3a] bg-[#0b1f3a] p-5">
@@ -170,6 +192,21 @@ function SuccessContent() {
               {output}
             </pre>
           </div>
+
+          <p className="rounded-lg border border-[#c9a227]/30 bg-[#c9a227]/10 px-3 py-2 text-xs leading-relaxed text-[#1c2230]/70">
+            {humanReview ? (
+              <>
+                Human specialist review is on this order. Apex ops will email
+                notes to your checkout address within 1 business day.
+              </>
+            ) : (
+              <>
+                A copy was emailed to your checkout address when generation
+                finished (if mail is configured). Drafts are informational —
+                have a qualified professional review before regulated use.
+              </>
+            )}
+          </p>
 
           {allowanceTokens > 0 ? (
             <div className="space-y-3 rounded-lg border border-[#0b1f3a]/10 bg-[#f7f5f0] p-4">

@@ -187,7 +187,7 @@ export function SupportChatWidget() {
         className="flex items-center gap-2 rounded-full bg-[#0b1f3a] px-4 py-3 text-sm font-bold text-[#f7f5f0] shadow-lg ring-1 ring-[#c9a227]/40 transition hover:bg-[#14335c]"
       >
         <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#c9a227] text-xs font-black text-[#0b1f3a]">
-          AI
+          ?
         </span>
         {open ? "Hide concierge" : "Need help?"}
       </button>

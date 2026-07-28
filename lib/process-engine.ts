@@ -1,12 +1,15 @@
 import OpenAI from "openai";
 import { db } from "@/lib/db";
 import { withBackoffOrFallback } from "@/lib/api-utils";
+import { displayTitle } from "@/lib/display";
 import { optimizeUserInput } from "@/lib/prompt-optimizer";
 import { validateAndHealOutput } from "@/lib/self-healing";
+import { sendDeliverableEmail } from "@/lib/send-deliverable-email";
+import { runAfterResponse } from "@/lib/run-after-response";
 
 function demoOutput(engineTitle: string, userInput: string, format: string) {
   const body = [
-    `# ${engineTitle}`,
+    `# ${displayTitle(engineTitle)}`,
     "",
     "## Generated Asset (Demo Mode)",
     "",
@@ -28,7 +31,7 @@ function demoOutput(engineTitle: string, userInput: string, format: string) {
   if (format === "json") {
     return JSON.stringify(
       {
-        packTitle: `${engineTitle} (Demo)`,
+        packTitle: `${displayTitle(engineTitle)} (Demo)`,
         note: "Demo mode — configure OPENAI_API_KEY for live generation",
         inputEcho: userInput,
         items: [
@@ -71,7 +74,10 @@ export async function processEngineExecution(params: {
   });
 
   try {
-    const optimization = await optimizeUserInput(userInput, engine.title);
+    const optimization = await optimizeUserInput(
+      userInput,
+      displayTitle(engine.title),
+    );
     if (optimization.hasMaliciousIntent) {
       throw new Error("Security alert: malicious prompt pattern detected.");
     }
@@ -131,13 +137,26 @@ export async function processEngineExecution(params: {
       }
     }
 
-    await db.engineRun.update({
+    const run = await db.engineRun.update({
       where: { stripeSessionId },
       data: {
         status: "completed",
         outputData: output,
       },
     });
+
+    if (process.env.GMAIL_APP_PASSWORD && run.userEmail) {
+      runAfterResponse(async () => {
+        await sendDeliverableEmail({
+          to: run.userEmail,
+          engineTitle: engine.title,
+          engineSlug: engine.slug,
+          output,
+          humanReview: run.humanReview,
+          sessionId: stripeSessionId,
+        }).catch((err) => console.warn("Deliverable email failed:", err));
+      });
+    }
 
     return { status: "success" as const, stripeSessionId };
   } catch (error) {

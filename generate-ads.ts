@@ -109,14 +109,14 @@ function buildAdScript(engine: EngineSeed): AdScript {
       overlayHook,
       title,
       `$${price}`,
-      "Instant email delivery",
+      "Instant on-page + email",
       "apexcapitaladmin.com",
     ],
     socialCaption: `${captionOpen}
 
-Instant output
+Instant on-page delivery
+Email copy included
 Secured checkout
-Delivered to your inbox
 
 ${targetUrl}`,
   };
