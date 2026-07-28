@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useState } from "react";
+import Link from "next/link";
 
 export function EngineCheckoutForm({
   slug,
@@ -85,6 +86,23 @@ export function EngineCheckoutForm({
           ? "Starting checkout..."
           : `Unlock deliverable — $${priceInUSD}`}
       </button>
+      <p className="text-center text-[11px] leading-relaxed text-[#1c2230]/50">
+        By purchasing, you agree to our{" "}
+        <Link
+          href="/terms"
+          className="underline decoration-[#c9a227] decoration-2 underline-offset-2 hover:text-[#0b1f3a]"
+        >
+          Terms of Service
+        </Link>{" "}
+        and{" "}
+        <Link
+          href="/privacy"
+          className="underline decoration-[#c9a227] decoration-2 underline-offset-2 hover:text-[#0b1f3a]"
+        >
+          Privacy Policy
+        </Link>
+        .
+      </p>
       <p className="text-[11px] leading-relaxed text-[#1c2230]/40">
         Without STRIPE_SECRET_KEY, checkout runs in local demo mode and
         generates immediately. With Stripe configured, payment is required

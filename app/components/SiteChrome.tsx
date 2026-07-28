@@ -52,6 +52,12 @@ export function DisclaimerFooter() {
             © {new Date().getFullYear()} Apex Capital Admin Services. All
             rights reserved.
           </span>
+          <Link href="/terms" className="transition hover:text-white/70">
+            Terms of Service
+          </Link>
+          <Link href="/privacy" className="transition hover:text-white/70">
+            Privacy Policy
+          </Link>
           <a
             href="mailto:admin@apexcapitaladmin.com"
             className="transition hover:text-white/70"

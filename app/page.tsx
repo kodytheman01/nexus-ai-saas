@@ -36,6 +36,57 @@ export default async function CatalogPage() {
               generated instantly by our engine layer.
             </p>
           </div>
+
+          <div className="mx-auto mt-10 grid max-w-4xl grid-cols-2 gap-3 sm:grid-cols-4">
+            {[
+              {
+                label: "Instant delivery",
+                detail: "Typically under 60 seconds",
+              },
+              {
+                label: "Secure checkout",
+                detail: "Powered by Stripe",
+              },
+              {
+                label: "500+ engines",
+                detail: "Specialized catalog",
+              },
+              {
+                label: "Regeneration",
+                detail: "One complimentary re-run",
+              },
+            ].map((item) => (
+              <div
+                key={item.label}
+                className="rounded-lg border border-[#0b1f3a]/10 bg-[#f7f5f0] px-3 py-4 text-center"
+              >
+                <p className="text-xs font-bold uppercase tracking-wide text-[#0b1f3a]">
+                  {item.label}
+                </p>
+                <p className="mt-1 text-[11px] leading-snug text-[#1c2230]/60">
+                  {item.detail}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          <div className="mx-auto mt-8 flex max-w-3xl flex-col items-center gap-2 text-center sm:flex-row sm:justify-center sm:gap-6 sm:text-left">
+            {["Intake", "Secure payment", "Automated generation", "Delivery"].map(
+              (step, i, arr) => (
+                <span
+                  key={step}
+                  className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-[#0b1f3a]/60"
+                >
+                  {step}
+                  {i < arr.length - 1 ? (
+                    <span aria-hidden className="text-[#c9a227]">
+                      →
+                    </span>
+                  ) : null}
+                </span>
+              ),
+            )}
+          </div>
         </div>
       </section>
 
