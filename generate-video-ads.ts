@@ -27,8 +27,16 @@ import { execFile } from "child_process";
 import { promisify } from "util";
 import sharp from "sharp";
 import { MsEdgeTTS, OUTPUT_FORMAT } from "msedge-tts";
+import {
+  isRateLimitError,
+  sleep,
+  withExponentialBackoff,
+} from "./lib/api-utils";
 
 const execFileAsync = promisify(execFile);
+
+/** Pause between TTS requests to reduce Edge throttling during long batch runs. */
+const TTS_THROTTLE_MS = 750;
 
 // `npm run` sometimes hands scripts a PATH stripped of user/machine-level entries
 // (observed in this environment). Make sure winget-installed ffmpeg/ffprobe shims resolve.
@@ -223,8 +231,24 @@ async function synthesizeVoiceover(tts: MsEdgeTTS, text: string, dirPath: string
   if (fs.existsSync(existing) && fs.statSync(existing).size > 0) {
     return existing;
   }
-  const { audioFilePath } = await tts.toFile(dirPath, escapeXml(text));
-  return audioFilePath;
+
+  // Edge TTS is free but will throttle under sustained load — retry with
+  // exponential backoff on 429/quota/network errors before giving up.
+  return withExponentialBackoff(
+    async () => {
+      const { audioFilePath } = await tts.toFile(dirPath, escapeXml(text));
+      if (!audioFilePath || !fs.existsSync(audioFilePath) || fs.statSync(audioFilePath).size === 0) {
+        throw new Error("Edge TTS returned empty audio file");
+      }
+      return audioFilePath;
+    },
+    {
+      label: `edge-tts:${path.basename(dirPath)}`,
+      maxAttempts: 5,
+      baseDelayMs: 1000,
+      maxDelayMs: 45_000,
+    },
+  );
 }
 
 async function renderVideo(ad: AdScript, voicePath: string, fontFile: string, outPath: string): Promise<void> {
@@ -348,6 +372,9 @@ async function main() {
     const outPath = path.join(OUTPUT_DIR, `${ad.slug}.mp4`);
     const adTmpDir = path.join(TMP_DIR, ad.slug);
     try {
+      // Throttle between Edge TTS requests so long batch runs stay under quota.
+      if (index > 0) await sleep(TTS_THROTTLE_MS);
+
       const voicePath = await synthesizeVoiceover(tts, ad.voiceoverScript, adTmpDir);
       await renderVideo(ad, voicePath, fontFile, outPath);
       const seconds = (Date.now() - startedAt) / 1000;
@@ -358,7 +385,17 @@ async function main() {
       );
     } catch (err) {
       failed++;
-      console.error(`[${index + 1}/${toProcess.length}] FAIL ${ad.slug}:`, (err as Error).message);
+      const msg = (err as Error).message;
+      if (isRateLimitError(err)) {
+        console.error(
+          `[${index + 1}/${toProcess.length}] RATE-LIMIT ${ad.slug}: ${msg} — will retry on next run`
+        );
+        // Extra cool-down before continuing the batch so subsequent ads aren't
+        // immediately rate-limited too.
+        await sleep(10_000);
+      } else {
+        console.error(`[${index + 1}/${toProcess.length}] FAIL ${ad.slug}:`, msg);
+      }
     }
   }
 

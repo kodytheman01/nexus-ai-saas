@@ -1,5 +1,6 @@
 import OpenAI from "openai";
 import { db } from "@/lib/db";
+import { withBackoffOrFallback } from "@/lib/api-utils";
 import { optimizeUserInput } from "@/lib/prompt-optimizer";
 import { validateAndHealOutput } from "@/lib/self-healing";
 
@@ -85,29 +86,49 @@ export async function processEngineExecution(params: {
       );
     } else {
       const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-      const completion = await openai.chat.completions.create({
-        model: process.env.OPENAI_MODEL || "gpt-4o",
-        messages: [
-          { role: "system", content: engine.aiSystemPrompt },
-          {
-            role: "user",
-            content: `Parameters: ${optimization.optimizedInput}\n\nOutput format: ${engine.outputFormat}\n\nInclude a short disclaimer that this is informational guidance, not licensed professional advice.`,
-          },
-        ],
-        response_format:
-          engine.outputFormat === "json"
-            ? { type: "json_object" }
-            : undefined,
-      });
+      const rateLimitFallbackNote =
+        "Live model was rate-limited; this is a structured fallback deliverable. Contact support for a complimentary regeneration once quota resets.";
 
-      const raw = completion.choices[0]?.message?.content;
-      if (!raw) throw new Error("Empty model response.");
-
-      output = await validateAndHealOutput(
-        raw,
-        engine.outputFormat,
-        engine.aiSystemPrompt,
+      // Primary generation: retry with backoff; if quota still exhausted, fall
+      // back to the structured demo asset so the paid run still completes.
+      const raw = await withBackoffOrFallback(
+        async () => {
+          const completion = await openai.chat.completions.create({
+            model: process.env.OPENAI_MODEL || "gpt-4o",
+            messages: [
+              { role: "system", content: engine.aiSystemPrompt },
+              {
+                role: "user",
+                content: `Parameters: ${optimization.optimizedInput}\n\nOutput format: ${engine.outputFormat}\n\nInclude a short disclaimer that this is informational guidance, not licensed professional advice.`,
+              },
+            ],
+            response_format:
+              engine.outputFormat === "json"
+                ? { type: "json_object" }
+                : undefined,
+          });
+          const content = completion.choices[0]?.message?.content;
+          if (!content) throw new Error("Empty model response.");
+          return content;
+        },
+        () =>
+          demoOutput(
+            engine.title,
+            optimization.optimizedInput,
+            engine.outputFormat,
+          ) + `\n\n_Note: ${rateLimitFallbackNote}_`,
+        { label: "process-engine", maxAttempts: 5, baseDelayMs: 750 },
       );
+
+      if (raw.includes(rateLimitFallbackNote)) {
+        output = raw;
+      } else {
+        output = await validateAndHealOutput(
+          raw,
+          engine.outputFormat,
+          engine.aiSystemPrompt,
+        );
+      }
     }
 
     await db.engineRun.update({
