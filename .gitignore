@@ -61,3 +61,5 @@ next-env.d.ts
 /video-ads-progress.log
 /premium-ads-progress.log
 /ad-launch-watch.log
+
+/video-ads-retry.log
