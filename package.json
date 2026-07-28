@@ -10,7 +10,8 @@
     "db:push": "prisma db push",
     "db:seed": "prisma db seed",
     "db:studio": "prisma studio",
-    "db:deploy": "prisma db push && prisma db seed"
+    "db:deploy": "prisma db push && prisma db seed",
+    "generate-ads": "tsx generate-ads.ts"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
