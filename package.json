@@ -12,7 +12,8 @@
     "db:studio": "prisma studio",
     "db:deploy": "prisma db push && prisma db seed",
     "generate-ads": "tsx generate-ads.ts",
-    "generate-video-ads": "tsx generate-video-ads.ts"
+    "generate-video-ads": "tsx generate-video-ads.ts",
+    "prepare-ad-launches": "tsx prepare-ad-launches.ts"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
