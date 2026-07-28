@@ -1,0 +1,10 @@
+[build]
+  # Prisma generate runs in postinstall / CI. Local Windows deploys may skip if client exists.
+  # Ensure DATABASE_URL (Neon Postgres) is set in Netlify env vars for production.
+  command = "npx prisma generate && npm run build"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"

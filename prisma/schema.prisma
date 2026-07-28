@@ -1,0 +1,66 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum OutputFormat {
+  json
+  markdown
+  code
+}
+
+enum RunStatus {
+  pending
+  processing
+  completed
+  failed
+}
+
+model CalculationEngine {
+  slug             String       @id
+  title            String
+  description      String
+  priceInUSD       Int
+  inputLabel       String
+  inputPlaceholder String
+  aiSystemPrompt   String
+  outputFormat     OutputFormat @default(markdown)
+  category         String
+  isActive         Boolean      @default(true)
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+  runs             EngineRun[]
+
+  @@map("calculation_engines")
+}
+
+model EngineRun {
+  id               String             @id @default(cuid())
+  stripeSessionId  String             @unique @map("stripe_session_id")
+  userEmail        String             @map("user_email")
+  engineSlug       String             @map("engine_slug")
+  inputParameters  String             @map("input_parameters")
+  status           RunStatus          @default(pending)
+  outputData       String?            @map("output_data")
+  allowanceTokens  Int                @default(1) @map("allowance_tokens")
+  createdAt        DateTime           @default(now()) @map("created_at")
+  updatedAt        DateTime           @updatedAt @map("updated_at")
+  engine           CalculationEngine  @relation(fields: [engineSlug], references: [slug], onDelete: Cascade)
+
+  @@index([status])
+  @@index([userEmail])
+  @@map("engine_runs")
+}
+
+model EphemeralPayload {
+  id         String   @id @default(cuid())
+  engineSlug String   @map("engine_slug")
+  userInput  String   @map("user_input")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  @@map("ephemeral_payloads")
+}

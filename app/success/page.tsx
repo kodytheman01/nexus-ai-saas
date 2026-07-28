@@ -1,0 +1,185 @@
+"use client";
+
+import { Suspense, useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+
+function SuccessContent() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const sessionId = searchParams.get("session_id");
+
+  const [status, setStatus] = useState<"pending" | "processing" | "completed" | "failed">(
+    "pending",
+  );
+  const [output, setOutput] = useState("");
+  const [allowanceTokens, setAllowanceTokens] = useState(0);
+  const [regenInput, setRegenInput] = useState("");
+  const [copied, setCopied] = useState(false);
+  const [regenBusy, setRegenBusy] = useState(false);
+
+  useEffect(() => {
+    if (!sessionId) return;
+
+    const checkStatus = async () => {
+      try {
+        const res = await fetch(
+          `/api/engine-status?session_id=${encodeURIComponent(sessionId)}`,
+        );
+        const data = await res.json();
+        if (data.status === "completed") {
+          setStatus("completed");
+          setOutput(data.outputData || "");
+          setAllowanceTokens(data.allowanceTokens ?? 0);
+          clearInterval(pollInterval);
+        } else if (data.status === "failed") {
+          setStatus("failed");
+          setOutput(data.outputData || "");
+          setAllowanceTokens(data.allowanceTokens ?? 0);
+          clearInterval(pollInterval);
+        } else if (data.status === "processing") {
+          setStatus("processing");
+        }
+      } catch (err) {
+        console.error("Polling failed:", err);
+      }
+    };
+
+    const pollInterval = setInterval(checkStatus, 2000);
+    checkStatus();
+    return () => clearInterval(pollInterval);
+  }, [sessionId]);
+
+  async function regenerate() {
+    if (!sessionId || regenInput.trim().length < 10) return;
+    setRegenBusy(true);
+    try {
+      const res = await fetch("/api/regenerate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          stripeSessionId: sessionId,
+          newUserInput: regenInput,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Regenerate failed");
+      setStatus("pending");
+      setOutput("");
+      setRegenBusy(false);
+      // restart polling by reloading
+      window.location.reload();
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Regenerate failed");
+      setRegenBusy(false);
+    }
+  }
+
+  if (!sessionId) {
+    return (
+      <div className="mx-auto my-16 max-w-md rounded-xl border border-red-200 bg-red-50 p-6 text-center">
+        <h3 className="font-bold text-red-800">Missing session</h3>
+        <p className="mt-2 text-sm text-red-600">
+          No checkout session id was found in the URL.
+        </p>
+        <button
+          onClick={() => router.push("/")}
+          className="mt-4 rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white"
+        >
+          Back home
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="mx-auto my-10 max-w-3xl rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
+      {(status === "pending" || status === "processing") && (
+        <div className="flex flex-col items-center justify-center space-y-4 py-16">
+          <div className="h-12 w-12 animate-spin rounded-full border-b-2 border-emerald-700" />
+          <h2 className="text-xl font-bold text-zinc-800">
+            Running compute engine...
+          </h2>
+          <p className="max-w-sm text-center text-sm text-zinc-500">
+            Payment/demo session verified. Generating your asset now.
+          </p>
+        </div>
+      )}
+
+      {status === "failed" && (
+        <div className="space-y-4 py-10 text-center">
+          <h2 className="text-xl font-bold text-zinc-800">Generation failed</h2>
+          <pre className="whitespace-pre-wrap rounded-xl bg-zinc-950 p-4 text-left text-xs text-red-200">
+            {output}
+          </pre>
+        </div>
+      )}
+
+      {status === "completed" && (
+        <div className="space-y-6">
+          <div className="flex items-start justify-between gap-4 border-b border-zinc-100 pb-4">
+            <div>
+              <span className="rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-semibold text-emerald-800">
+                Complete
+              </span>
+              <h1 className="mt-2 text-2xl font-bold text-zinc-900">
+                Your engine output
+              </h1>
+            </div>
+            <button
+              onClick={() => {
+                navigator.clipboard.writeText(output);
+                setCopied(true);
+                setTimeout(() => setCopied(false), 2000);
+              }}
+              className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-semibold text-white hover:bg-zinc-800"
+            >
+              {copied ? "Copied" : "Copy"}
+            </button>
+          </div>
+
+          <div className="overflow-x-auto rounded-xl border border-zinc-800 bg-zinc-950 p-5">
+            <pre className="whitespace-pre-wrap font-mono text-sm leading-relaxed text-zinc-100">
+              {output}
+            </pre>
+          </div>
+
+          {allowanceTokens > 0 ? (
+            <div className="space-y-3 rounded-xl border border-zinc-200 bg-zinc-50 p-4">
+              <h3 className="text-sm font-bold text-zinc-800">
+                One free regenerate left
+              </h3>
+              <textarea
+                rows={4}
+                value={regenInput}
+                onChange={(e) => setRegenInput(e.target.value)}
+                placeholder="Correct your input and regenerate..."
+                className="w-full rounded-lg border border-zinc-200 bg-white p-3 text-sm"
+              />
+              <button
+                disabled={regenBusy || regenInput.trim().length < 10}
+                onClick={regenerate}
+                className="rounded-lg bg-emerald-700 px-4 py-2 text-sm font-semibold text-white disabled:bg-zinc-300"
+              >
+                {regenBusy ? "Queuing..." : "Regenerate"}
+              </button>
+            </div>
+          ) : null}
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default function SuccessPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="mx-auto max-w-3xl p-12 text-center text-sm text-zinc-500">
+          Loading session...
+        </div>
+      }
+    >
+      <SuccessContent />
+    </Suspense>
+  );
+}
