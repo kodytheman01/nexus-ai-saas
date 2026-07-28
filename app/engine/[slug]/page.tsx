@@ -6,6 +6,7 @@ import { EngineCheckoutForm } from "@/app/components/EngineCheckoutForm";
 import { ProductJsonLd } from "@/app/components/JsonLd";
 import { getFlagship } from "@/config/flagship";
 import { displayTitle } from "@/lib/display";
+import { getIntakeExample } from "@/lib/intake-examples";
 import { getSampleDeliverable, WHAT_YOU_GET_DEFAULT } from "@/lib/offer";
 import { EngineCanceledBanner } from "./CanceledBanner";
 
@@ -61,6 +62,11 @@ export default async function EnginePage({ params, searchParams }: Props) {
     description: engine.description,
   });
   const whatYouGet = flagship?.whatYouGet ?? WHAT_YOU_GET_DEFAULT;
+  const intakeExample = getIntakeExample({
+    slug: engine.slug,
+    category: engine.category,
+    inputPlaceholder: engine.inputPlaceholder,
+  });
 
   const related = await db.calculationEngine.findMany({
     where: {
@@ -112,13 +118,29 @@ export default async function EnginePage({ params, searchParams }: Props) {
               Start intake
             </h2>
             <p className="mb-4 text-xs text-[#1c2230]/55">
-              ${engine.priceInUSD} draft · optional human review at checkout
+              ${engine.priceInUSD} draft · email copy included · optional human
+              review
             </p>
+            <ul className="mb-4 grid grid-cols-2 gap-2 text-[10px] font-semibold uppercase tracking-wide text-[#0b1f3a]/55">
+              <li className="rounded border border-[#0b1f3a]/10 bg-[#f7f5f0] px-2 py-1.5">
+                Stripe checkout
+              </li>
+              <li className="rounded border border-[#0b1f3a]/10 bg-[#f7f5f0] px-2 py-1.5">
+                Instant draft
+              </li>
+              <li className="rounded border border-[#0b1f3a]/10 bg-[#f7f5f0] px-2 py-1.5">
+                Email + download
+              </li>
+              <li className="rounded border border-[#0b1f3a]/10 bg-[#f7f5f0] px-2 py-1.5">
+                1 regen token
+              </li>
+            </ul>
             <EngineCheckoutForm
               slug={engine.slug}
               inputLabel={engine.inputLabel}
               inputPlaceholder={engine.inputPlaceholder}
               priceInUSD={engine.priceInUSD}
+              intakeExample={intakeExample}
             />
           </div>
         </div>

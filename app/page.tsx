@@ -57,7 +57,7 @@ export default async function CatalogPage() {
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <a
-                href="#grant-mode"
+                href="/grant-mode"
                 className="rounded-lg bg-[#c9a227] px-5 py-3 text-sm font-bold text-[#0b1f3a] transition hover:bg-[#e0b93a]"
               >
                 Start with Grant Mode
@@ -116,7 +116,13 @@ export default async function CatalogPage() {
               <p className="mt-2 text-sm leading-relaxed text-[#1c2230]/65">
                 Narrative drafts, FOA outlines, budget allocation language, and
                 compliance checklists — then refine with your team or add human
-                review at checkout.
+                review at checkout.{" "}
+                <Link
+                  href="/grant-mode"
+                  className="font-semibold text-[#0b1f3a] underline decoration-[#c9a227] decoration-2 underline-offset-2"
+                >
+                  Full Grant Mode guide
+                </Link>
               </p>
             </div>
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">

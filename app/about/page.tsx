@@ -169,13 +169,20 @@ export default function AboutPage() {
           <a href="tel:+12145063083" className="underline underline-offset-2">
             (214) 506-3083
           </a>
+          {" · "}Operating from Texas, USA
         </p>
         <div className="mt-4 flex flex-wrap gap-4 text-sm">
           <Link
-            href="/#grant-mode"
+            href="/grant-mode"
             className="font-semibold text-[#0b1f3a] underline decoration-[#c9a227] decoration-2 underline-offset-4"
           >
             Grant Mode
+          </Link>
+          <Link
+            href="/how-it-works"
+            className="font-semibold text-[#0b1f3a]/70 underline underline-offset-4"
+          >
+            How it works
           </Link>
           <Link
             href="/#catalog"

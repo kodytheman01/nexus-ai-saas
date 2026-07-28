@@ -22,22 +22,28 @@ export const FLAGSHIP_ENGINES: FlagshipEngine[] = [
     scenarioBody:
       "A 12-person nonprofit needed a first-pass narrative for a state workforce grant. They fed program metrics, population served, and outcomes — and received a structured draft to refine with their grant writer.",
     sampleExcerpt: `## Need Statement
-The [County] workforce corridor continues to face a measurable skills gap in advanced manufacturing. Local employers report unfilled technician roles averaging 90+ days open, while residents lack access to cohort-based credential pathways.
+The [County] workforce corridor faces a measurable advanced-manufacturing skills gap. Employer surveys (n=42, [Year]) report technician roles open an average of 93 days. Residents without industry credentials are [X]% of the working-age population (ACS [Year]).
 
-## Project Goals
-1. Enroll 80 adult learners in a 16-week technician pathway within 12 months.
-2. Achieve an 70% credential completion rate.
-3. Place at least 55% of completers into related employment within 90 days.
+## Goals & Measurable Objectives (SMART)
+1. Enroll 80 adult learners in a 16-week technician pathway within 12 months of award.
+2. Achieve ≥70% credential completion among enrolled participants.
+3. Place ≥55% of completers into related employment within 90 days of completion.
 
-## Approach
-Cohort-based instruction, employer advisory input, and wraparound supports (childcare referrals, transit stipends) reduce attrition for working adults.
+## Approach / Project Design
+- Cohort-based instruction with employer advisory input on curriculum
+- Wraparound supports (childcare referrals, transit stipends) to reduce attrition for working adults
+- Quarterly learning reviews with partners; continuous improvement log
 
 ## Evaluation
-Pre/post skills assessments, credential attainment, and employment placement tracked quarterly and reported to the funder.`,
+Pre/post skills assessments; credential attainment; employment placement tracked quarterly and reported to the funder with data definitions and source systems documented.
+
+## Sustainability note
+Employer cash/in-kind commitments and tuition recovery pathways sustain cohorts beyond the award period.`,
     whatYouGet: [
-      "Funder-style narrative sections (need, goals, approach, evaluation)",
+      "Funder-style narrative sections (need, SMART goals, approach, evaluation)",
       "Editable draft language tailored to your inputs",
       "One complimentary regeneration if intake needs correction",
+      "Optional human review for near-final filings",
     ],
   },
   {
@@ -47,20 +53,28 @@ Pre/post skills assessments, credential attainment, and employment placement tra
     scenarioTitle: "Scenario: First-time applicant organizing a federal FOA",
     scenarioBody:
       "A municipal partner used the outline engine to map required sections against their FOA checklist — reducing “blank page” time before bringing in a specialist reviewer.",
-    sampleExcerpt: `1. Cover / Abstract
-2. Statement of Need (data + local context)
-3. Goals & Measurable Objectives
-4. Project Design & Work Plan (timeline + milestones)
-5. Organizational Capacity
-6. Partnerships & Letters of Support
-7. Evaluation Plan
-8. Budget Narrative (aligned to line items)
-9. Sustainability / Continuation Plan
-10. Appendices checklist`,
+    sampleExcerpt: `## FOA-aligned outline (illustrative)
+
+1. Cover / Abstract — problem, population, ask amount, period of performance
+2. Statement of Need — local data, disparity vs. state/national, urgency
+3. Goals & Measurable Objectives — SMART; link each to activities
+4. Project Design & Work Plan — year-1 / year-2 milestones; Gantt cues
+5. Organizational Capacity — staff roles, prior awards, fiscal controls
+6. Partnerships & Letters of Support — roles, MOUs, employer advisors
+7. Evaluation Plan — indicators, data sources, reporting cadence
+8. Budget Narrative — personnel, fringe, travel, supplies, contractual, other; align to SF-424A-style categories
+9. Sustainability / Continuation — post-award funding model
+10. Appendices checklist — resumes, LOIs, org chart, indirect rate docs
+
+### Evidence to gather next
+- [ ] Labor market data citations
+- [ ] Partner letters (drafted)
+- [ ] Prior outcome tables
+- [ ] Match documentation (if required)`,
     whatYouGet: [
       "FOA-aligned section outline",
       "Suggested evidence to gather per section",
-      "Budget narrative prompts",
+      "Budget narrative category prompts",
     ],
   },
   {
@@ -70,17 +84,27 @@ Pre/post skills assessments, credential attainment, and employment placement tra
     scenarioTitle: "Scenario: Mid-cycle compliance scramble",
     scenarioBody:
       "A program manager mapped reporting deadlines and evidence folders before a site visit — using the checklist as an internal control list, then verifying against the award letter.",
-    sampleExcerpt: `## Reporting Cadence
-- [ ] Quarterly progress report due dates logged
-- [ ] Financial drawdown / expenditure evidence filed
-- [ ] Participant eligibility documentation retained
-- [ ] Match / cost-share evidence (if applicable)
-- [ ] Prior approval requests tracked
+    sampleExcerpt: `## Award control calendar
+- [ ] Period of performance dates logged in shared calendar
+- [ ] Quarterly progress report due dates + owners
+- [ ] Financial report / drawdown schedule
+- [ ] Prior-approval triggers documented (budget transfers, key personnel)
 
-## Evidence Pack
-- [ ] Signed timesheets / effort documentation
-- [ ] Procurement records
-- [ ] Outcome data exports with definitions`,
+## Participant & eligibility file
+- [ ] Eligibility criteria from award / program guide
+- [ ] Intake forms retained; PII access limited
+- [ ] Attendance / effort documentation
+
+## Financial evidence pack
+- [ ] Timesheets / effort certifications
+- [ ] Procurement records (quotes, approvals)
+- [ ] Match / cost-share evidence with valuation method
+- [ ] Invoice ↔ ledger reconciliation sample
+
+## Site-visit readiness
+- [ ] Org chart + fiscal policies folder
+- [ ] Outcome data dictionary + export
+- [ ] Corrective-action log (if prior findings)`,
     whatYouGet: [
       "Compliance checklist tailored to your award description",
       "Evidence pack reminders",
@@ -94,15 +118,20 @@ Pre/post skills assessments, credential attainment, and employment placement tra
     scenarioTitle: "Scenario: Board asking “where does the money go?”",
     scenarioBody:
       "Leadership produced a clean allocation narrative for board review before attaching detailed spreadsheets from finance.",
-    sampleExcerpt: `## Allocation Summary
+    sampleExcerpt: `## Allocation Summary (illustrative)
 - Program delivery: 72%
 - Personnel (program): 48% of total
 - Direct participant supports: 14%
 - Admin / overhead: 18%
 - Fundraising: 10%
 
-## Notes
-Overhead kept within funder-typical ranges; personnel mapped to grant-allowable roles.`,
+## Budget narrative cues
+Personnel maps to grant-allowable roles with %FTE stated. Participant supports (stipends, transit) tied to enrollment targets. Overhead kept within funder-typical ranges; method of allocation (direct / shared) noted for finance review.
+
+## Board talking points
+1. Program share vs. peer benchmarks
+2. Sensitivity if enrollment misses by 15%
+3. What is restricted vs. unrestricted`,
     whatYouGet: [
       "Allocation breakdown from your inputs",
       "Board-friendly narrative summary",
@@ -126,7 +155,10 @@ Includes non-public technical, commercial, and financial information marked conf
 Information that is public, independently developed, or rightfully received from a third party without duty of confidentiality.
 
 ## Term
-Obligations survive for [X] years after disclosure.`,
+Obligations survive for [X] years after disclosure.
+
+## Return / destruction
+Upon request, Receiving Party returns or destroys CI and certifies destruction, except archival copies required by law.`,
     whatYouGet: [
       "Structured NDA draft sections",
       "Customizable term / purpose language",
@@ -260,3 +292,4 @@ export const FLAGSHIP_SLUGS = FLAGSHIP_ENGINES.map((f) => f.slug);
 export function getFlagship(slug: string): FlagshipEngine | undefined {
   return FLAGSHIP_ENGINES.find((f) => f.slug === slug);
 }
+

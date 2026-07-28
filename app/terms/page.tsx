@@ -19,21 +19,8 @@ export default function TermsPage() {
         Terms of Service
       </h1>
       <p className="mt-3 text-xs text-[#1c2230]/50">
-        Last updated: {new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}
+        Last updated: July 28, 2026
       </p>
-
-      <div className="mt-8 rounded-lg border border-[#c9a227]/30 bg-[#c9a227]/10 p-4">
-        <p className="text-sm leading-relaxed text-[#5c4a10]">
-          <strong>Notice:</strong> This is a general template intended to
-          provide baseline coverage for a small, live commerce site. It is
-          not a substitute for review by a licensed attorney and does not
-          constitute legal advice. Apex Capital Admin Services recommends
-          having qualified legal counsel review and, where appropriate,
-          customize these terms before any significant increase in
-          marketing spend, transaction volume, or expansion into new
-          jurisdictions.
-        </p>
-      </div>
 
       <div className="mt-10 space-y-8">
         <section>
@@ -104,8 +91,8 @@ export default function TermsPage() {
             final</strong> once a deliverable has been successfully
             generated and delivered. If your input requires clarification
             or refinement, one complimentary regeneration is available per
-            purchase — contact us at the email below and we will re-run the
-            engine with a corrected input at no additional charge. Refunds
+            purchase — you may also use the complementary regeneration control
+            on the success page when a regeneration token remains. Refunds
             will be issued only in cases where we fail to deliver a
             deliverable due to a technical failure on our end and are
             unable to remedy it through regeneration. To request a refund
@@ -169,11 +156,11 @@ export default function TermsPage() {
             7. Governing law
           </h2>
           <p className="mt-2 text-sm leading-relaxed text-[#1c2230]/70">
-            These terms are governed by the laws of the United States,
-            without regard to conflict-of-law principles, except as
-            otherwise required by applicable local consumer protection law.
-            If any provision of these terms is found unenforceable, the
-            remaining provisions will remain in full effect.
+            These terms are governed by the laws of the State of Texas, USA,
+            without regard to conflict-of-law principles, except as otherwise
+            required by applicable local consumer protection law. If any
+            provision of these terms is found unenforceable, the remaining
+            provisions will remain in full effect.
           </p>
         </section>
 

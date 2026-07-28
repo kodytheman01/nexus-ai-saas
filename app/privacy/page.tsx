@@ -19,23 +19,8 @@ export default function PrivacyPage() {
         Privacy Policy
       </h1>
       <p className="mt-3 text-xs text-[#1c2230]/50">
-        Last updated: {new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}
+        Last updated: July 28, 2026
       </p>
-
-      <div className="mt-8 rounded-lg border border-[#c9a227]/30 bg-[#c9a227]/10 p-4">
-        <p className="text-sm leading-relaxed text-[#5c4a10]">
-          <strong>Notice:</strong> This is a general template intended to
-          provide baseline coverage for a small, live commerce site. It is
-          not a substitute for review by a licensed attorney and does not
-          constitute legal advice. It is written to be consistent with the
-          general principles of common privacy frameworks (such as the
-          GDPR and CCPA) but is not represented as a complete or
-          jurisdiction-specific compliance document. Apex Capital Admin
-          Services recommends having qualified legal counsel review this
-          policy before any significant increase in marketing spend,
-          traffic, or expansion into new jurisdictions.
-        </p>
-      </div>
 
       <div className="mt-10 space-y-8">
         <section>
@@ -48,8 +33,8 @@ export default function PrivacyPage() {
           </p>
           <ul className="mt-2 list-disc space-y-1 pl-5 text-sm leading-relaxed text-[#1c2230]/70">
             <li>
-              Your email address, if you provide one at checkout (used to
-              deliver your output and follow up on your order).
+              Your email address at checkout (required — used to deliver your
+              output, order link, and optional human-review follow-up).
             </li>
             <li>
               The written input you submit to an engine (used solely to

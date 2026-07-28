@@ -14,15 +14,18 @@ export function EngineCheckoutForm({
   inputLabel,
   inputPlaceholder,
   priceInUSD,
+  intakeExample,
 }: {
   slug: string;
   inputLabel: string;
   inputPlaceholder: string;
   priceInUSD: number;
+  intakeExample?: string;
 }) {
   const [userInput, setUserInput] = useState("");
   const [email, setEmail] = useState("");
   const [humanReview, setHumanReview] = useState(false);
+  const [showExample, setShowExample] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
 
@@ -86,9 +89,37 @@ export function EngineCheckoutForm({
         </p>
       </div>
       <div>
-        <label className="mb-1 block text-xs font-bold uppercase tracking-wider text-[#0b1f3a]/60">
-          {inputLabel}
-        </label>
+        <div className="mb-1 flex items-center justify-between gap-2">
+          <label className="block text-xs font-bold uppercase tracking-wider text-[#0b1f3a]/60">
+            {inputLabel}
+          </label>
+          {intakeExample ? (
+            <button
+              type="button"
+              onClick={() => setShowExample((v) => !v)}
+              className="text-[11px] font-semibold text-[#0b1f3a] underline decoration-[#c9a227] decoration-2 underline-offset-2"
+            >
+              {showExample ? "Hide example" : "See good intake example"}
+            </button>
+          ) : null}
+        </div>
+        {showExample && intakeExample ? (
+          <div className="mb-2 rounded-lg border border-[#0b1f3a]/10 bg-[#f7f5f0] p-3">
+            <pre className="whitespace-pre-wrap font-mono text-[11px] leading-relaxed text-[#1c2230]/75">
+              {intakeExample}
+            </pre>
+            <button
+              type="button"
+              onClick={() => {
+                setUserInput(intakeExample);
+                setShowExample(false);
+              }}
+              className="mt-2 text-[11px] font-bold text-[#0b1f3a] underline underline-offset-2"
+            >
+              Use this as a starting point
+            </button>
+          </div>
+        ) : null}
         <textarea
           required
           rows={7}

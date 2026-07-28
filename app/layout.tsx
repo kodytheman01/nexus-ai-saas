@@ -32,12 +32,13 @@ export const metadata: Metadata = {
   description: siteDescription,
   keywords: [
     "Apex Capital Admin Services",
-    "automated deliverables",
-    "business document generator",
+    "grant proposal draft",
+    "grant narrative generator",
+    "FOA outline",
+    "nonprofit budget narrative",
     "NDA generator",
+    "automated deliverables",
     "Stripe checkout engines",
-    "instant professional templates",
-    "AI business tools",
   ],
   openGraph: {
     title: siteTitle,
