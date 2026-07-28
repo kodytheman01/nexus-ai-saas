@@ -2,7 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 
 const SESSION_COOKIE = "apex_admin_session";
 
-export function proxy(request: NextRequest) {
+// NOTE: Next.js 16 renamed this convention to `proxy.ts`, but the Netlify
+// Next.js adapter (@netlify/plugin-nextjs v5.15.13) does not yet bundle the
+// `proxy` edge function correctly. Keeping `middleware.ts` (deprecated but
+// functional) until Netlify ships support.
+export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   const isLoginPage = pathname === "/admin/login";
