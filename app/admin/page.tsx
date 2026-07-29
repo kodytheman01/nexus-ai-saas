@@ -15,6 +15,7 @@ type Health = {
     createdAt: string;
     preview: string;
   }[];
+  adsWave1PublicBase?: string;
   stripeMode: string;
   env: Record<string, boolean>;
 };
@@ -160,6 +161,73 @@ export default function AdminHomePage() {
               <li className="text-sm text-[#1c2230]/50">Loading…</li>
             )}
         </ul>
+      </section>
+
+      <section className="mt-10 rounded-lg border border-[#0b1f3a]/10 bg-[#f7f5f0] p-5">
+        <h2 className="font-display text-xl font-semibold text-[#0b1f3a]">
+          Instagram / Meta auto-post (Wave 1)
+        </h2>
+        <p className="mt-1 text-sm text-[#1c2230]/70">
+          Videos are already public at{" "}
+          <a
+            href="https://apexcapitaladmin.com/ads"
+            target="_blank"
+            rel="noreferrer"
+            className="font-semibold underline decoration-[#c9a227] underline-offset-2"
+          >
+            /ads
+          </a>
+          . You only need the two Meta secrets.
+        </p>
+        <ol className="mt-3 list-decimal space-y-2 pl-5 text-sm leading-relaxed text-[#1c2230]/75">
+          <li>
+            Open{" "}
+            <a
+              href="https://developers.facebook.com/tools/explorer/"
+              target="_blank"
+              rel="noreferrer"
+              className="font-semibold underline decoration-[#c9a227] underline-offset-2"
+            >
+              Graph API Explorer
+            </a>{" "}
+            → select your app → Generate Token with{" "}
+            <code className="rounded bg-white px-1">instagram_content_publish</code>.
+          </li>
+          <li>
+            Query <code className="rounded bg-white px-1">me/accounts</code> →
+            then{" "}
+            <code className="rounded bg-white px-1">
+              {"{page-id}?fields=instagram_business_account"}
+            </code>
+            → copy IG id → Netlify{" "}
+            <code className="rounded bg-white px-1">INSTAGRAM_BUSINESS_ACCOUNT_ID</code>.
+          </li>
+          <li>
+            From <code className="rounded bg-white px-1">me/accounts</code> copy
+            Page <code className="rounded bg-white px-1">access_token</code> →
+            extend in Token Debugger → Netlify{" "}
+            <code className="rounded bg-white px-1">META_PAGE_ACCESS_TOKEN</code>.
+          </li>
+          <li>
+            Set{" "}
+            <code className="rounded bg-white px-1">
+              PUBLIC_AD_VIDEO_BASE_URL=https://apexcapitaladmin.com/ads
+            </code>{" "}
+            → redeploy → local:{" "}
+            <code className="rounded bg-white px-1">
+              npm run ig:publish -- --limit 1
+            </code>
+            .
+          </li>
+        </ol>
+        <p className="mt-3 text-xs text-[#1c2230]/55">
+          Until tokens exist: post manually from{" "}
+          <code className="rounded bg-white px-1">ad-launch-wave1/TODAY</code>.
+          Health: IG id{" "}
+          {health?.env.INSTAGRAM_BUSINESS_ACCOUNT_ID ? "OK" : "Missing"} · Page
+          token {health?.env.META_PAGE_ACCESS_TOKEN ? "OK" : "Missing"} · Public
+          ads URL {health?.env.PUBLIC_AD_VIDEO_BASE_URL ? "OK" : "Missing"}
+        </p>
       </section>
 
       <section className="mt-10 rounded-lg border border-[#0b1f3a]/10 bg-[#f7f5f0] p-5">

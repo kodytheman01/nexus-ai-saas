@@ -69,9 +69,15 @@ export async function GET() {
           process.env.NEXT_PUBLIC_GA_ID || process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID,
         ),
         NEXT_PUBLIC_META_PIXEL_ID: Boolean(process.env.NEXT_PUBLIC_META_PIXEL_ID),
+        INSTAGRAM_BUSINESS_ACCOUNT_ID: Boolean(
+          process.env.INSTAGRAM_BUSINESS_ACCOUNT_ID,
+        ),
+        META_PAGE_ACCESS_TOKEN: Boolean(process.env.META_PAGE_ACCESS_TOKEN),
+        PUBLIC_AD_VIDEO_BASE_URL: Boolean(process.env.PUBLIC_AD_VIDEO_BASE_URL),
         OPS_DASHBOARD_PASSWORD: Boolean(process.env.OPS_DASHBOARD_PASSWORD),
         NEXT_PUBLIC_APP_URL: Boolean(process.env.NEXT_PUBLIC_APP_URL),
       },
+      adsWave1PublicBase: "https://apexcapitaladmin.com/ads",
       stripeMode: process.env.STRIPE_SECRET_KEY?.startsWith("sk_live")
         ? "live"
         : process.env.STRIPE_SECRET_KEY?.startsWith("sk_test")
