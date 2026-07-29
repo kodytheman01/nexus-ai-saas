@@ -42,19 +42,21 @@ export default async function CatalogPage() {
               "radial-gradient(ellipse 80% 60% at 70% 20%, #c9a227 0%, transparent 55%), radial-gradient(ellipse 50% 40% at 10% 90%, #14335c 0%, transparent 50%)",
           }}
         />
-        <div className="relative mx-auto max-w-6xl px-4 py-12 sm:py-16">
+        <div className="relative mx-auto max-w-6xl px-4 py-16 sm:py-20">
           <div className="max-w-2xl">
-            <p className="mb-3 text-xs font-semibold uppercase tracking-[0.25em] text-[#c9a227]">
+            <p className="mb-4 text-xs font-semibold uppercase tracking-[0.25em] text-[#c9a227]">
               Apex Capital Admin Services
             </p>
-            <h1 className="font-display text-3xl font-semibold tracking-tight text-[#f7f5f0] sm:text-5xl">
-              Pick a path. Pay. Get a draft.
+            <h1 className="font-display text-4xl font-semibold tracking-tight text-[#f7f5f0] sm:text-5xl">
+              Draft-ready grant, contract, and ops deliverables — from intake to
+              output.
             </h1>
-            <p className="mt-3 text-sm leading-relaxed text-white/70 sm:text-base">
-              {engines.length || 500} engines · Stripe checkout · instant on-page
-              delivery + email. Optional human review (+${HUMAN_REVIEW_USD}).
+            <p className="mt-4 text-base leading-relaxed text-white/70">
+              500 specialized engines. Stripe-secured checkout. Instant on-page
+              delivery plus email copy. Optional human specialist review (+$
+              {HUMAN_REVIEW_USD}) when the stakes are high.
             </p>
-            <div className="mt-7 flex flex-wrap gap-3">
+            <div className="mt-8 flex flex-wrap gap-3">
               <a
                 href="/grant-mode"
                 className="rounded-lg bg-[#c9a227] px-5 py-3 text-sm font-bold text-[#0b1f3a] transition hover:bg-[#e0b93a]"
@@ -65,9 +67,36 @@ export default async function CatalogPage() {
                 href="#catalog"
                 className="rounded-lg border border-white/25 bg-white/5 px-5 py-3 text-sm font-bold text-[#f7f5f0] transition hover:bg-white/10"
               >
-                Browse Flagships
+                Browse all 500 engines
               </a>
             </div>
+          </div>
+
+          <div className="mt-12 grid grid-cols-2 gap-3 sm:grid-cols-4">
+            {[
+              { label: "Instant draft", detail: "Typically under 60 seconds" },
+              { label: "Email copy", detail: "Sent to your checkout address" },
+              {
+                label: "Full catalog",
+                detail: `${engines.length || 500} engines live`,
+              },
+              {
+                label: "Human review",
+                detail: `Optional +$${HUMAN_REVIEW_USD} specialist pass`,
+              },
+            ].map((item) => (
+              <div
+                key={item.label}
+                className="rounded-lg border border-white/10 bg-white/5 px-3 py-4"
+              >
+                <p className="text-xs font-bold uppercase tracking-wide text-[#c9a227]">
+                  {item.label}
+                </p>
+                <p className="mt-1 text-[11px] leading-snug text-white/55">
+                  {item.detail}
+                </p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
