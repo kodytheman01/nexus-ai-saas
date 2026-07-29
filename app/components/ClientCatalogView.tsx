@@ -93,6 +93,8 @@ export function ClientCatalogView({
       let catOk = true;
       if (activeCategory === "grants") {
         catOk = isGrantRelated(eng);
+      } else if (activeCategory === "flagships") {
+        catOk = FLAGSHIP_SET.has(eng.slug);
       } else if (activeCategory !== "all") {
         catOk = eng.category === activeCategory;
       }
@@ -139,6 +141,7 @@ export function ClientCatalogView({
       <div className="flex flex-wrap gap-2">
         {[
           { id: "all", label: "All" },
+          { id: "flagships", label: "Flagships" },
           { id: "grants", label: "Grants & nonprofit" },
           ...categories.map((c) => ({ id: c, label: c })),
         ].map((chip) => (
@@ -206,11 +209,13 @@ export function ClientCatalogView({
           ) : null}
         </div>
         <select
-          value={activeCategory === "grants" ? "all" : activeCategory}
+          value={activeCategory}
           onChange={(e) => setActiveCategory(e.target.value)}
           className="rounded-lg border border-[#0b1f3a]/15 bg-white px-4 py-3 text-sm font-semibold capitalize text-[#0b1f3a] shadow-sm sm:hidden"
         >
           <option value="all">All categories</option>
+          <option value="flagships">Flagships</option>
+          <option value="grants">Grants &amp; nonprofit</option>
           {categories.map((c) => (
             <option key={c} value={c}>
               {c}
@@ -231,17 +236,27 @@ export function ClientCatalogView({
               No engines match that search
             </p>
             <p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-[#1c2230]/55">
-              Try Grants &amp; nonprofit, clear the search, or ask Apex Concierge
-              (bottom-right) for a special request.
+              Try Flagships, Grants &amp; nonprofit, clear the search, or ask Apex
+              Concierge (bottom-right) for a special request.
             </p>
             <div className="mt-4 flex flex-wrap justify-center gap-2">
               <button
                 type="button"
                 onClick={() => {
                   setSearch("");
-                  setActiveCategory("grants");
+                  setActiveCategory("flagships");
                 }}
                 className="rounded-lg bg-[#0b1f3a] px-4 py-2 text-xs font-bold text-[#f7f5f0]"
+              >
+                Show Flagships
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setSearch("");
+                  setActiveCategory("grants");
+                }}
+                className="rounded-lg border border-[#0b1f3a]/15 px-4 py-2 text-xs font-bold text-[#0b1f3a]"
               >
                 Show Grants &amp; nonprofit
               </button>
