@@ -23,16 +23,20 @@ export function NavSearch() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const [value, setValue] = useState("");
+  const qParam = searchParams.get("q") ?? "";
+  const [value, setValue] = useState(qParam);
+  const [prevQ, setPrevQ] = useState(qParam);
   const [open, setOpen] = useState(false);
-  const [history, setHistory] = useState<string[]>([]);
+  const [history] = useState<string[]>(() =>
+    typeof window === "undefined" ? [] : loadHistory(),
+  );
   const wrapRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    setHistory(loadHistory());
-    const q = searchParams.get("q");
-    if (q) setValue(q);
-  }, [searchParams]);
+  // Keep input in sync when the URL query changes (share links / back-forward).
+  if (qParam !== prevQ) {
+    setPrevQ(qParam);
+    setValue(qParam);
+  }
 
   useEffect(() => {
     function onDoc(e: MouseEvent) {

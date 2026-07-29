@@ -51,46 +51,56 @@ export function ClientCatalogView({
   initialCategory?: string;
 }) {
   const searchParams = useSearchParams();
+  const qParam = searchParams.get("q");
+  const viewParam = searchParams.get("view");
+  const urlKey = `${qParam ?? ""}|${viewParam ?? ""}`;
+
   const [activeCategory, setActiveCategory] = useState(initialCategory);
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState(qParam ?? "");
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
-  const [history, setHistory] = useState<string[]>([]);
+  const [history, setHistory] = useState<string[]>(() => loadHistory());
   const [historyOpen, setHistoryOpen] = useState(false);
+  const [urlSyncKey, setUrlSyncKey] = useState(urlKey);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const wrapRef = useRef<HTMLDivElement>(null);
+  const loggedQ = useRef<string | null>(null);
 
-  useEffect(() => {
-    setHistory(loadHistory());
-  }, []);
-
-  useEffect(() => {
-    const q = searchParams.get("q");
-    if (q != null) {
-      setSearch(q);
+  // Sync catalog from URL (share links / "Browse all 500" / nav search).
+  if (urlKey !== urlSyncKey) {
+    setUrlSyncKey(urlKey);
+    if (qParam != null) {
+      setSearch(qParam);
       setActiveCategory("all");
-      setVisibleCount(PAGE_SIZE);
-      if (q.trim().length >= 2) {
-        const count = initialEngines.filter((eng) => {
-          const hay = `${eng.title} ${eng.description} ${eng.category} ${eng.slug}`.toLowerCase();
-          return hay.includes(q.toLowerCase());
-        }).length;
-        setHistory(pushHistory(q.trim()));
-        void fetch("/api/search-log", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            query: q.trim(),
-            resultCount: count,
-            source: "nav",
-          }),
-        }).catch(() => undefined);
-      }
+    } else if (
+      viewParam === "all" ||
+      viewParam === "flagships" ||
+      viewParam === "grants"
+    ) {
+      setActiveCategory(viewParam);
     }
-  }, [searchParams, initialEngines]);
+    setVisibleCount(PAGE_SIZE);
+  }
 
   useEffect(() => {
-    setVisibleCount(PAGE_SIZE);
-  }, [activeCategory, search]);
+    const q = qParam?.trim() ?? "";
+    if (q.length < 2 || loggedQ.current === q) return;
+    loggedQ.current = q;
+    const count = initialEngines.filter((eng) => {
+      const hay = `${eng.title} ${eng.description} ${eng.category} ${eng.slug}`.toLowerCase();
+      return hay.includes(q.toLowerCase());
+    }).length;
+    // Persist only — avoid setState-in-effect; dropdown reloads from storage on next open/mount.
+    pushHistory(q);
+    void fetch("/api/search-log", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        query: q,
+        resultCount: count,
+        source: "nav",
+      }),
+    }).catch(() => undefined);
+  }, [qParam, initialEngines]);
 
   useEffect(() => {
     function onDocClick(e: MouseEvent) {
@@ -147,6 +157,7 @@ export function ClientCatalogView({
 
   function onSearchChange(value: string) {
     setSearch(value);
+    setVisibleCount(PAGE_SIZE);
     if (debounceRef.current) clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(() => {
       const q = value.trim();

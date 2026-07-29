@@ -29,16 +29,18 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const engine = await db.calculationEngine.findUnique({ where: { slug } });
   if (!engine) return { title: "Engine not found" };
 
-  const title = `${displayTitle(engine.title)} | Apex Capital Admin Services`;
+  const name = displayTitle(engine.title);
+  const fullTitle = `${name} | Apex Capital Admin Services`;
   const description = engine.description;
   const url = `${appUrl}/engine/${engine.slug}`;
 
   return {
-    title,
+    // Layout template already appends " | Apex Capital Admin Services"
+    title: name,
     description,
     alternates: { canonical: url },
     openGraph: {
-      title,
+      title: fullTitle,
       description,
       url,
       siteName: "Apex Capital Admin Services",
@@ -46,7 +48,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     },
     twitter: {
       card: "summary_large_image",
-      title,
+      title: fullTitle,
       description,
     },
   };

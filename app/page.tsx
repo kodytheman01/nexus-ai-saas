@@ -52,9 +52,7 @@ export default async function CatalogPage() {
               output.
             </h1>
             <p className="mt-4 text-base leading-relaxed text-white/70">
-              500 specialized engines. Stripe-secured checkout. Instant on-page
-              delivery plus email copy. Optional human specialist review (+$
-              {HUMAN_REVIEW_USD}) when the stakes are high.
+              {`500 specialized engines. Stripe-secured checkout. Instant on-page delivery plus email copy. Optional human specialist review (+$${HUMAN_REVIEW_USD}) when the stakes are high.`}
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <a
@@ -63,12 +61,12 @@ export default async function CatalogPage() {
               >
                 Start with Grant Mode
               </a>
-              <a
-                href="#catalog"
+              <Link
+                href="/?view=all#catalog"
                 className="rounded-lg border border-white/25 bg-white/5 px-5 py-3 text-sm font-bold text-[#f7f5f0] transition hover:bg-white/10"
               >
                 Browse all 500 engines
-              </a>
+              </Link>
             </div>
           </div>
 

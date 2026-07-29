@@ -1,6 +1,7 @@
 "use client";
 
 import { Suspense, useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 
 declare global {
@@ -219,18 +220,18 @@ function SuccessContent() {
           </p>
 
           <div className="flex flex-wrap gap-3 text-sm">
-            <a
+            <Link
               href="/grant-mode"
               className="rounded-lg bg-[#0b1f3a] px-4 py-2 font-semibold text-[#f7f5f0]"
             >
               Explore Grant Mode
-            </a>
-            <a
+            </Link>
+            <Link
               href="/"
               className="rounded-lg border border-[#0b1f3a]/15 px-4 py-2 font-semibold text-[#0b1f3a]"
             >
               Back to catalog
-            </a>
+            </Link>
           </div>
 
           {allowanceTokens > 0 ? (
