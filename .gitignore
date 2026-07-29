@@ -57,6 +57,7 @@ next-env.d.ts
 /video-ads-premium/
 /.video-ads-tmp/
 /ad-launch-kits/
+/ad-launch-wave1/
 /instagram-release/
 /video-ads-progress.log
 /premium-ads-progress.log

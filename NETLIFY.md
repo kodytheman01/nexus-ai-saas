@@ -71,8 +71,10 @@ The site already renders the verification meta tag when the env var is set (`app
 - Standard creatives: `video-ads-output/` (500 MP4s)
 - Launch kits with captions + UTM URLs: `ad-launch-kits/`
 - Premium subset: `video-ads-premium/` (~41)
+- **Wave 1 live CDN:** `npm run ads:wave1:live` → hosts Grant+premium at `https://apexcapitaladmin.com/ads/{slug}.mp4`
+- Set `PUBLIC_AD_VIDEO_BASE_URL=https://apexcapitaladmin.com/ads` for Instagram Graph publish
 - Prefer Grant Mode landing: `https://apexcapitaladmin.com/grant-mode` or engine UTM links from each kit
-- Do not auto-blast Instagram until Meta Business tokens + public video hosting are configured
+- Do not auto-blast Instagram until Meta Business tokens are configured (`npm run ig:publish -- --dry-run`)
 
 ---
 

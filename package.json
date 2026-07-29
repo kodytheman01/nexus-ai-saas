@@ -16,6 +16,8 @@
     "prepare-ad-launches": "tsx prepare-ad-launches.ts",
     "ig:queue": "tsx build-instagram-queue.ts",
     "ig:publish": "tsx publish-instagram-queue.ts",
+    "ads:wave1": "tsx scripts/launch-grant-premium.ts",
+    "ads:wave1:live": "tsx scripts/sync-wave1-ads-public.ts",
     "test:checkout-override": "tsx scripts/test-checkout-override.ts"
   },
   "prisma": {
