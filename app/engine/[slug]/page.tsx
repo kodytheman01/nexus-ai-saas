@@ -5,6 +5,11 @@ import { db } from "@/lib/db";
 import { EngineCheckoutForm } from "@/app/components/EngineCheckoutForm";
 import { ProductJsonLd } from "@/app/components/JsonLd";
 import { getFlagship } from "@/config/flagship";
+import {
+  ENTITY,
+  FOA_COVERAGE_CHECKLIST,
+  GRANT_PAIRINGS,
+} from "@/config/trust";
 import { displayTitle } from "@/lib/display";
 import { getIntakeExample } from "@/lib/intake-examples";
 import { getSampleDeliverable, WHAT_YOU_GET_DEFAULT } from "@/lib/offer";
@@ -67,6 +72,8 @@ export default async function EnginePage({ params, searchParams }: Props) {
     category: engine.category,
     inputPlaceholder: engine.inputPlaceholder,
   });
+  const isGrant = flagship?.badge === "Grant Mode";
+  const pairings = GRANT_PAIRINGS[engine.slug] ?? [];
 
   const related = await db.calculationEngine.findMany({
     where: {
@@ -142,6 +149,12 @@ export default async function EnginePage({ params, searchParams }: Props) {
               priceInUSD={engine.priceInUSD}
               intakeExample={intakeExample}
             />
+            <p className="mt-4 text-[11px] leading-relaxed text-[#1c2230]/55">
+              Not a substitute for a licensed attorney, CPA, grant officer, or
+              your program team. Drafts are first-pass structure — verify against
+              the live FOA before submit. Support: {ENTITY.email} ·{" "}
+              {ENTITY.supportHours}.
+            </p>
           </div>
         </div>
 
@@ -194,6 +207,29 @@ export default async function EnginePage({ params, searchParams }: Props) {
           </div>
 
           {flagship ? (
+            <div className="mb-8 grid gap-3 sm:grid-cols-2">
+              <div className="rounded-lg border border-[#0b1f3a]/10 bg-white p-4">
+                <p className="text-[10px] font-bold uppercase tracking-wider text-[#0b1f3a]/40">
+                  Before
+                </p>
+                <p className="mt-2 text-xs leading-relaxed text-[#1c2230]/65">
+                  Scattered notes, blank-page FOA sections, and unclear where
+                  budget narrative meets the story.
+                </p>
+              </div>
+              <div className="rounded-lg border border-[#c9a227]/35 bg-[#c9a227]/10 p-4">
+                <p className="text-[10px] font-bold uppercase tracking-wider text-[#8a6d13]">
+                  After
+                </p>
+                <p className="mt-2 text-xs leading-relaxed text-[#1c2230]/70">
+                  Sectioned draft from your intake — ready for your voice,
+                  program team, and counsel review.
+                </p>
+              </div>
+            </div>
+          ) : null}
+
+          {flagship ? (
             <div className="mb-8 rounded-lg border border-[#0b1f3a]/10 bg-[#f7f5f0] p-5">
               <p className="text-[10px] font-bold uppercase tracking-wider text-[#8a6d13]">
                 Illustrative scenario (anonymized)
@@ -204,6 +240,61 @@ export default async function EnginePage({ params, searchParams }: Props) {
               <p className="mt-2 text-sm leading-relaxed text-[#1c2230]/70">
                 {flagship.scenarioBody}
               </p>
+            </div>
+          ) : null}
+
+          {isGrant ? (
+            <div className="mb-8 rounded-lg border border-[#0b1f3a]/10 bg-white p-5">
+              <h2 className="text-xs font-bold uppercase tracking-wider text-[#0b1f3a]/50">
+                FOA paste-in coverage checklist
+              </h2>
+              <p className="mt-1 text-xs text-[#1c2230]/55">
+                Paste FOA section requirements into intake. Tick these against
+                the live solicitation before you submit.
+              </p>
+              <ul className="mt-3 space-y-2">
+                {FOA_COVERAGE_CHECKLIST.map((row) => (
+                  <li
+                    key={row.section}
+                    className="flex gap-2 text-sm leading-relaxed text-[#1c2230]/75"
+                  >
+                    <span className="mt-0.5 shrink-0 font-mono text-[10px] text-[#c9a227]">
+                      [ ]
+                    </span>
+                    <span>
+                      <span className="font-semibold text-[#0b1f3a]">
+                        {row.section}.
+                      </span>{" "}
+                      {row.tip}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : null}
+
+          {pairings.length > 0 ? (
+            <div className="mb-8 rounded-lg border border-[#0b1f3a]/10 bg-[#f7f5f0] p-5">
+              <h2 className="text-xs font-bold uppercase tracking-wider text-[#0b1f3a]/50">
+                Pair with
+              </h2>
+              <ul className="mt-3 space-y-2">
+                {pairings.map((p) => (
+                  <li key={p.slug}>
+                    <Link
+                      href={`/engine/${p.slug}`}
+                      className="block rounded-lg border border-[#0b1f3a]/10 bg-white px-3 py-2.5 hover:border-[#c9a227]/40"
+                    >
+                      <span className="text-sm font-semibold text-[#0b1f3a]">
+                        {p.label}
+                      </span>
+                      <span className="mt-0.5 block text-xs text-[#1c2230]/55">
+                        {p.why}
+                      </span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
             </div>
           ) : null}
 

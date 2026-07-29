@@ -15,7 +15,8 @@
     "generate-video-ads": "tsx generate-video-ads.ts",
     "prepare-ad-launches": "tsx prepare-ad-launches.ts",
     "ig:queue": "tsx build-instagram-queue.ts",
-    "ig:publish": "tsx publish-instagram-queue.ts"
+    "ig:publish": "tsx publish-instagram-queue.ts",
+    "test:checkout-override": "tsx scripts/test-checkout-override.ts"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"

@@ -133,6 +133,41 @@ export default function AboutPage() {
 
         <section>
           <h2 className="font-display text-xl font-semibold text-[#0b1f3a]">
+            Entity, support &amp; data retention
+          </h2>
+          <ul className="mt-3 space-y-2 text-sm leading-relaxed text-[#1c2230]/70">
+            <li>
+              <span className="font-semibold text-[#0b1f3a]">Legal name:</span>{" "}
+              Apex Capital Admin Services · Operating from Texas, USA
+            </li>
+            <li>
+              <span className="font-semibold text-[#0b1f3a]">Support:</span>{" "}
+              admin@apexcapitaladmin.com · (214) 506-3083 · Mon–Fri, 9am–5pm
+              Central
+            </li>
+            <li>
+              <span className="font-semibold text-[#0b1f3a]">
+                Human review SLA:
+              </span>{" "}
+              Within 1 business day of generation (ops quality pass — not
+              licensed advice)
+            </li>
+            <li>
+              <span className="font-semibold text-[#0b1f3a]">Retention:</span>{" "}
+              Order records (email, engine, deliverable reference) are kept as
+              needed for support, accounting, and legal obligations. Intake text
+              is retained only as long as needed to generate, deliver, and
+              support your order, then may be deleted or anonymized.
+            </li>
+            <li>
+              <span className="font-semibold text-[#0b1f3a]">Do not submit:</span>{" "}
+              SSNs, medical PHI, passwords, or API secrets in intake.
+            </li>
+          </ul>
+        </section>
+
+        <section>
+          <h2 className="font-display text-xl font-semibold text-[#0b1f3a]">
             Governance and standards
           </h2>
           <p className="mt-2 text-sm leading-relaxed text-[#1c2230]/70">

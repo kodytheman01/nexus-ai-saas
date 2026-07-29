@@ -128,6 +128,10 @@ export function EngineCheckoutForm({
           placeholder={inputPlaceholder}
           className="w-full rounded-lg border border-[#0b1f3a]/15 bg-[#f7f5f0] px-3 py-3 text-sm leading-relaxed text-[#0b1f3a] outline-none focus:ring-2 focus:ring-[#c9a227]/40"
         />
+        <p className="mt-1.5 text-[11px] leading-relaxed text-[#8a6d13]">
+          Do not paste SSNs, medical PHI, passwords, API keys, or other secrets.
+          Intake is processed to generate your draft.
+        </p>
       </div>
 
       <label className="flex cursor-pointer items-start gap-3 rounded-lg border border-[#c9a227]/35 bg-[#c9a227]/10 p-3">

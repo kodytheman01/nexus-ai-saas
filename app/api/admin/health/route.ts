@@ -9,6 +9,13 @@ export async function GET() {
     let engineCount = 0;
     let pendingReviews = 0;
     let completedLast7d = 0;
+    let failedLast7d = 0;
+    let recentFailures: {
+      stripeSessionId: string;
+      engineSlug: string;
+      createdAt: Date;
+      preview: string;
+    }[] = [];
     let dbOk = false;
 
     try {
@@ -20,6 +27,26 @@ export async function GET() {
       completedLast7d = await db.engineRun.count({
         where: { status: "completed", createdAt: { gte: weekAgo } },
       });
+      failedLast7d = await db.engineRun.count({
+        where: { status: "failed", createdAt: { gte: weekAgo } },
+      });
+      const fails = await db.engineRun.findMany({
+        where: { status: "failed" },
+        orderBy: { createdAt: "desc" },
+        take: 10,
+        select: {
+          stripeSessionId: true,
+          engineSlug: true,
+          createdAt: true,
+          outputData: true,
+        },
+      });
+      recentFailures = fails.map((f) => ({
+        stripeSessionId: f.stripeSessionId,
+        engineSlug: f.engineSlug,
+        createdAt: f.createdAt,
+        preview: (f.outputData || "").slice(0, 180),
+      }));
       dbOk = true;
     } catch {
       dbOk = false;
@@ -30,6 +57,8 @@ export async function GET() {
       engineCount,
       pendingHumanReviews: pendingReviews,
       completedRunsLast7d: completedLast7d,
+      failedRunsLast7d: failedLast7d,
+      recentFailures,
       env: {
         OPENAI_API_KEY: Boolean(process.env.OPENAI_API_KEY),
         STRIPE_SECRET_KEY: Boolean(process.env.STRIPE_SECRET_KEY),

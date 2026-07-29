@@ -34,11 +34,19 @@ export async function sendDeliverableEmail(opts: {
   await transporter.sendMail({
     from: `"Apex Capital Admin" <${gmailUser}>`,
     to: opts.to,
-    subject: `Your Apex deliverable: ${title}`,
+    subject: `Receipt & deliverable: ${title} · Order ${opts.sessionId.slice(0, 20)}`,
     text: [
-      `Your deliverable for "${title}" is ready.`,
+      `Apex Capital Admin Services — order receipt`,
       "",
-      `View online: ${successUrl}`,
+      `Order ID: ${opts.sessionId}`,
+      `Engine: ${title}`,
+      `Legal entity: Apex Capital Admin Services (Texas, USA)`,
+      `Support: ${gmailUser} · Mon–Fri 9am–5pm Central`,
+      "",
+      `Your deliverable is ready.`,
+      `View online (bookmark this): ${successUrl}`,
+      "",
+      "Stripe sends a separate payment receipt for your records.",
       reviewNote,
       "--- DELIVERABLE ---",
       "",
@@ -46,7 +54,8 @@ export async function sendDeliverableEmail(opts: {
       "",
       "---",
       "Informational draft only — not licensed legal, financial, tax, or medical advice.",
-      "Apex Capital Admin Services · admin@apexcapitaladmin.com",
+      "Do not reply with SSNs, PHI, or secrets.",
+      "Apex Capital Admin Services · admin@apexcapitaladmin.com · (214) 506-3083",
     ].join("\n"),
     attachments: [
       {

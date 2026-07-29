@@ -226,9 +226,36 @@ export function ClientCatalogView({
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         {filtered.length === 0 ? (
-          <div className="col-span-full rounded-lg border border-dashed border-[#0b1f3a]/20 bg-white py-16 text-center text-sm text-[#1c2230]/40">
-            No engines match. Try Grants &amp; nonprofit, or open Apex Concierge
-            for a special request.
+          <div className="col-span-full rounded-lg border border-dashed border-[#0b1f3a]/20 bg-white px-6 py-16 text-center">
+            <p className="font-display text-lg font-semibold text-[#0b1f3a]">
+              No engines match that search
+            </p>
+            <p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-[#1c2230]/55">
+              Try Grants &amp; nonprofit, clear the search, or ask Apex Concierge
+              (bottom-right) for a special request.
+            </p>
+            <div className="mt-4 flex flex-wrap justify-center gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  setSearch("");
+                  setActiveCategory("grants");
+                }}
+                className="rounded-lg bg-[#0b1f3a] px-4 py-2 text-xs font-bold text-[#f7f5f0]"
+              >
+                Show Grants &amp; nonprofit
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setSearch("");
+                  setActiveCategory("all");
+                }}
+                className="rounded-lg border border-[#0b1f3a]/15 px-4 py-2 text-xs font-bold text-[#0b1f3a]"
+              >
+                Clear filters
+              </button>
+            </div>
           </div>
         ) : (
           filtered.map((engine) => {

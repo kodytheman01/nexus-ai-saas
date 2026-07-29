@@ -8,6 +8,13 @@ type Health = {
   engineCount: number;
   pendingHumanReviews: number;
   completedRunsLast7d: number;
+  failedRunsLast7d?: number;
+  recentFailures?: {
+    stripeSessionId: string;
+    engineSlug: string;
+    createdAt: string;
+    preview: string;
+  }[];
   stripeMode: string;
   env: Record<string, boolean>;
 };
@@ -84,7 +91,7 @@ export default function AdminHomePage() {
         </p>
       ) : null}
 
-      <section className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <section className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
         {[
           {
             label: "Engines live",
@@ -97,6 +104,10 @@ export default function AdminHomePage() {
           {
             label: "Completed (7d)",
             value: health ? String(health.completedRunsLast7d) : "…",
+          },
+          {
+            label: "Failed (7d)",
+            value: health ? String(health.failedRunsLast7d ?? 0) : "…",
           },
           {
             label: "Stripe mode",
@@ -192,6 +203,33 @@ export default function AdminHomePage() {
             ? "token present in this environment"
             : "token not set yet (expected until you add it in Netlify)"}
         </p>
+      </section>
+
+      <section className="mt-10 rounded-lg border border-[#0b1f3a]/10 bg-white p-5">
+        <h2 className="font-display text-xl font-semibold text-[#0b1f3a]">
+          Failed generations (webhook / engine)
+        </h2>
+        <p className="mt-1 text-xs text-[#1c2230]/55">
+          Recent failed EngineRuns — check Stripe webhook delivery and OpenAI
+          quota if these spike.
+        </p>
+        {!health?.recentFailures?.length ? (
+          <p className="mt-4 text-sm text-[#1c2230]/50">No recent failures.</p>
+        ) : (
+          <ul className="mt-4 space-y-2">
+            {health.recentFailures.map((f) => (
+              <li
+                key={f.stripeSessionId}
+                className="rounded border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-900"
+              >
+                <p className="font-mono">
+                  {f.engineSlug} · {f.stripeSessionId.slice(0, 28)}…
+                </p>
+                <p className="mt-1 opacity-80">{f.preview}</p>
+              </li>
+            ))}
+          </ul>
+        )}
       </section>
 
       <section className="mt-10 rounded-lg border border-[#0b1f3a]/10 bg-white p-5">

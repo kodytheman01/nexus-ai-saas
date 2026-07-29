@@ -154,8 +154,17 @@ function SuccessContent() {
                 Complete
               </span>
               <h1 className="mt-2 text-2xl font-bold text-[#0b1f3a]">
-                Your deliverable is ready
+                Thank you — your deliverable is ready
               </h1>
+              <p className="mt-1 text-xs text-[#1c2230]/55">
+                Order ID:{" "}
+                <span className="font-mono text-[#0b1f3a]">{sessionId}</span>
+              </p>
+              <p className="mt-2 text-sm leading-relaxed text-[#1c2230]/65">
+                Bookmark this page (or keep the email link) — it is how you
+                reopen this deliverable. Stripe sends a payment receipt
+                separately.
+              </p>
             </div>
             <div className="flex shrink-0 gap-2">
               <button
@@ -202,11 +211,27 @@ function SuccessContent() {
             ) : (
               <>
                 A copy was emailed to your checkout address when generation
-                finished (if mail is configured). Drafts are informational —
-                have a qualified professional review before regulated use.
+                finished (if mail is configured). Next time, add human review
+                (+$49) for near-final filings. Drafts are informational — have a
+                qualified professional review before regulated use.
               </>
             )}
           </p>
+
+          <div className="flex flex-wrap gap-3 text-sm">
+            <a
+              href="/grant-mode"
+              className="rounded-lg bg-[#0b1f3a] px-4 py-2 font-semibold text-[#f7f5f0]"
+            >
+              Explore Grant Mode
+            </a>
+            <a
+              href="/"
+              className="rounded-lg border border-[#0b1f3a]/15 px-4 py-2 font-semibold text-[#0b1f3a]"
+            >
+              Back to catalog
+            </a>
+          </div>
 
           {allowanceTokens > 0 ? (
             <div className="space-y-3 rounded-lg border border-[#0b1f3a]/10 bg-[#f7f5f0] p-4">

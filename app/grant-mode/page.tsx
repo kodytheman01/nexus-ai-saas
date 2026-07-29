@@ -77,15 +77,19 @@ export default function GrantModePage() {
               href="/engine/grant-proposal-narrative-generator"
               className="rounded-lg bg-[#c9a227] px-5 py-3 text-sm font-bold text-[#0b1f3a] transition hover:bg-[#e0b93a]"
             >
-              Open narrative engine
+              Start with narrative draft
             </Link>
             <Link
-              href="/#catalog"
+              href="/engine/nonprofit-budget-allocation-calculator"
               className="rounded-lg border border-white/25 bg-white/5 px-5 py-3 text-sm font-bold text-[#f7f5f0] transition hover:bg-white/10"
             >
-              Filter Grants &amp; nonprofit in catalog
+              Pair with budget narrative
             </Link>
           </div>
+          <p className="mt-4 max-w-xl text-xs leading-relaxed text-white/50">
+            One primary path for ads: narrative engine. Outline, budget, and
+            compliance stay below for specialists who already know the workflow.
+          </p>
         </div>
       </section>
 
