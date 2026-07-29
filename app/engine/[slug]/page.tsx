@@ -10,7 +10,7 @@ import {
   FOA_COVERAGE_CHECKLIST,
   GRANT_PAIRINGS,
 } from "@/config/trust";
-import { displayTitle } from "@/lib/display";
+import { displayTitle, isGrantRelated } from "@/lib/display";
 import { getIntakeExample } from "@/lib/intake-examples";
 import { getSampleDeliverable, WHAT_YOU_GET_DEFAULT } from "@/lib/offer";
 import { EngineCanceledBanner } from "./CanceledBanner";
@@ -72,8 +72,14 @@ export default async function EnginePage({ params, searchParams }: Props) {
     category: engine.category,
     inputPlaceholder: engine.inputPlaceholder,
   });
-  const isGrant = flagship?.badge === "Grant Mode";
-  const pairings = GRANT_PAIRINGS[engine.slug] ?? [];
+  const isGrant =
+    flagship?.badge === "Grant Mode" ||
+    isGrantRelated({
+      slug: engine.slug,
+      title: engine.title,
+      category: engine.category,
+    });
+  const pairings = isGrant ? (GRANT_PAIRINGS[engine.slug] ?? []) : [];
 
   const related = await db.calculationEngine.findMany({
     where: {
@@ -151,9 +157,11 @@ export default async function EnginePage({ params, searchParams }: Props) {
             />
             <p className="mt-4 text-[11px] leading-relaxed text-[#1c2230]/55">
               Not a substitute for a licensed attorney, CPA, grant officer, or
-              your program team. Drafts are first-pass structure — verify against
-              the live FOA before submit. Support: {ENTITY.email} ·{" "}
-              {ENTITY.supportHours}.
+              your program team. Drafts are first-pass structure
+              {isGrant
+                ? " — verify against the live FOA before submit"
+                : " — verify with your counsel or program team before relying on them"}
+              . Support: {ENTITY.email} · {ENTITY.supportHours}.
             </p>
           </div>
         </div>
@@ -213,8 +221,9 @@ export default async function EnginePage({ params, searchParams }: Props) {
                   Before
                 </p>
                 <p className="mt-2 text-xs leading-relaxed text-[#1c2230]/65">
-                  Scattered notes, blank-page FOA sections, and unclear where
-                  budget narrative meets the story.
+                  {isGrant
+                    ? "Scattered notes, blank-page FOA sections, and unclear where budget narrative meets the story."
+                    : "Scattered notes, blank templates, and no clear first draft to hand your team."}
                 </p>
               </div>
               <div className="rounded-lg border border-[#c9a227]/35 bg-[#c9a227]/10 p-4">

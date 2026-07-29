@@ -38,16 +38,22 @@ function pushHistory(query: string) {
   return next;
 }
 
+const PAGE_SIZE = 12;
+
 export function ClientCatalogView({
   initialEngines,
   categories,
+  initialCategory = "flagships",
 }: {
   initialEngines: CatalogEngine[];
   categories: string[];
+  /** Homepage defaults to Flagships so the page stays short; all 500 stay one tap away. */
+  initialCategory?: string;
 }) {
   const searchParams = useSearchParams();
-  const [activeCategory, setActiveCategory] = useState("all");
+  const [activeCategory, setActiveCategory] = useState(initialCategory);
   const [search, setSearch] = useState("");
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const [history, setHistory] = useState<string[]>([]);
   const [historyOpen, setHistoryOpen] = useState(false);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -61,6 +67,8 @@ export function ClientCatalogView({
     const q = searchParams.get("q");
     if (q != null) {
       setSearch(q);
+      setActiveCategory("all");
+      setVisibleCount(PAGE_SIZE);
       if (q.trim().length >= 2) {
         const count = initialEngines.filter((eng) => {
           const hay = `${eng.title} ${eng.description} ${eng.category} ${eng.slug}`.toLowerCase();
@@ -79,6 +87,10 @@ export function ClientCatalogView({
       }
     }
   }, [searchParams, initialEngines]);
+
+  useEffect(() => {
+    setVisibleCount(PAGE_SIZE);
+  }, [activeCategory, search]);
 
   useEffect(() => {
     function onDocClick(e: MouseEvent) {
@@ -110,6 +122,17 @@ export function ClientCatalogView({
       return catOk && searchOk;
     });
   }, [initialEngines, activeCategory, search]);
+
+  const visible = useMemo(
+    () => filtered.slice(0, visibleCount),
+    [filtered, visibleCount],
+  );
+  const hasMore = visible.length < filtered.length;
+
+  function setCategory(id: string) {
+    setActiveCategory(id);
+    setVisibleCount(PAGE_SIZE);
+  }
 
   function logSearch(query: string, resultCount: number) {
     const q = query.trim();
@@ -148,7 +171,7 @@ export function ClientCatalogView({
           <button
             key={chip.id}
             type="button"
-            onClick={() => setActiveCategory(chip.id)}
+            onClick={() => setCategory(chip.id)}
             className={`rounded-full px-3 py-1.5 text-xs font-bold capitalize transition ${
               activeCategory === chip.id
                 ? "bg-[#0b1f3a] text-[#c9a227]"
@@ -210,7 +233,7 @@ export function ClientCatalogView({
         </div>
         <select
           value={activeCategory}
-          onChange={(e) => setActiveCategory(e.target.value)}
+          onChange={(e) => setCategory(e.target.value)}
           className="rounded-lg border border-[#0b1f3a]/15 bg-white px-4 py-3 text-sm font-semibold capitalize text-[#0b1f3a] shadow-sm sm:hidden"
         >
           <option value="all">All categories</option>
@@ -225,8 +248,24 @@ export function ClientCatalogView({
       </div>
 
       <p className="text-xs text-[#1c2230]/45">
-        Showing {filtered.length} of {initialEngines.length} engines
+        Showing {Math.min(visible.length, filtered.length)} of {filtered.length}{" "}
+        match{filtered.length === 1 ? "" : "es"}
+        {activeCategory === "flagships" ? " · Flagships" : ""}
+        {activeCategory === "all" ? ` · ${initialEngines.length} total engines` : ""}
         {search.trim() ? ` for “${search.trim()}”` : ""}
+        {activeCategory === "flagships" && !search.trim() ? (
+          <>
+            {" "}
+            ·{" "}
+            <button
+              type="button"
+              className="font-semibold text-[#0b1f3a] underline decoration-[#c9a227] underline-offset-2"
+              onClick={() => setCategory("all")}
+            >
+              Browse all {initialEngines.length}
+            </button>
+          </>
+        ) : null}
       </p>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -244,7 +283,7 @@ export function ClientCatalogView({
                 type="button"
                 onClick={() => {
                   setSearch("");
-                  setActiveCategory("flagships");
+                  setCategory("flagships");
                 }}
                 className="rounded-lg bg-[#0b1f3a] px-4 py-2 text-xs font-bold text-[#f7f5f0]"
               >
@@ -254,7 +293,7 @@ export function ClientCatalogView({
                 type="button"
                 onClick={() => {
                   setSearch("");
-                  setActiveCategory("grants");
+                  setCategory("grants");
                 }}
                 className="rounded-lg border border-[#0b1f3a]/15 px-4 py-2 text-xs font-bold text-[#0b1f3a]"
               >
@@ -264,7 +303,7 @@ export function ClientCatalogView({
                 type="button"
                 onClick={() => {
                   setSearch("");
-                  setActiveCategory("all");
+                  setCategory("all");
                 }}
                 className="rounded-lg border border-[#0b1f3a]/15 px-4 py-2 text-xs font-bold text-[#0b1f3a]"
               >
@@ -273,7 +312,7 @@ export function ClientCatalogView({
             </div>
           </div>
         ) : (
-          filtered.map((engine) => {
+          visible.map((engine) => {
             const name = displayTitle(engine.title);
             const flagship = FLAGSHIP_SET.has(engine.slug);
             return (
@@ -316,6 +355,27 @@ export function ClientCatalogView({
           })
         )}
       </div>
+
+      {hasMore ? (
+        <div className="flex flex-col items-center gap-2 pt-2">
+          <button
+            type="button"
+            onClick={() => setVisibleCount((n) => n + PAGE_SIZE)}
+            className="rounded-lg bg-[#0b1f3a] px-6 py-3 text-sm font-bold text-[#f7f5f0] transition hover:bg-[#16325a]"
+          >
+            Load more ({filtered.length - visible.length} remaining)
+          </button>
+          {activeCategory !== "all" ? (
+            <button
+              type="button"
+              onClick={() => setCategory("all")}
+              className="text-xs font-semibold text-[#0b1f3a]/70 underline decoration-[#c9a227] underline-offset-2"
+            >
+              Or browse all {initialEngines.length} engines
+            </button>
+          ) : null}
+        </div>
+      ) : null}
     </div>
   );
 }
