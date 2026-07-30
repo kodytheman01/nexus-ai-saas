@@ -58,7 +58,10 @@ next-env.d.ts
 /.video-ads-tmp/
 /ad-launch-kits/
 /ad-launch-wave1/
-/instagram-release/
+/instagram-release/*
+!/instagram-release/QUEUE.json
+!/instagram-release/posted-slugs.json
+!/instagram-release/.gitkeep
 /video-ads-progress.log
 /premium-ads-progress.log
 /ad-launch-watch.log

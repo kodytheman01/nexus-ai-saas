@@ -32,6 +32,10 @@ jobs:
             echo "Missing Meta secrets — skip publish. See docs/META_POSTING_HANDOFF.md"
             exit 0
           fi
+          if [ ! -f instagram-release/QUEUE.json ]; then
+            echo "QUEUE.json missing — building queue"
+            npm run ig:queue
+          fi
           npm run ig:publish -- --limit 1
       - name: Commit queue state
         if: success()
