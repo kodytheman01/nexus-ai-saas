@@ -186,7 +186,27 @@ export default function PrivacyPage() {
 
         <section>
           <h2 className="font-display text-xl font-semibold text-[#0b1f3a]">
-            8. Changes to this policy
+            8. User data deletion
+          </h2>
+          <p className="mt-2 text-sm leading-relaxed text-[#1c2230]/70">
+            To request deletion of your data associated with our website or
+            Meta/Instagram integrations, email{" "}
+            <a
+              href="mailto:admin@apexcapitaladmin.com"
+              className="underline decoration-[#c9a227] decoration-2 underline-offset-4"
+            >
+              admin@apexcapitaladmin.com
+            </a>{" "}
+            with the subject line &quot;Data Deletion Request&quot; and include
+            your Facebook/Instagram username or the email used at checkout. We
+            will delete or anonymize associated personal data within 30 days,
+            except where retention is required by law.
+          </p>
+        </section>
+
+        <section>
+          <h2 className="font-display text-xl font-semibold text-[#0b1f3a]">
+            9. Changes to this policy
           </h2>
           <p className="mt-2 text-sm leading-relaxed text-[#1c2230]/70">
             We may update this policy from time to time. Material changes

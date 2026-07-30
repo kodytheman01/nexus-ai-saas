@@ -2,12 +2,15 @@
 
 I can run the queue and schedule. I **cannot** finish Meta login or create a Business account without your phone/email verification.
 
-## Blockers right now (local)
+## Which Meta app
 
-- `META_PAGE_ACCESS_TOKEN` — missing
-- `META_USER_TOKEN` — missing  
-- `INSTAGRAM_BUSINESS_ACCOUNT_ID` — already set
-- `PUBLIC_AD_VIDEO_BASE_URL` — already set (`/ads`)
+Use **Apex Reels Engine** App ID `808775495658176` (Instagram connected).
+
+Do **not** use App ID `2363197144089748` for tokens — that was confused with IG account id before.
+
+After token works, confirm real IG id via:
+`me/accounts?fields=id,name,access_token,instagram_business_account`
+
 
 ## What you do once (5–10 min)
 
