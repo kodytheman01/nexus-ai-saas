@@ -113,6 +113,19 @@ export function EngineCheckoutForm({
     });
   }, [searchParams]);
 
+  // Pre-Stripe abandon capture (email + ready intake) so drip can fire
+  useEffect(() => {
+    if (!hydrated || !intakeOk || !email.trim().includes("@")) return;
+    const t = setTimeout(() => {
+      fetch("/api/abandoned-checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: email.trim(), engineSlug: slug }),
+      }).catch(() => undefined);
+    }, 1200);
+    return () => clearTimeout(t);
+  }, [hydrated, intakeOk, email, slug]);
+
   function applySample() {
     if (!intakeExample) return;
     setUserInput(intakeExample);

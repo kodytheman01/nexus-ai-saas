@@ -23,6 +23,7 @@ function SuccessContent() {
   );
   const [output, setOutput] = useState("");
   const [engineSlug, setEngineSlug] = useState("deliverable");
+  const [engineCategory, setEngineCategory] = useState("");
   const [humanReview, setHumanReview] = useState(false);
   const [allowanceTokens, setAllowanceTokens] = useState(0);
   const [regenInput, setRegenInput] = useState("");
@@ -30,8 +31,8 @@ function SuccessContent() {
   const [regenBusy, setRegenBusy] = useState(false);
   const conversionFired = useRef(false);
   const upsells = useMemo(
-    () => getSuccessUpsells(engineSlug),
-    [engineSlug],
+    () => getSuccessUpsells(engineSlug, engineCategory),
+    [engineSlug, engineCategory],
   );
 
   useEffect(() => {
@@ -49,6 +50,7 @@ function SuccessContent() {
           setAllowanceTokens(data.allowanceTokens ?? 0);
           setHumanReview(Boolean(data.humanReview));
           if (data.engineSlug) setEngineSlug(String(data.engineSlug));
+          if (data.engineCategory) setEngineCategory(String(data.engineCategory));
           clearInterval(pollInterval);
 
           // Client-side purchase events only after a real Stripe Checkout

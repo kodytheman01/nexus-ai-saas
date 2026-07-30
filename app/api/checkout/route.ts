@@ -174,23 +174,38 @@ export async function POST(request: Request) {
 
     // Track for abandoned-checkout drip (converted on Stripe webhook).
     try {
-      const abandoned = await db.abandonedCheckout.create({
-        data: {
-          email: customerEmail,
+      const open = await db.abandonedCheckout.findFirst({
+        where: {
+          email: customerEmail.toLowerCase(),
           engineSlug,
-          stripeSessionId: session.id,
+          convertedAt: null,
         },
+        orderBy: { createdAt: "desc" },
       });
-      await inngest.send({
-        name: "checkout/abandoned.schedule",
-        data: {
-          abandonedId: abandoned.id,
-          stripeSessionId: session.id,
-          email: customerEmail,
-          engineSlug,
-          engineTitle: productName,
-        },
-      });
+      const abandoned = open
+        ? await db.abandonedCheckout.update({
+            where: { id: open.id },
+            data: { stripeSessionId: session.id },
+          })
+        : await db.abandonedCheckout.create({
+            data: {
+              email: customerEmail.toLowerCase(),
+              engineSlug,
+              stripeSessionId: session.id,
+            },
+          });
+      if (!open) {
+        await inngest.send({
+          name: "checkout/abandoned.schedule",
+          data: {
+            abandonedId: abandoned.id,
+            stripeSessionId: session.id,
+            email: customerEmail.toLowerCase(),
+            engineSlug,
+            engineTitle: productName,
+          },
+        });
+      }
     } catch (err) {
       console.warn("Abandoned checkout tracking skipped:", err);
     }

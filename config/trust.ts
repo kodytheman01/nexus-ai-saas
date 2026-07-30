@@ -184,13 +184,119 @@ export const OFFER_PAIRINGS: Record<string, EnginePairing[]> = {
   ],
 };
 
+const DEFAULT_MODE_UPSELLS: EnginePairing[] = [
+  {
+    label: "Grant Proposal Narrative",
+    slug: "grant-proposal-narrative-generator",
+    why: "Need a funder narrative next?",
+  },
+  {
+    label: "Pay or Quit Notice",
+    slug: "pay-or-quit-notice-drafter",
+    why: "Landlord rent-demand draft",
+  },
+  {
+    label: "Contractor Proposal",
+    slug: "contractor-proposal-drafter",
+    why: "Job bid / proposal draft",
+  },
+];
+
+const CATEGORY_UPSELLS: Record<string, EnginePairing[]> = {
+  "landlord-notice": [
+    {
+      label: "Pay or Quit Notice",
+      slug: "pay-or-quit-notice-drafter",
+      why: "Primary landlord money path",
+    },
+    {
+      label: "Security Deposit Itemization",
+      slug: "security-deposit-itemization-letter",
+      why: "Close the deposit loop",
+    },
+  ],
+  "tenant-letter": [
+    {
+      label: "Tenant Repair Request",
+      slug: "tenant-repair-request-letter",
+      why: "Keep the paper trail going",
+    },
+    {
+      label: "Move-Out Checklist",
+      slug: "tenant-move-out-checklist",
+      why: "Protect deposit return odds",
+    },
+  ],
+  "contractor-bid": [
+    {
+      label: "Contractor Proposal",
+      slug: "contractor-proposal-drafter",
+      why: "Primary Bid Mode path",
+    },
+    {
+      label: "Change Order",
+      slug: "change-order-drafter",
+      why: "Document scope shifts",
+    },
+  ],
+  "hr-offer": [
+    {
+      label: "Job Offer Letter",
+      slug: "job-offer-letter-drafter",
+      why: "Primary Offer Mode path",
+    },
+    {
+      label: "Candidate Rejection",
+      slug: "offer-rejection-letter",
+      why: "Close other candidates",
+    },
+  ],
+  nonprofit: [
+    {
+      label: "Grant Proposal Narrative",
+      slug: "grant-proposal-narrative-generator",
+      why: "Primary Grant Mode path",
+    },
+    {
+      label: "Grant Proposal Outline",
+      slug: "grant-proposal-outline-generator",
+      why: "Map FOA sections first",
+    },
+  ],
+  legal: [
+    {
+      label: "NDA Generator",
+      slug: "nda-generator",
+      why: "Common next contract draft",
+    },
+    {
+      label: "Ironclad Contract Factory",
+      slug: "ironclad-contract-factory",
+      why: "Service agreement skeleton",
+    },
+  ],
+  sales: [
+    {
+      label: "Sales Proposal",
+      slug: "sales-proposal-generator",
+      why: "Client-ready proposal draft",
+    },
+  ],
+};
+
 /** Success-page upsells — related engines + human-review nudge. */
-export function getSuccessUpsells(engineSlug: string): EnginePairing[] {
-  return (
+export function getSuccessUpsells(
+  engineSlug: string,
+  category?: string,
+): EnginePairing[] {
+  const specific =
     GRANT_PAIRINGS[engineSlug] ??
     NOTICE_PAIRINGS[engineSlug] ??
     BID_PAIRINGS[engineSlug] ??
-    OFFER_PAIRINGS[engineSlug] ??
-    []
-  );
+    OFFER_PAIRINGS[engineSlug];
+  if (specific?.length) return specific;
+  if (category && CATEGORY_UPSELLS[category]?.length) {
+    return CATEGORY_UPSELLS[category];
+  }
+  return DEFAULT_MODE_UPSELLS;
 }

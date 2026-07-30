@@ -24,7 +24,7 @@ export async function GET(request: Request) {
         engineSlug: true,
         allowanceTokens: true,
         humanReview: true,
-        engine: { select: { title: true, priceInUSD: true } },
+        engine: { select: { title: true, priceInUSD: true, category: true } },
       },
     });
 
@@ -43,6 +43,7 @@ export async function GET(request: Request) {
     return NextResponse.json({
       status: run.status,
       engineSlug: run.engineSlug,
+      engineCategory: run.engine?.category ?? "",
       outputData: run.outputData,
       allowanceTokens: run.allowanceTokens,
       engineTitle: run.engine?.title
