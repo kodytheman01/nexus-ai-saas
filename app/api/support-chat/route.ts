@@ -28,6 +28,8 @@ export async function POST(request: Request) {
       })
       .catch(() => undefined);
 
+    // Load full active catalog (525+) — a take:500 cap previously dropped
+    // Notice/Bid/Offer engines appended after the core 500.
     const engines = await db.calculationEngine.findMany({
       where: { isActive: true },
       select: {
@@ -37,11 +39,11 @@ export async function POST(request: Request) {
         priceInUSD: true,
         category: true,
       },
-      take: 500,
+      orderBy: { slug: "asc" },
     });
 
-    const tokens = message
-      .toLowerCase()
+    const msg = message.toLowerCase();
+    const tokens = msg
       .split(/[^a-z0-9]+/)
       .filter((t) => t.length > 2);
 
@@ -51,19 +53,56 @@ export async function POST(request: Request) {
         const hay = `${name} ${e.title} ${e.description} ${e.category} ${e.slug}`.toLowerCase();
         let score = tokens.reduce((s, t) => (hay.includes(t) ? s + 2 : s), 0);
         // Phrase boosts for common money intents
-        if (/grant|foa|nofo|nonprofit|fund/.test(message.toLowerCase()) && isGrantRelated(e)) {
+        if (/grant|foa|nofo|nonprofit|fund/.test(msg) && isGrantRelated(e)) {
           score += 6;
         }
-        if (/nda|non.?disclosure|confidential/.test(message.toLowerCase()) && hay.includes("nda")) {
+        if (
+          /pay.?or.?quit|evict|landlord|tenant|notice to vacate|rent demand|deposit itemiz|lease/.test(
+            msg,
+          ) &&
+          (e.category === "landlord-notice" ||
+            e.category === "tenant-letter" ||
+            e.category === "landlord-ops" ||
+            hay.includes("notice") ||
+            hay.includes("tenant") ||
+            hay.includes("landlord"))
+        ) {
           score += 8;
         }
-        if (/privacy|gdpr|ccpa/.test(message.toLowerCase()) && hay.includes("privacy")) {
+        if (
+          /contractor|change.?order|scope of work|bid|gc |subcontractor|punch.?list/.test(
+            msg,
+          ) &&
+          (e.category === "contractor-bid" ||
+            hay.includes("contractor") ||
+            hay.includes("change-order") ||
+            hay.includes("scope"))
+        ) {
+          score += 8;
+        }
+        if (
+          /job offer|offer letter|hiring|reject.*candidate|promotion letter|hr |internship/.test(
+            msg,
+          ) &&
+          (e.category === "hr-offer" ||
+            hay.includes("offer") ||
+            hay.includes("rejection") ||
+            hay.includes("promotion"))
+        ) {
+          // Prefer Offer Mode over cheaper core employment twins
+          if (e.category === "hr-offer") score += 10;
+          else score += 3;
+        }
+        if (/nda|non.?disclosure|confidential/.test(msg) && hay.includes("nda")) {
+          score += 8;
+        }
+        if (/privacy|gdpr|ccpa/.test(msg) && hay.includes("privacy")) {
           score += 6;
         }
-        if (/runway|burn.?rate|startup/.test(message.toLowerCase()) && (hay.includes("runway") || hay.includes("burn"))) {
+        if (/runway|burn.?rate|startup/.test(msg) && (hay.includes("runway") || hay.includes("burn"))) {
           score += 6;
         }
-        if (/proposal|sales|quote|pitch/.test(message.toLowerCase()) && hay.includes("proposal")) {
+        if (/proposal|sales|quote|pitch/.test(msg) && hay.includes("proposal")) {
           score += 4;
         }
         if (FLAGSHIP_SET.has(e.slug)) score += 3;
@@ -92,16 +131,16 @@ export async function POST(request: Request) {
 Your job: get the visitor to the RIGHT engine checkout as fast as possible.
 Tone: professional, concise, helpful — no fluff.
 
-You help with: what they need → which engine, pricing, Grant Mode, Notice Mode (landlord/tenant), how Stripe checkout/delivery works, special requests.
+You help with: what they need → which engine, pricing, Grant/Notice/Bid/Offer Modes, how Stripe checkout/delivery works, special requests.
 Rules:
-- Recommend only engines from the catalog snippet. Prefer Flagships / Grant Mode / Notice Mode when relevant.
-- Landlord/tenant → Notice Mode paths (/notice-mode or pay-or-quit). Grants/FOA → Grant Mode.
+- Recommend only engines from the catalog snippet. Prefer Flagships and Mode money paths when relevant.
+- Grants/FOA → Grant Mode (/go/grant). Landlord/tenant → Notice Mode (/go/notice). Contractor bids/change orders → Bid Mode (/go/bid). Job offers/HR letters → Offer Mode (/go/offer). Prefer Mode engines over cheaper core twins when both exist.
 - Always include the path exactly like /engine/{slug}?sample=1&focus=intake so sample intake is ready.
 - Checkout is Stripe; delivery typically under 60 seconds (+ email when configured).
 - Optional human specialist review is +$49.
-- Outputs are informational drafts — not licensed legal/financial/medical/housing advice. Say "not legal advice" for notice/tenant asks.
+- Outputs are informational drafts — not licensed legal/financial/medical/housing advice. Say "not legal advice" for notice/tenant/HR asks.
 - Keep answers under 100 words. End with a clear next step ("Open the first link below" or similar).
-- If nothing fits, say so and suggest emailing admin@apexcapitaladmin.com or browsing /grant-mode or /notice-mode.
+- If nothing fits, say so and suggest emailing admin@apexcapitaladmin.com or browsing /grant-mode, /notice-mode, /bid-mode, or /offer-mode.
 
 Catalog shortlist:
 ${catalogBlock}`;
