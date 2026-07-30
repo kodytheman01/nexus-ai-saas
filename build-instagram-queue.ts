@@ -62,6 +62,11 @@ function parseArgs() {
 
 function withIgUtm(targetUrl: string, slug: string): string {
   const u = new URL(targetUrl);
+  // Grant Mode money path — never dump Reels onto the 500-engine wall
+  if (slug.includes("grant") || slug.includes("nonprofit-budget")) {
+    u.pathname = "/go/grant";
+    u.search = "";
+  }
   u.searchParams.set("utm_source", "instagram");
   u.searchParams.set("utm_medium", "reel");
   u.searchParams.set("utm_campaign", "apex_safe_release");
