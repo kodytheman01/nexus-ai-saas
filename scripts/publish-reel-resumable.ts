@@ -17,13 +17,22 @@ const localPath = path.join(
   "ads",
   `${slug}.mp4`,
 );
-const caption = `Grant deadline? Get a funder-style narrative draft in about a minute.
+const metaPath = path.join(process.cwd(), "public", "ads", `${slug}.json`);
+
+const defaultCaption = `Grant deadline? Get a funder-style narrative draft in about a minute.
 
 $24 · Stripe checkout · optional human review
 
 https://apexcapitaladmin.com/go/grant?utm_source=instagram&utm_medium=reel&utm_campaign=apex_wave1_grant&utm_content=${slug}
 
 #GrantWriting #Nonprofit #FOA #ApexCapital #GrantMode`;
+
+const caption = fs.existsSync(metaPath)
+  ? String(
+      (JSON.parse(fs.readFileSync(metaPath, "utf8")) as { caption?: string })
+        .caption || defaultCaption,
+    )
+  : defaultCaption;
 
 async function main() {
   if (!igId || !token) throw new Error("Missing IG id or page token");
