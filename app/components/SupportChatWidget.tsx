@@ -13,10 +13,10 @@ export const OPEN_CONCIERGE_EVENT = "apex-open-concierge";
 const QUICK_PROMPTS = [
   "I need a grant proposal narrative",
   "Pay or quit / rent demand notice",
+  "Contractor proposal / bid letter",
+  "Job offer letter draft",
   "Tenant repair request letter",
-  "Nonprofit budget allocation",
   "Mutual NDA for a vendor",
-  "Notice to vacate",
 ];
 
 function getSessionId() {
@@ -51,7 +51,7 @@ export function SupportChatWidget() {
     {
       role: "assistant",
       content:
-        "Tell me what you need — grant narrative, NDA, budget, proposal, privacy policy, runway… I’ll route you to the right engine and checkout.",
+        "Tell me what you need — grant narrative, pay-or-quit, contractor bid, offer letter, NDA… I’ll route you to the right engine and checkout.",
     },
   ]);
   const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
@@ -242,6 +242,20 @@ export function SupportChatWidget() {
                     onClick={() => setOpen(false)}
                   >
                     Notice Mode →
+                  </Link>
+                  <Link
+                    href="/bid-mode"
+                    className="text-[11px] font-semibold text-[#0b1f3a] underline decoration-[#c9a227] underline-offset-2"
+                    onClick={() => setOpen(false)}
+                  >
+                    Bid Mode →
+                  </Link>
+                  <Link
+                    href="/offer-mode"
+                    className="text-[11px] font-semibold text-[#0b1f3a] underline decoration-[#c9a227] underline-offset-2"
+                    onClick={() => setOpen(false)}
+                  >
+                    Offer Mode →
                   </Link>
                 </div>
               </div>

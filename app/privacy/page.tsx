@@ -34,7 +34,9 @@ export default function PrivacyPage() {
           <ul className="mt-2 list-disc space-y-1 pl-5 text-sm leading-relaxed text-[#1c2230]/70">
             <li>
               Your email address at checkout (required — used to deliver your
-              output, order link, and optional human-review follow-up).
+              output, order link, optional human-review follow-up, and — if you
+              start checkout but do not complete payment — a short abandoned-cart
+              reminder sequence you can ignore after purchasing).
             </li>
             <li>
               The written input you submit to an engine (used solely to

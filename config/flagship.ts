@@ -437,6 +437,101 @@ Request to terminate lease at [Address] effective [Date] due to [Reason].
 Propose [Buyout / replacement / military clause — confirm eligibility].`,
     whatYouGet: ["Lease-break request draft", "Negotiation cue lines"],
   },
+  // —— Bid Mode (contractors) ——
+  {
+    slug: "contractor-proposal-drafter",
+    badge: "Bid Mode",
+    hook: "Turn job notes into a clean contractor proposal draft in minutes.",
+    scenarioTitle: "Scenario: Kitchen remodel bid due Friday",
+    scenarioBody:
+      "A small GC needed a first-pass proposal with scope, timeline, and payment schedule before sending to the homeowner.",
+    sampleExcerpt: `## Proposal — Draft (illustrative)
+
+TO: [Owner]
+PROPERTY: [Address]
+SCOPE: [Bullets]
+EXCLUSIONS: [List]
+TIMELINE: [Weeks]
+PRICE: $[Amount] · Deposit [X]%
+CHANGE ORDERS: Written approval required.
+
+Draft only — confirm price and terms before sending.`,
+    whatYouGet: [
+      "Structured proposal draft",
+      "Scope / exclusions / payment cues",
+      "Optional human review before customer send",
+    ],
+  },
+  {
+    slug: "change-order-drafter",
+    badge: "Bid Mode",
+    hook: "Document scope changes, cost deltas, and schedule impact clearly.",
+    scenarioTitle: "Scenario: Owner adds a pot filler mid-job",
+    scenarioBody:
+      "GC needed a change order the owner could sign the same day — without reinventing the template.",
+    sampleExcerpt: `## Change Order — Draft
+Original job: [Ref]
+Change: [Description]
+Cost impact: $[Delta]
+Schedule: +[Days]
+Owner / contractor acknowledgment lines.`,
+    whatYouGet: ["Change-order draft", "Cost + schedule impact block"],
+  },
+  {
+    slug: "scope-of-work-outline",
+    badge: "Bid Mode",
+    hook: "Structure inclusions, exclusions, and assumptions before you price.",
+    scenarioTitle: "Scenario: Interior paint bid",
+    scenarioBody:
+      "Painter wanted a tight SOW outline so the homeowner knew what was in and out.",
+    sampleExcerpt: `## Scope Outline
+Inclusions · Exclusions · Assumptions · Acceptance criteria.`,
+    whatYouGet: ["SOW outline", "Exclusion prompts"],
+  },
+  // —— Offer Mode (HR) ——
+  {
+    slug: "job-offer-letter-drafter",
+    badge: "Offer Mode",
+    hook: "Draft a professional offer letter from role and compensation facts.",
+    scenarioTitle: "Scenario: Ops Analyst hire this week",
+    scenarioBody:
+      "A lean People team needed a clean offer letter draft before counsel/HR final pass.",
+    sampleExcerpt: `## Offer Letter — Draft (illustrative)
+
+Dear [Candidate],
+We are pleased to offer [Title] starting [Date] at $[Comp].
+Benefits overview · contingencies · acceptance deadline · signatures.
+
+Draft only — employment counsel review recommended.`,
+    whatYouGet: [
+      "Offer letter structure",
+      "Comp / start / contingency blocks",
+      "Optional human review before send",
+    ],
+  },
+  {
+    slug: "offer-rejection-letter",
+    badge: "Offer Mode",
+    hook: "Close other candidates with a respectful rejection draft.",
+    scenarioTitle: "Scenario: Final-round runners-up",
+    scenarioBody:
+      "Hiring manager needed a brief, non-discriminatory rejection after the offer went out.",
+    sampleExcerpt: `## Rejection — Draft
+Thank you for interviewing for [Role]. We selected another candidate.
+Optional keep-warm line. Contact: [Email].`,
+    whatYouGet: ["Respectful rejection draft", "Keep-warm optional line"],
+  },
+  {
+    slug: "internal-promotion-letter",
+    badge: "Offer Mode",
+    hook: "Confirm promotion, title, and compensation change in one letter.",
+    scenarioTitle: "Scenario: Associate → Senior Associate",
+    scenarioBody:
+      "Manager wanted a formal promotion letter before payroll updated.",
+    sampleExcerpt: `## Promotion Letter — Draft
+New title · effective date · compensation · reporting · acknowledgment.`,
+    whatYouGet: ["Promotion letter draft", "Effective-date + comp block"],
+  },
 ];
 
 export const FLAGSHIP_SLUGS = FLAGSHIP_ENGINES.map((f) => f.slug);

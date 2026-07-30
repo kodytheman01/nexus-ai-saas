@@ -133,6 +133,18 @@ export async function POST(req: Request) {
       });
     }
 
+    await db.abandonedCheckout
+      .updateMany({
+        where: {
+          OR: [
+            { stripeSessionId: session.id },
+            { email: customerEmail, engineSlug, convertedAt: null },
+          ],
+        },
+        data: { convertedAt: new Date() },
+      })
+      .catch(() => undefined);
+
     await db.ephemeralPayload.delete({ where: { id: ephemeral.id } }).catch(() => undefined);
   }
 

@@ -8,12 +8,16 @@ import { EnginePixelEvents } from "@/app/components/EnginePixelEvents";
 import { ProductJsonLd } from "@/app/components/JsonLd";
 import { getFlagship } from "@/config/flagship";
 import {
+  BID_PAIRINGS,
   ENTITY,
   FOA_COVERAGE_CHECKLIST,
   GRANT_PAIRINGS,
   HOUSING_LEGAL_DISCLAIMER,
+  NOTICE_PAIRINGS,
   NOTICE_PRE_SERVE_CHECKLIST,
+  OFFER_PAIRINGS,
 } from "@/config/trust";
+import { NOTICE_STATE_PACKS, parseNoticeState } from "@/config/state-packs";
 import { displayTitle, isGrantRelated } from "@/lib/display";
 import { getIntakeExample } from "@/lib/intake-examples";
 import { getSampleDeliverable, WHAT_YOU_GET_DEFAULT } from "@/lib/offer";
@@ -25,7 +29,7 @@ const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://apexcapitaladmin.com"
 
 type Props = {
   params: Promise<{ slug: string }>;
-  searchParams: Promise<{ canceled?: string }>;
+  searchParams: Promise<{ canceled?: string; state?: string }>;
 };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -91,7 +95,18 @@ export default async function EnginePage({ params, searchParams }: Props) {
     engine.category === "landlord-notice" ||
     engine.category === "tenant-letter" ||
     engine.category === "landlord-ops";
-  const pairings = isGrant ? (GRANT_PAIRINGS[engine.slug] ?? []) : [];
+  const isBid =
+    flagship?.badge === "Bid Mode" || engine.category === "contractor-bid";
+  const isOffer =
+    flagship?.badge === "Offer Mode" || engine.category === "hr-offer";
+  const statePack = isNotice ? parseNoticeState(sp.state) : null;
+  const statePackData = statePack ? NOTICE_STATE_PACKS[statePack] : null;
+  const pairings =
+    GRANT_PAIRINGS[engine.slug] ??
+    NOTICE_PAIRINGS[engine.slug] ??
+    BID_PAIRINGS[engine.slug] ??
+    OFFER_PAIRINGS[engine.slug] ??
+    [];
 
   const related = await db.calculationEngine.findMany({
     where: {
@@ -139,6 +154,22 @@ export default async function EnginePage({ params, searchParams }: Props) {
             <span aria-hidden>/</span>
             <Link href="/notice-mode" className="hover:text-[#0b1f3a]">
               {flagship?.badge === "Tenant Mode" ? "Tenant Mode" : "Notice Mode"}
+            </Link>
+          </>
+        ) : null}
+        {isBid ? (
+          <>
+            <span aria-hidden>/</span>
+            <Link href="/bid-mode" className="hover:text-[#0b1f3a]">
+              Bid Mode
+            </Link>
+          </>
+        ) : null}
+        {isOffer ? (
+          <>
+            <span aria-hidden>/</span>
+            <Link href="/offer-mode" className="hover:text-[#0b1f3a]">
+              Offer Mode
             </Link>
           </>
         ) : null}
@@ -341,6 +372,54 @@ export default async function EnginePage({ params, searchParams }: Props) {
                   </li>
                 ))}
               </ul>
+              {!statePackData ? (
+                <p className="mt-3 text-[11px] text-[#1c2230]/55">
+                  State packs:{" "}
+                  {(["TX", "FL", "CA"] as const).map((code, i) => (
+                    <span key={code}>
+                      {i > 0 ? " · " : null}
+                      <Link
+                        href={`/engine/${engine.slug}?sample=1&focus=intake&state=${code}`}
+                        className="font-semibold text-[#0b1f3a] underline decoration-[#c9a227] decoration-2 underline-offset-2"
+                      >
+                        {code}
+                      </Link>
+                    </span>
+                  ))}
+                </p>
+              ) : null}
+            </div>
+          ) : null}
+
+          {statePackData ? (
+            <div className="mb-8 rounded-lg border border-[#c9a227]/40 bg-[#c9a227]/10 p-5">
+              <h2 className="text-xs font-bold uppercase tracking-wider text-[#8a6d13]">
+                {statePackData.code} state pack — local-law cues
+              </h2>
+              <p className="mt-1 text-xs text-[#1c2230]/65">
+                {statePackData.tagline} Educational only — confirm with counsel.
+              </p>
+              <ul className="mt-3 space-y-2">
+                {statePackData.localLawCues.map((row) => (
+                  <li
+                    key={row.section}
+                    className="text-sm leading-relaxed text-[#1c2230]/75"
+                  >
+                    <span className="font-semibold text-[#0b1f3a]">
+                      {row.section}.
+                    </span>{" "}
+                    {row.tip}
+                  </li>
+                ))}
+              </ul>
+              <div className="mt-3 rounded border border-[#0b1f3a]/10 bg-white/70 p-3">
+                <p className="text-[10px] font-bold uppercase tracking-wider text-[#0b1f3a]/45">
+                  Suggested intake lines
+                </p>
+                <pre className="mt-1 whitespace-pre-wrap font-mono text-[11px] leading-relaxed text-[#1c2230]/70">
+                  {statePackData.intakeHints.join("\n")}
+                </pre>
+              </div>
             </div>
           ) : null}
 

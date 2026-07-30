@@ -1,11 +1,18 @@
 import { PrismaClient } from "@prisma/client";
 import { ENGINES_SEED_DATA } from "../config/engines";
 import { NOTICE_ENGINES_SEED } from "../config/notice-engines";
+import { BID_ENGINES_SEED } from "../config/bid-engines";
+import { OFFER_ENGINES_SEED } from "../config/offer-engines";
 
 const prisma = new PrismaClient();
 
 async function main() {
-  const all = [...ENGINES_SEED_DATA, ...NOTICE_ENGINES_SEED];
+  const all = [
+    ...ENGINES_SEED_DATA,
+    ...NOTICE_ENGINES_SEED,
+    ...BID_ENGINES_SEED,
+    ...OFFER_ENGINES_SEED,
+  ];
   console.log("Seeding engines...");
 
   for (const engine of all) {
@@ -38,7 +45,7 @@ async function main() {
   }
 
   console.log(
-    `Seeded ${all.length} engines (${ENGINES_SEED_DATA.length} core + ${NOTICE_ENGINES_SEED.length} notice/tenant).`,
+    `Seeded ${all.length} engines (${ENGINES_SEED_DATA.length} core + ${NOTICE_ENGINES_SEED.length} notice/tenant + ${BID_ENGINES_SEED.length} bid + ${OFFER_ENGINES_SEED.length} offer).`,
   );
 }
 

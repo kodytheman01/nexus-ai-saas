@@ -24,17 +24,29 @@ export function SiteNav() {
           <NavSearch />
         </Suspense>
 
-        <nav className="ml-auto flex shrink-0 items-center gap-3 text-sm font-medium text-[#0b1f3a]/70 sm:gap-5">
+        <nav className="ml-auto flex shrink-0 items-center gap-2.5 text-sm font-medium text-[#0b1f3a]/70 sm:gap-4">
           <Link href="/grant-mode" className="transition hover:text-[#0b1f3a]">
-            Grant Mode
+            Grant
           </Link>
           <Link href="/notice-mode" className="transition hover:text-[#0b1f3a]">
-            Notice Mode
+            Notice
           </Link>
-          <Link href="/how-it-works" className="hidden transition hover:text-[#0b1f3a] sm:inline">
+          <Link
+            href="/bid-mode"
+            className="hidden transition hover:text-[#0b1f3a] sm:inline"
+          >
+            Bid
+          </Link>
+          <Link
+            href="/offer-mode"
+            className="hidden transition hover:text-[#0b1f3a] md:inline"
+          >
+            Offer
+          </Link>
+          <Link href="/how-it-works" className="hidden transition hover:text-[#0b1f3a] lg:inline">
             How it works
           </Link>
-          <Link href="/#catalog" className="hidden transition hover:text-[#0b1f3a] lg:inline">
+          <Link href="/#catalog" className="hidden transition hover:text-[#0b1f3a] xl:inline">
             Engines
           </Link>
           <Link href="/about" className="transition hover:text-[#0b1f3a]">
@@ -73,6 +85,12 @@ export function DisclaimerFooter() {
           </Link>
           <Link href="/notice-mode" className="transition hover:text-white/70">
             Notice Mode
+          </Link>
+          <Link href="/bid-mode" className="transition hover:text-white/70">
+            Bid Mode
+          </Link>
+          <Link href="/offer-mode" className="transition hover:text-white/70">
+            Offer Mode
           </Link>
           <Link href="/how-it-works" className="transition hover:text-white/70">
             How it works

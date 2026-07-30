@@ -98,3 +98,99 @@ export const NOTICE_PRE_SERVE_CHECKLIST: { section: string; tip: string }[] = [
     tip: "Have an attorney or housing professional review when stakes are high",
   },
 ];
+
+export type EnginePairing = { label: string; slug: string; why: string };
+
+export const NOTICE_PAIRINGS: Record<string, EnginePairing[]> = {
+  "pay-or-quit-notice-drafter": [
+    {
+      label: "Security Deposit Itemization",
+      slug: "security-deposit-itemization-letter",
+      why: "If tenancy ends, itemize deposit next",
+    },
+    {
+      label: "Lease Violation / Cure",
+      slug: "lease-violation-cure-notice",
+      why: "Non-rent breaches need a different draft",
+    },
+  ],
+  "notice-to-vacate-drafter": [
+    {
+      label: "Security Deposit Itemization",
+      slug: "security-deposit-itemization-letter",
+      why: "Pair vacate with deposit accounting",
+    },
+    {
+      label: "Pay or Quit Notice",
+      slug: "pay-or-quit-notice-drafter",
+      why: "Unpaid rent path if that is the issue",
+    },
+  ],
+  "security-deposit-itemization-letter": [
+    {
+      label: "Notice to Vacate",
+      slug: "notice-to-vacate-drafter",
+      why: "Close the tenancy paperwork loop",
+    },
+  ],
+};
+
+export const BID_PAIRINGS: Record<string, EnginePairing[]> = {
+  "contractor-proposal-drafter": [
+    {
+      label: "Change Order",
+      slug: "change-order-drafter",
+      why: "Scope shifts after the bid is signed",
+    },
+    {
+      label: "Scope of Work Outline",
+      slug: "scope-of-work-outline",
+      why: "Tighten inclusions before pricing",
+    },
+  ],
+  "change-order-drafter": [
+    {
+      label: "Contractor Proposal",
+      slug: "contractor-proposal-drafter",
+      why: "Refresh the base proposal if needed",
+    },
+    {
+      label: "Punch List Letter",
+      slug: "job-completion-punch-list",
+      why: "Close remaining items at the end",
+    },
+  ],
+};
+
+export const OFFER_PAIRINGS: Record<string, EnginePairing[]> = {
+  "job-offer-letter-drafter": [
+    {
+      label: "Candidate Rejection",
+      slug: "offer-rejection-letter",
+      why: "Close other candidates cleanly",
+    },
+    {
+      label: "Internship Offer",
+      slug: "internship-offer-letter",
+      why: "Different track for interns",
+    },
+  ],
+  "offer-rejection-letter": [
+    {
+      label: "Job Offer Letter",
+      slug: "job-offer-letter-drafter",
+      why: "Send the chosen candidate next",
+    },
+  ],
+};
+
+/** Success-page upsells — related engines + human-review nudge. */
+export function getSuccessUpsells(engineSlug: string): EnginePairing[] {
+  return (
+    GRANT_PAIRINGS[engineSlug] ??
+    NOTICE_PAIRINGS[engineSlug] ??
+    BID_PAIRINGS[engineSlug] ??
+    OFFER_PAIRINGS[engineSlug] ??
+    []
+  );
+}

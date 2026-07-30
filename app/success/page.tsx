@@ -1,8 +1,10 @@
 "use client";
 
-import { Suspense, useEffect, useRef, useState } from "react";
+import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
+import { getSuccessUpsells } from "@/config/trust";
+import { HUMAN_REVIEW_USD } from "@/lib/offer";
 
 declare global {
   interface Window {
@@ -27,6 +29,10 @@ function SuccessContent() {
   const [copied, setCopied] = useState(false);
   const [regenBusy, setRegenBusy] = useState(false);
   const conversionFired = useRef(false);
+  const upsells = useMemo(
+    () => getSuccessUpsells(engineSlug),
+    [engineSlug],
+  );
 
   useEffect(() => {
     if (!sessionId) return;
@@ -220,18 +226,67 @@ function SuccessContent() {
             )}
           </p>
 
+          <div className="space-y-3 rounded-lg border border-[#c9a227]/35 bg-[#c9a227]/10 p-4">
+            <h3 className="text-sm font-bold text-[#0b1f3a]">
+              Next step — keep the draft moving
+            </h3>
+            {!humanReview ? (
+              <p className="text-xs leading-relaxed text-[#1c2230]/70">
+                Next order: add human specialist review (+${HUMAN_REVIEW_USD})
+                at checkout for near-final filings, notices, bids, or offers.
+                Not available as a retrofit on this session.
+              </p>
+            ) : (
+              <p className="text-xs leading-relaxed text-[#1c2230]/70">
+                Human review is on this order — watch your inbox within 1
+                business day.
+              </p>
+            )}
+            {upsells.length > 0 ? (
+              <ul className="space-y-2">
+                {upsells.map((u) => (
+                  <li key={u.slug}>
+                    <Link
+                      href={`/engine/${u.slug}?sample=1&focus=intake`}
+                      className="block rounded-lg border border-[#0b1f3a]/10 bg-white px-3 py-2.5 text-sm transition hover:border-[#c9a227]/50"
+                    >
+                      <span className="font-semibold text-[#0b1f3a]">
+                        {u.label}
+                      </span>
+                      <span className="mt-0.5 block text-xs text-[#1c2230]/55">
+                        {u.why}
+                      </span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            ) : null}
+          </div>
+
           <div className="flex flex-wrap gap-3 text-sm">
             <Link
-              href="/grant-mode"
+              href="/notice-mode"
               className="rounded-lg bg-[#0b1f3a] px-4 py-2 font-semibold text-[#f7f5f0]"
             >
-              Explore Grant Mode
+              Notice Mode
+            </Link>
+            <Link
+              href="/bid-mode"
+              className="rounded-lg border border-[#0b1f3a]/15 px-4 py-2 font-semibold text-[#0b1f3a]"
+            >
+              Bid Mode
+            </Link>
+            <Link
+              href="/offer-mode"
+              className="rounded-lg border border-[#0b1f3a]/15 px-4 py-2 font-semibold text-[#0b1f3a]"
+            >
+              Offer Mode
             </Link>
             <Link
               href="/"
               className="rounded-lg border border-[#0b1f3a]/15 px-4 py-2 font-semibold text-[#0b1f3a]"
             >
-              Back to catalog
+              Catalog
             </Link>
           </div>
 

@@ -6,6 +6,12 @@ export const GRANT_NARRATIVE_SLUG = "grant-proposal-narrative-generator";
 /** Primary Notice Mode landing — landlord rent demand. */
 export const NOTICE_PRIMARY_SLUG = "pay-or-quit-notice-drafter";
 
+/** Primary Bid Mode landing — contractor proposal. */
+export const BID_PRIMARY_SLUG = "contractor-proposal-drafter";
+
+/** Primary Offer Mode landing — job offer letter. */
+export const OFFER_PRIMARY_SLUG = "job-offer-letter-drafter";
+
 export const GRANT_FLAGSHIP_SLUGS = FLAGSHIP_ENGINES.filter(
   (f) => f.badge === "Grant Mode",
 ).map((f) => f.slug);
@@ -14,8 +20,18 @@ export const NOTICE_FLAGSHIP_SLUGS = FLAGSHIP_ENGINES.filter(
   (f) => f.badge === "Notice Mode" || f.badge === "Tenant Mode",
 ).map((f) => f.slug);
 
+export const BID_FLAGSHIP_SLUGS = FLAGSHIP_ENGINES.filter(
+  (f) => f.badge === "Bid Mode",
+).map((f) => f.slug);
+
+export const OFFER_FLAGSHIP_SLUGS = FLAGSHIP_ENGINES.filter(
+  (f) => f.badge === "Offer Mode",
+).map((f) => f.slug);
+
 const GRANT_SLUG_SET = new Set(GRANT_FLAGSHIP_SLUGS);
 const NOTICE_SLUG_SET = new Set(NOTICE_FLAGSHIP_SLUGS);
+const BID_SLUG_SET = new Set(BID_FLAGSHIP_SLUGS);
+const OFFER_SLUG_SET = new Set(OFFER_FLAGSHIP_SLUGS);
 
 type ParamSource =
   | URLSearchParams
@@ -28,6 +44,34 @@ function param(sp: ParamSource, key: string): string {
   return v ?? "";
 }
 
+function campaignHintsNotice(campaign: string): boolean {
+  return (
+    campaign.includes("notice") ||
+    campaign.includes("eviction") ||
+    campaign.includes("landlord") ||
+    campaign.includes("tenant") ||
+    campaign.includes("lease")
+  );
+}
+
+function campaignHintsBid(campaign: string): boolean {
+  return (
+    campaign.includes("bid") ||
+    campaign.includes("contractor") ||
+    campaign.includes("change-order") ||
+    campaign.includes("change_order")
+  );
+}
+
+function campaignHintsOffer(campaign: string): boolean {
+  return (
+    campaign.includes("offer") ||
+    campaign.includes("hr") ||
+    campaign.includes("hiring") ||
+    campaign.includes("job-offer")
+  );
+}
+
 /** True when this visit looks like paid / tagged Grant Mode traffic. */
 export function isGrantPaidTraffic(sp: ParamSource): boolean {
   const campaign = param(sp, "utm_campaign").toLowerCase();
@@ -35,12 +79,10 @@ export function isGrantPaidTraffic(sp: ParamSource): boolean {
   const medium = param(sp, "utm_medium").toLowerCase();
   const source = param(sp, "utm_source").toLowerCase();
 
-  // Notice campaigns must not steal Grant landings
   if (
-    campaign.includes("notice") ||
-    campaign.includes("eviction") ||
-    campaign.includes("landlord") ||
-    campaign.includes("tenant")
+    campaignHintsNotice(campaign) ||
+    campaignHintsBid(campaign) ||
+    campaignHintsOffer(campaign)
   ) {
     return false;
   }
@@ -51,7 +93,6 @@ export function isGrantPaidTraffic(sp: ParamSource): boolean {
     (medium.includes("video") || medium === "paid_social" || medium === "cpc") &&
     (campaign.includes("apex") || source.includes("meta") || source.includes("instagram"))
   ) {
-    // Wave-1 grant kits use apex_wave1_grant; premium uses apex_wave1_premium
     if (campaign.includes("premium")) return false;
     if (campaign.includes("wave1") || campaign.includes("apex")) return true;
   }
@@ -63,17 +104,10 @@ export function isNoticePaidTraffic(sp: ParamSource): boolean {
   const campaign = param(sp, "utm_campaign").toLowerCase();
   const content = param(sp, "utm_content").toLowerCase();
   const medium = param(sp, "utm_medium").toLowerCase();
-  const source = param(sp, "utm_source").toLowerCase();
 
-  if (
-    campaign.includes("notice") ||
-    campaign.includes("eviction") ||
-    campaign.includes("landlord") ||
-    campaign.includes("tenant") ||
-    campaign.includes("lease")
-  ) {
-    return true;
-  }
+  if (campaignHintsBid(campaign) || campaignHintsOffer(campaign)) return false;
+
+  if (campaignHintsNotice(campaign)) return true;
   if (NOTICE_SLUG_SET.has(content)) return true;
   if (
     (medium.includes("video") || medium === "paid_social" || medium === "cpc") &&
@@ -83,8 +117,24 @@ export function isNoticePaidTraffic(sp: ParamSource): boolean {
   ) {
     return true;
   }
-  // unused but kept for future Meta notice creatives
-  void source;
+  return false;
+}
+
+export function isBidPaidTraffic(sp: ParamSource): boolean {
+  const campaign = param(sp, "utm_campaign").toLowerCase();
+  const content = param(sp, "utm_content").toLowerCase();
+  if (campaignHintsBid(campaign)) return true;
+  if (BID_SLUG_SET.has(content)) return true;
+  if (content.includes("contractor") || content.includes("bid")) return true;
+  return false;
+}
+
+export function isOfferPaidTraffic(sp: ParamSource): boolean {
+  const campaign = param(sp, "utm_campaign").toLowerCase();
+  const content = param(sp, "utm_content").toLowerCase();
+  if (campaignHintsOffer(campaign)) return true;
+  if (OFFER_SLUG_SET.has(content)) return true;
+  if (content.includes("offer") || content.includes("hiring")) return true;
   return false;
 }
 
@@ -114,15 +164,23 @@ function withAttribution(
   return `/engine/${slug}?${u.toString()}`;
 }
 
-/** Deep-link path: narrative engine + sample intake + scroll to checkout. */
 export function grantMoneyLandingPath(sp?: ParamSource): string {
   return withAttribution(GRANT_NARRATIVE_SLUG, sp);
 }
 
-/** Deep-link path: pay-or-quit + sample intake. */
 export function noticeMoneyLandingPath(sp?: ParamSource): string {
   return withAttribution(NOTICE_PRIMARY_SLUG, sp);
 }
 
+export function bidMoneyLandingPath(sp?: ParamSource): string {
+  return withAttribution(BID_PRIMARY_SLUG, sp);
+}
+
+export function offerMoneyLandingPath(sp?: ParamSource): string {
+  return withAttribution(OFFER_PRIMARY_SLUG, sp);
+}
+
 export const GRANT_GO_PATH = "/go/grant";
 export const NOTICE_GO_PATH = "/go/notice";
+export const BID_GO_PATH = "/go/bid";
+export const OFFER_GO_PATH = "/go/offer";

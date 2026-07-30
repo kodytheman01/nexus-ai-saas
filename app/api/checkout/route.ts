@@ -169,6 +169,29 @@ export async function POST(request: Request) {
       },
     });
 
+    // Track for abandoned-checkout drip (converted on Stripe webhook).
+    try {
+      const abandoned = await db.abandonedCheckout.create({
+        data: {
+          email: customerEmail,
+          engineSlug,
+          stripeSessionId: session.id,
+        },
+      });
+      await inngest.send({
+        name: "checkout/abandoned.schedule",
+        data: {
+          abandonedId: abandoned.id,
+          stripeSessionId: session.id,
+          email: customerEmail,
+          engineSlug,
+          engineTitle: productName,
+        },
+      });
+    } catch (err) {
+      console.warn("Abandoned checkout tracking skipped:", err);
+    }
+
     return NextResponse.json({ url: session.url });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Checkout failed";

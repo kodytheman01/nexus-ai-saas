@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { FLAGSHIP_ENGINES } from "@/config/flagship";
 import { NOTICE_PRIMARY_SLUG } from "@/config/conversion";
+import { NOTICE_STATE_PACKS, NOTICE_STATE_CODES } from "@/config/state-packs";
 import { LEGAL_DISCLAIMER } from "@/config/trust";
 import { HUMAN_REVIEW_USD } from "@/lib/offer";
 
@@ -99,6 +100,58 @@ export default function NoticeModePage() {
             Sample intake loads in one tap. Ads should deep-link via /go/notice.{" "}
             {LEGAL_DISCLAIMER}
           </p>
+        </div>
+      </section>
+
+      <section
+        id="state-packs"
+        className="scroll-mt-24 border-b border-[#0b1f3a]/10 bg-white"
+      >
+        <div className="mx-auto max-w-6xl px-4 py-12">
+          <h2 className="font-display text-2xl font-semibold text-[#0b1f3a]">
+            State packs — TX · FL · CA
+          </h2>
+          <p className="mt-1 max-w-2xl text-sm text-[#1c2230]/65">
+            Educational local-law cues only. Never a substitute for counsel.
+            Open pay-or-quit with your state attached.
+          </p>
+          <div className="mt-6 grid gap-4 sm:grid-cols-3">
+            {NOTICE_STATE_CODES.map((code) => {
+              const pack = NOTICE_STATE_PACKS[code];
+              return (
+                <div
+                  key={code}
+                  className="rounded-lg border border-[#0b1f3a]/10 bg-[#f7f5f0] p-5"
+                >
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-[#8a6d13]">
+                    {pack.code} pack
+                  </p>
+                  <h3 className="mt-1 font-display text-lg font-semibold text-[#0b1f3a]">
+                    {pack.name}
+                  </h3>
+                  <p className="mt-2 text-xs leading-relaxed text-[#1c2230]/65">
+                    {pack.tagline}
+                  </p>
+                  <ul className="mt-3 space-y-1.5 text-[11px] leading-relaxed text-[#1c2230]/70">
+                    {pack.localLawCues.slice(0, 2).map((row) => (
+                      <li key={row.section}>
+                        <span className="font-semibold text-[#0b1f3a]">
+                          {row.section}:
+                        </span>{" "}
+                        {row.tip}
+                      </li>
+                    ))}
+                  </ul>
+                  <Link
+                    href={`/engine/${NOTICE_PRIMARY_SLUG}?sample=1&focus=intake&state=${pack.code}`}
+                    className="mt-4 inline-block text-xs font-bold text-[#0b1f3a] underline decoration-[#c9a227] decoration-2 underline-offset-2"
+                  >
+                    Open pay-or-quit with {pack.code} cues →
+                  </Link>
+                </div>
+              );
+            })}
+          </div>
         </div>
       </section>
 

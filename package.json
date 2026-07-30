@@ -20,6 +20,8 @@
     "ads:wave1:live": "tsx scripts/sync-wave1-ads-public.ts",
     "ads:walkthrough": "tsx scripts/generate-site-walkthrough-ad.ts --capture --force",
     "ads:walkthrough:capture": "tsx scripts/capture-site-walkthrough.ts",
+    "ads:notice-walkthrough": "tsx scripts/generate-notice-walkthrough-ad.ts --capture --force",
+    "ads:notice-walkthrough:capture": "tsx scripts/capture-notice-walkthrough.ts",
     "test:checkout-override": "tsx scripts/test-checkout-override.ts",
     "qa:smoke": "tsx scripts/qa-site-smoke.ts"
   },

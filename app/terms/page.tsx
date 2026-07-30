@@ -55,6 +55,18 @@ export default function TermsPage() {
             restricted in many jurisdictions — do not rely on a draft as
             permission to act.
           </p>
+          <p className="mt-3 text-sm leading-relaxed text-[#1c2230]/70">
+            <strong className="text-[#0b1f3a]">Bid Mode:</strong> Contractor
+            proposals, change orders, and scopes are drafts only — not licensed
+            estimates, not construction advice, and not substitute for a signed
+            contract reviewed for your trade and jurisdiction.
+          </p>
+          <p className="mt-3 text-sm leading-relaxed text-[#1c2230]/70">
+            <strong className="text-[#0b1f3a]">Offer Mode:</strong> Offer,
+            rejection, and promotion letters are drafts only — not employment
+            legal advice. Employment laws vary by state; have People leadership
+            or employment counsel review before sending.
+          </p>
         </section>
 
         <section>
