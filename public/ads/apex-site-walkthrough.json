@@ -1,17 +1,10 @@
 {
   "slug": "apex-site-walkthrough",
-  "type": "site_walkthrough",
-  "title": "Apex Capital — Full Site Walkthrough",
-  "voiceover": "Deadline on the line and a blank page in front of you?\n\nThis is Apex Capital Admin Services — apexcapitaladmin.com.\n\nWe build draft-ready grant, contract, and ops paperwork — fast.\n\nOn the homepage, start with Grant Mode: a funder-style narrative from your facts in about a minute, twenty-four dollars, Stripe checkout.\n\nNeed more? Five hundred engines — NDAs, budgets, offers, ops playbooks — or ask Concierge to find the right one.\n\nHow it works: choose, intake, pay, draft. On-page and email in under sixty seconds. Optional forty-nine dollar human review when stakes are high.\n\nNo fake testimonials. No funding promises. Just structure you can revise.\n\nWhy us: speed, Stripe security, a full catalog, and a clear path when you're stuck.\n\nGo to apexcapitaladmin.com slash go slash grant. Use the sample intake. See the draft.\n\nApex. Draft-ready. Deadline-ready.",
-  "caption": "Apex Capital Admin Services — the whole site, in one Reel.\n\nGrant Mode · 500 engines · Concierge finder\nStripe checkout · draft in ~60s · optional +$49 human review\nNo fake testimonials. Drafts, not guarantees.\n\nWhy come to us: you need structure before the deadline — not another blank doc.\n\n👉 https://apexcapitaladmin.com/go/grant?utm_source=instagram&utm_medium=reel&utm_campaign=apex_walkthrough&utm_content=site-tour\n\n#ApexCapital #GrantMode #Nonprofit #GrantWriting #BusinessOps",
-  "landing": "https://apexcapitaladmin.com/go/grant?utm_source=instagram&utm_medium=reel&utm_campaign=apex_walkthrough&utm_content=site-tour",
-  "scenes": [
-    "APEX CAPITAL ADMIN",
-    "GRANT MODE",
-    "500 ENGINES + CONCIERGE",
-    "HOW IT WORKS",
-    "WHY APEX",
-    "START NOW"
-  ],
-  "createdAt": "2026-07-30T07:57:30.758Z"
+  "type": "site_walkthrough_live_ui",
+  "title": "Apex Capital — Live Site Walkthrough",
+  "voiceover": "Deadline on the line and a blank page in front of you?\n\nThis is Apex Capital Admin Services — apexcapitaladmin.com. You're looking at the real site.\n\nHomepage first — brand, promise, and Grant Mode up front. That's the money path: a funder-style narrative from your facts in about a minute.\n\nOpen Grant Mode. See the engines built for grant writers. Then the narrative intake — sample data ready — Stripe checkout, draft on the page and in your email.\n\nHow it works is simple: choose, intake, pay, draft. Optional human review when stakes are high.\n\nBrowse the catalog — five hundred engines — or ask Concierge to find the right one.\n\nAbout us: Texas operators, no fake testimonials, drafts not guarantees.\n\nWhy come to us: speed, Stripe security, a full catalog, and a clear path when you're stuck.\n\nGo to apexcapitaladmin.com slash go slash grant. Use the sample intake. See the draft.\n\nApex. Draft-ready. Deadline-ready.",
+  "caption": "Watch the real Apex site — not a stock template.\n\nHomepage → Grant Mode → intake → How it works → 500 engines → why us.\n\n$24 drafts · Stripe · ~60 seconds · optional +$49 human review\nNo fake testimonials. Structure before the deadline.\n\n👉 https://apexcapitaladmin.com/go/grant?utm_source=instagram&utm_medium=reel&utm_campaign=apex_walkthrough&utm_content=site-tour-live\n\n#ApexCapital #GrantMode #Nonprofit #GrantWriting #BusinessOps",
+  "landing": "https://apexcapitaladmin.com/go/grant?utm_source=instagram&utm_medium=reel&utm_campaign=apex_walkthrough&utm_content=site-tour-live",
+  "source": "playwright_screen_recording",
+  "createdAt": "2026-07-30T13:46:58.196Z"
 }

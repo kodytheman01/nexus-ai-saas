@@ -1,18 +1,17 @@
 /**
- * Apex site walkthrough Reel — narrates the whole product, not one engine SKU.
+ * Apex site walkthrough Reel — REAL screen recording of the live site + VO.
  *
- * Why engine ads underperform: they pitch one $24 tool with text-on-navy.
- * This creative walks the live product story: who we are → Grant Mode →
- * how it works → 500 engines / Concierge → trust → why Apex → CTA.
+ * Pipeline:
+ *   1) npx tsx scripts/capture-site-walkthrough.ts   (Playwright records UI)
+ *   2) npx tsx scripts/generate-site-walkthrough-ad.ts --force
  *
- * Usage:
- *   npx tsx scripts/generate-site-walkthrough-ad.ts
- *   npx tsx scripts/generate-site-walkthrough-ad.ts --force
+ * Or one-shot:
+ *   npx tsx scripts/generate-site-walkthrough-ad.ts --force --capture
  */
 import fs from "fs";
 import path from "path";
 import os from "os";
-import { execFile } from "child_process";
+import { execFile, spawnSync } from "child_process";
 import { promisify } from "util";
 import sharp from "sharp";
 import { MsEdgeTTS, OUTPUT_FORMAT } from "msedge-tts";
@@ -35,6 +34,7 @@ const ROOT = path.join(__dirname, "..");
 const OUT_DIR = path.join(ROOT, "video-ads-premium");
 const PUBLIC_ADS = path.join(ROOT, "public", "ads");
 const TMP = path.join(ROOT, ".video-ads-tmp", "walkthrough");
+const UI_DIR = path.join(TMP, "ui");
 const WIDTH = 1080;
 const HEIGHT = 1920;
 const NAVY = "#0b1f3a";
@@ -42,81 +42,41 @@ const GOLD = "#c9a227";
 const CREAM = "#f7f5f0";
 const SLUG = "apex-site-walkthrough";
 const FORCE = process.argv.includes("--force");
+const DO_CAPTURE = process.argv.includes("--capture");
 
 const LANDING =
-  "https://apexcapitaladmin.com/go/grant?utm_source=instagram&utm_medium=reel&utm_campaign=apex_walkthrough&utm_content=site-tour";
+  "https://apexcapitaladmin.com/go/grant?utm_source=instagram&utm_medium=reel&utm_campaign=apex_walkthrough&utm_content=site-tour-live";
 
-/** Full walkthrough VO — talks them through the site and the offer (~45s). */
 const VOICEOVER = `Deadline on the line and a blank page in front of you?
 
-This is Apex Capital Admin Services — apexcapitaladmin.com.
+This is Apex Capital Admin Services — apexcapitaladmin.com. You're looking at the real site.
 
-We build draft-ready grant, contract, and ops paperwork — fast.
+Homepage first — brand, promise, and Grant Mode up front. That's the money path: a funder-style narrative from your facts in about a minute.
 
-On the homepage, start with Grant Mode: a funder-style narrative from your facts in about a minute, twenty-four dollars, Stripe checkout.
+Open Grant Mode. See the engines built for grant writers. Then the narrative intake — sample data ready — Stripe checkout, draft on the page and in your email.
 
-Need more? Five hundred engines — NDAs, budgets, offers, ops playbooks — or ask Concierge to find the right one.
+How it works is simple: choose, intake, pay, draft. Optional human review when stakes are high.
 
-How it works: choose, intake, pay, draft. On-page and email in under sixty seconds. Optional forty-nine dollar human review when stakes are high.
+Browse the catalog — five hundred engines — or ask Concierge to find the right one.
 
-No fake testimonials. No funding promises. Just structure you can revise.
+About us: Texas operators, no fake testimonials, drafts not guarantees.
 
-Why us: speed, Stripe security, a full catalog, and a clear path when you're stuck.
+Why come to us: speed, Stripe security, a full catalog, and a clear path when you're stuck.
 
 Go to apexcapitaladmin.com slash go slash grant. Use the sample intake. See the draft.
 
 Apex. Draft-ready. Deadline-ready.`;
 
-const CAPTION = `Apex Capital Admin Services — the whole site, in one Reel.
+const CAPTION = `Watch the real Apex site — not a stock template.
 
-Grant Mode · 500 engines · Concierge finder
-Stripe checkout · draft in ~60s · optional +$49 human review
-No fake testimonials. Drafts, not guarantees.
+Homepage → Grant Mode → intake → How it works → 500 engines → why us.
 
-Why come to us: you need structure before the deadline — not another blank doc.
+$24 drafts · Stripe · ~60 seconds · optional +$49 human review
+No fake testimonials. Structure before the deadline.
 
 👉 ${LANDING}
 
 #ApexCapital #GrantMode #Nonprofit #GrantWriting #BusinessOps`;
-
-type Scene = {
-  badge: string;
-  title: string;
-  lines: string[];
-};
-
-const SCENES: Scene[] = [
-  {
-    badge: "APEX CAPITAL ADMIN",
-    title: "Stop the blank page.",
-    lines: ["Draft-ready grant, contract,", "and ops deliverables."],
-  },
-  {
-    badge: "GRANT MODE",
-    title: "Where the money starts.",
-    lines: ["Narrative from your facts ~60s.", "$24 · Stripe · sample intake."],
-  },
-  {
-    badge: "500 ENGINES + CONCIERGE",
-    title: "The full catalog.",
-    lines: ["NDAs · budgets · offers · ops.", "Or ask: Find an engine."],
-  },
-  {
-    badge: "HOW IT WORKS",
-    title: "Choose → Pay → Draft.",
-    lines: ["Under 60 seconds.", "Optional +$49 human review."],
-  },
-  {
-    badge: "WHY APEX",
-    title: "Speed. Trust. Path.",
-    lines: ["No fake testimonials.", "Structure before the deadline."],
-  },
-  {
-    badge: "START NOW",
-    title: "apexcapitaladmin.com/go/grant",
-    lines: ["Sample intake → see the draft.", "Then decide."],
-  },
-];
 
 function escapeXml(text: string): string {
   return text
@@ -125,54 +85,6 @@ function escapeXml(text: string): string {
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&apos;");
-}
-
-function resolveFont(): string {
-  for (const f of [
-    "C:/Windows/Fonts/seguisb.ttf",
-    "C:/Windows/Fonts/segoeuib.ttf",
-    "C:/Windows/Fonts/arialbd.ttf",
-  ]) {
-    if (fs.existsSync(f)) return f;
-  }
-  throw new Error("No bold font found");
-}
-
-async function renderScene(scene: Scene, index: number): Promise<string> {
-  const out = path.join(TMP, `scene-${index}.png`);
-  const lineSvg = scene.lines
-    .map(
-      (l, i) =>
-        `<text x="540" y="${980 + i * 78}" text-anchor="middle" font-family="Georgia, serif" font-size="42" fill="${CREAM}" opacity="0.92">${escapeXml(l)}</text>`,
-    )
-    .join("\n");
-
-  const svg = `
-<svg width="${WIDTH}" height="${HEIGHT}" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <radialGradient id="g" cx="50%" cy="30%" r="70%">
-      <stop offset="0%" stop-color="#15294a"/>
-      <stop offset="55%" stop-color="${NAVY}"/>
-      <stop offset="100%" stop-color="#070f1c"/>
-    </radialGradient>
-  </defs>
-  <rect width="${WIDTH}" height="${HEIGHT}" fill="url(#g)"/>
-  <rect x="72" y="72" width="48" height="2" fill="${GOLD}" opacity="0.7"/>
-  <rect x="72" y="72" width="2" height="48" fill="${GOLD}" opacity="0.7"/>
-  <rect x="${WIDTH - 120}" y="72" width="48" height="2" fill="${GOLD}" opacity="0.7"/>
-  <rect x="${WIDTH - 74}" y="72" width="2" height="48" fill="${GOLD}" opacity="0.7"/>
-  <circle cx="540" cy="260" r="64" fill="none" stroke="${GOLD}" stroke-width="2.5"/>
-  <text x="540" y="278" text-anchor="middle" font-family="Georgia, serif" font-size="72" fill="${CREAM}">A</text>
-  <text x="540" y="400" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="22" letter-spacing="6" fill="${GOLD}">${escapeXml(scene.badge)}</text>
-  <text x="540" y="560" text-anchor="middle" font-family="Georgia, serif" font-size="56" fill="${CREAM}">${escapeXml(scene.title)}</text>
-  <rect x="420" y="610" width="240" height="2" fill="${GOLD}" opacity="0.65"/>
-  ${lineSvg}
-  <text x="540" y="1780" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="24" fill="${GOLD}" opacity="0.85">apexcapitaladmin.com</text>
-  <text x="540" y="1840" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="18" fill="${CREAM}" opacity="0.45">${index + 1} / ${SCENES.length}</text>
-</svg>`.trim();
-
-  await sharp(Buffer.from(svg)).png().toFile(out);
-  return out;
 }
 
 async function synthesize(text: string, outFile: string): Promise<void> {
@@ -206,116 +118,248 @@ async function audioDuration(file: string): Promise<number> {
   return parseFloat(stdout.trim());
 }
 
+async function makeEndCard(): Promise<string> {
+  const out = path.join(TMP, "end-card.png");
+  const svg = `
+<svg width="${WIDTH}" height="${HEIGHT}" xmlns="http://www.w3.org/2000/svg">
+  <rect width="${WIDTH}" height="${HEIGHT}" fill="${NAVY}"/>
+  <circle cx="540" cy="520" r="70" fill="none" stroke="${GOLD}" stroke-width="3"/>
+  <text x="540" y="545" text-anchor="middle" font-family="Georgia, serif" font-size="78" fill="${CREAM}">A</text>
+  <text x="540" y="700" text-anchor="middle" font-family="Georgia, serif" font-size="52" fill="${CREAM}">Start Grant Mode</text>
+  <text x="540" y="780" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="34" fill="${GOLD}">apexcapitaladmin.com/go/grant</text>
+  <text x="540" y="900" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="28" fill="${CREAM}" opacity="0.8">Sample intake · see the draft · then decide</text>
+</svg>`.trim();
+  await sharp(Buffer.from(svg)).png().toFile(out);
+  return out;
+}
+
+async function makeLowerThird(label: string, file: string): Promise<string> {
+  const svg = `
+<svg width="${WIDTH}" height="220" xmlns="http://www.w3.org/2000/svg">
+  <rect x="60" y="40" width="960" height="140" rx="12" fill="${NAVY}" fill-opacity="0.88"/>
+  <rect x="60" y="40" width="10" height="140" fill="${GOLD}"/>
+  <text x="100" y="125" font-family="Segoe UI, Arial, sans-serif" font-size="42" fill="${CREAM}">${escapeXml(label)}</text>
+</svg>`.trim();
+  await sharp(Buffer.from(svg)).png().toFile(file);
+  return file;
+}
+
+function runCapture() {
+  console.log("Capturing live site (Playwright)…");
+  const r = spawnSync(
+    process.execPath,
+    [
+      path.join(ROOT, "node_modules", "tsx", "dist", "cli.mjs"),
+      path.join(ROOT, "scripts", "capture-site-walkthrough.ts"),
+    ],
+    { cwd: ROOT, stdio: "inherit", shell: false, env: process.env },
+  );
+  // Fallback: npx tsx
+  if (r.status !== 0) {
+    const r2 = spawnSync(
+      "npx",
+      ["tsx", "scripts/capture-site-walkthrough.ts"],
+      { cwd: ROOT, stdio: "inherit", shell: true, env: process.env },
+    );
+    if (r2.status !== 0) {
+      throw new Error("Site capture failed");
+    }
+  }
+}
+
 async function main() {
   fs.mkdirSync(TMP, { recursive: true });
   fs.mkdirSync(OUT_DIR, { recursive: true });
   fs.mkdirSync(PUBLIC_ADS, { recursive: true });
 
-  const mp4Out = path.join(OUT_DIR, `${SLUG}.mp4`);
-  const publicOut = path.join(PUBLIC_ADS, `${SLUG}.mp4`);
-  const audio = path.join(TMP, "vo.mp3");
-  const metaJson = path.join(PUBLIC_ADS, `${SLUG}.json`);
-
-  console.log("Rendering walkthrough scenes…");
-  const scenes: string[] = [];
-  for (let i = 0; i < SCENES.length; i++) {
-    scenes.push(await renderScene(SCENES[i], i));
+  if (DO_CAPTURE || !fs.existsSync(path.join(UI_DIR, "full-tour.webm"))) {
+    runCapture();
   }
 
+  const uiWebm = path.join(UI_DIR, "full-tour.webm");
+  if (!fs.existsSync(uiWebm)) {
+    throw new Error(`Missing UI capture at ${uiWebm}. Run with --capture.`);
+  }
+
+  const audio = path.join(TMP, "vo-live.mp3");
   console.log("Synthesizing voiceover…");
   await synthesize(VOICEOVER, audio);
-  const dur = await audioDuration(audio);
-  const per = Math.max(2.8, dur / SCENES.length);
-  console.log(`Audio ${dur.toFixed(1)}s · ~${per.toFixed(1)}s per scene`);
+  const voDur = await audioDuration(audio);
+  console.log(`VO ${voDur.toFixed(1)}s`);
 
-  // Build concat demuxer with timed stills (Ken Burns via zoompan briefly)
-  const font = resolveFont();
-  const localFont = path.join(TMP, "font.ttf");
-  fs.copyFileSync(font, localFont);
+  const uiMp4 = path.join(TMP, "ui-raw.mp4");
+  console.log("Converting UI capture…");
+  await execFileAsync("ffmpeg", [
+    "-y",
+    "-i",
+    uiWebm,
+    "-vf",
+    `scale=${WIDTH}:${HEIGHT}:force_original_aspect_ratio=decrease,pad=${WIDTH}:${HEIGHT}:(ow-iw)/2:(oh-ih)/2,fps=30,format=yuv420p`,
+    "-c:v",
+    "libx264",
+    "-preset",
+    "medium",
+    "-crf",
+    "20",
+    "-an",
+    uiMp4,
+  ]);
 
-  const listFile = path.join(TMP, "concat.txt");
-  const listLines: string[] = [];
-  for (let i = 0; i < scenes.length; i++) {
-    const d = i === scenes.length - 1 ? Math.max(per, dur - per * (scenes.length - 1)) : per;
-    listLines.push(`file '${scenes[i].replace(/\\/g, "/")}'`);
-    listLines.push(`duration ${d.toFixed(3)}`);
-  }
-  listLines.push(`file '${scenes[scenes.length - 1].replace(/\\/g, "/")}'`);
-  fs.writeFileSync(listFile, listLines.join("\n"), "utf8");
+  const uiDur = await audioDuration(uiMp4);
+  console.log(`UI ${uiDur.toFixed(1)}s`);
 
-  const silentVideo = path.join(TMP, "silent.mp4");
-  console.log("Encoding video…");
-  await execFileAsync(
-    "ffmpeg",
-    [
-      "-y",
-      "-f",
-      "concat",
-      "-safe",
-      "0",
-      "-i",
-      listFile,
-      "-vf",
-      `scale=${WIDTH}:${HEIGHT}:force_original_aspect_ratio=decrease,pad=${WIDTH}:${HEIGHT}:(ow-iw)/2:(oh-ih)/2,format=yuv420p`,
-      "-r",
-      "30",
-      "-pix_fmt",
-      "yuv420p",
-      "-c:v",
-      "libx264",
-      "-preset",
-      "medium",
-      "-crf",
-      "20",
-      silentVideo,
-    ],
-    { maxBuffer: 20 * 1024 * 1024 },
+  // Speed-adjust UI to roughly match VO (keep between 0.75x–1.35x)
+  let tempo = voDur / Math.max(uiDur, 0.1);
+  tempo = Math.min(1.35, Math.max(0.75, tempo));
+  const uiTimed = path.join(TMP, "ui-timed.mp4");
+  const pts = (1 / tempo).toFixed(4);
+  console.log(`Time-stretch UI x${tempo.toFixed(2)}`);
+  await execFileAsync("ffmpeg", [
+    "-y",
+    "-i",
+    uiMp4,
+    "-filter:v",
+    `setpts=${pts}*PTS`,
+    "-an",
+    uiTimed,
+  ]);
+
+  const endCard = await makeEndCard();
+  const endCardVid = path.join(TMP, "end.mp4");
+  await execFileAsync("ffmpeg", [
+    "-y",
+    "-loop",
+    "1",
+    "-i",
+    endCard,
+    "-t",
+    "3.2",
+    "-vf",
+    `scale=${WIDTH}:${HEIGHT},fps=30,format=yuv420p`,
+    "-c:v",
+    "libx264",
+    "-pix_fmt",
+    "yuv420p",
+    endCardVid,
+  ]);
+
+  // Lower-third labels burned at key timestamps (approximate)
+  const ltHome = await makeLowerThird("Homepage — Apex Capital Admin", path.join(TMP, "lt1.png"));
+  const ltGrant = await makeLowerThird("Grant Mode — money path", path.join(TMP, "lt2.png"));
+  const ltHow = await makeLowerThird("How it works", path.join(TMP, "lt3.png"));
+  const ltWhy = await makeLowerThird("Why Apex", path.join(TMP, "lt4.png"));
+
+  const labeled = path.join(TMP, "ui-labeled.mp4");
+  const fc = [
+    `[0:v][1:v]overlay=0:H-h-40:enable='between(t,0,8)'[v1]`,
+    `[v1][2:v]overlay=0:H-h-40:enable='between(t,8,22)'[v2]`,
+    `[v2][3:v]overlay=0:H-h-40:enable='between(t,22,40)'[v3]`,
+    `[v3][4:v]overlay=0:H-h-40:enable='between(t,40,999)'[vout]`,
+  ].join(";");
+  await execFileAsync("ffmpeg", [
+    "-y",
+    "-i",
+    uiTimed,
+    "-i",
+    ltHome,
+    "-i",
+    ltGrant,
+    "-i",
+    ltHow,
+    "-i",
+    ltWhy,
+    "-filter_complex",
+    fc,
+    "-map",
+    "[vout]",
+    "-c:v",
+    "libx264",
+    "-pix_fmt",
+    "yuv420p",
+    "-crf",
+    "20",
+    labeled,
+  ]);
+
+  const concatList = path.join(TMP, "concat-live.txt");
+  fs.writeFileSync(
+    concatList,
+    `file '${labeled.replace(/\\/g, "/")}'\nfile '${endCardVid.replace(/\\/g, "/")}'\n`,
   );
+  const silent = path.join(TMP, "silent-live.mp4");
+  await execFileAsync("ffmpeg", [
+    "-y",
+    "-f",
+    "concat",
+    "-safe",
+    "0",
+    "-i",
+    concatList,
+    "-c",
+    "copy",
+    silent,
+  ]);
 
-  await execFileAsync(
-    "ffmpeg",
-    [
-      "-y",
-      "-i",
-      silentVideo,
-      "-i",
-      audio,
-      "-c:v",
-      "copy",
-      "-c:a",
-      "aac",
-      "-b:a",
-      "128k",
-      "-shortest",
-      "-movflags",
-      "+faststart",
-      mp4Out,
-    ],
-    { maxBuffer: 20 * 1024 * 1024 },
-  );
+  const mp4Out = path.join(OUT_DIR, `${SLUG}.mp4`);
+  const publicOut = path.join(PUBLIC_ADS, `${SLUG}.mp4`);
+  console.log("Muxing VO…");
+  await execFileAsync("ffmpeg", [
+    "-y",
+    "-i",
+    silent,
+    "-i",
+    audio,
+    "-c:v",
+    "libx264",
+    "-pix_fmt",
+    "yuv420p",
+    "-profile:v",
+    "high",
+    "-level",
+    "4.0",
+    "-r",
+    "30",
+    "-b:v",
+    "3500k",
+    "-maxrate",
+    "3500k",
+    "-bufsize",
+    "7000k",
+    "-c:a",
+    "aac",
+    "-b:a",
+    "128k",
+    "-ar",
+    "44100",
+    "-ac",
+    "2",
+    "-shortest",
+    "-movflags",
+    "+faststart",
+    mp4Out,
+  ]);
 
   fs.copyFileSync(mp4Out, publicOut);
   fs.writeFileSync(
-    metaJson,
+    path.join(PUBLIC_ADS, `${SLUG}.json`),
     JSON.stringify(
       {
         slug: SLUG,
-        type: "site_walkthrough",
-        title: "Apex Capital — Full Site Walkthrough",
+        type: "site_walkthrough_live_ui",
+        title: "Apex Capital — Live Site Walkthrough",
         voiceover: VOICEOVER,
         caption: CAPTION,
         landing: LANDING,
-        scenes: SCENES.map((s) => s.badge),
+        source: "playwright_screen_recording",
         createdAt: new Date().toISOString(),
       },
       null,
       2,
     ),
-    "utf8",
   );
 
-  console.log("OK", publicOut);
-  console.log("CAPTION_FILE", metaJson);
+  const finalDur = await audioDuration(mp4Out);
+  console.log("OK", publicOut, `duration=${finalDur.toFixed(1)}s`);
 }
 
 main().catch((e) => {

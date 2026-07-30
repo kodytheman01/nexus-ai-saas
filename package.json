@@ -18,7 +18,8 @@
     "ig:publish": "tsx publish-instagram-queue.ts",
     "ads:wave1": "tsx scripts/launch-grant-premium.ts",
     "ads:wave1:live": "tsx scripts/sync-wave1-ads-public.ts",
-    "ads:walkthrough": "tsx scripts/generate-site-walkthrough-ad.ts",
+    "ads:walkthrough": "tsx scripts/generate-site-walkthrough-ad.ts --capture --force",
+    "ads:walkthrough:capture": "tsx scripts/capture-site-walkthrough.ts",
     "test:checkout-override": "tsx scripts/test-checkout-override.ts",
     "qa:smoke": "tsx scripts/qa-site-smoke.ts"
   },
@@ -48,6 +49,7 @@
     "eslint": "^9",
     "eslint-config-next": "16.2.12",
     "msedge-tts": "^2.0.7",
+    "playwright": "^1.62.0",
     "prisma": "^6.19.0",
     "sharp": "^0.35.3",
     "tailwindcss": "^4",
