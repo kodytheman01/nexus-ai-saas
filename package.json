@@ -18,6 +18,7 @@
     "ig:publish": "tsx publish-instagram-queue.ts",
     "ads:wave1": "tsx scripts/launch-grant-premium.ts",
     "ads:wave1:live": "tsx scripts/sync-wave1-ads-public.ts",
+    "ads:walkthrough": "tsx scripts/generate-site-walkthrough-ad.ts",
     "test:checkout-override": "tsx scripts/test-checkout-override.ts",
     "qa:smoke": "tsx scripts/qa-site-smoke.ts"
   },

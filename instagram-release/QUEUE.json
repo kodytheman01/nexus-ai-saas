@@ -7,8 +7,20 @@
     "preferGrantThenPremium": true,
     "note": "Manual upload until Meta tokens + public video hosting are set."
   },
-  "total": 45,
+  "total": 46,
   "items": [
+    {
+      "day": 0,
+      "slot": 0,
+      "scheduledLocal": "2026-07-30T07:56:36.705Z",
+      "slug": "apex-site-walkthrough",
+      "title": "Apex Capital — Full Site Walkthrough",
+      "videoPath": "C:\\Users\\kodyt\\Projects\\nexus-ai-saas\\public\\ads\\apex-site-walkthrough.mp4",
+      "caption": "Apex Capital Admin Services — the whole site, in one Reel.\n\nGrant Mode · 500 engines · Concierge finder\nStripe checkout · draft in ~60s · optional +$49 human review\nNo fake testimonials. Drafts, not guarantees.\n\nWhy come to us: you need structure before the deadline — not another blank doc.\n\n👉 https://apexcapitaladmin.com/go/grant?utm_source=instagram&utm_medium=reel&utm_campaign=apex_walkthrough&utm_content=site-tour\n\n#ApexCapital #GrantMode #Nonprofit #GrantWriting #BusinessOps",
+      "instagramUrl": "https://apexcapitaladmin.com/go/grant?utm_source=instagram&utm_medium=reel&utm_campaign=apex_walkthrough&utm_content=site-tour",
+      "status": "queued",
+      "tier": "brand"
+    },
     {
       "day": 1,
       "slot": 1,
