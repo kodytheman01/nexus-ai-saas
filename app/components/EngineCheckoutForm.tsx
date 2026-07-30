@@ -1,13 +1,21 @@
 "use client";
 
-import { FormEvent, useMemo, useState } from "react";
+import { FormEvent, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import {
   extractGAClientIdFromCookie,
   parseAttributionCookie,
   readCookie,
 } from "@/lib/attribution";
 import { HUMAN_REVIEW_USD } from "@/lib/offer";
+
+declare global {
+  interface Window {
+    gtag?: (...args: unknown[]) => void;
+    fbq?: (...args: unknown[]) => void;
+  }
+}
 
 export function EngineCheckoutForm({
   slug,
@@ -22,10 +30,21 @@ export function EngineCheckoutForm({
   priceInUSD: number;
   intakeExample?: string;
 }) {
-  const [userInput, setUserInput] = useState("");
+  const searchParams = useSearchParams();
+  const wantsSample =
+    searchParams.get("sample") === "1" || searchParams.get("sample") === "true";
+  const [userInput, setUserInput] = useState(() =>
+    wantsSample && intakeExample ? intakeExample : "",
+  );
   const [email, setEmail] = useState("");
   const [humanReview, setHumanReview] = useState(false);
   const [showExample, setShowExample] = useState(false);
+  const [usedSample, setUsedSample] = useState(
+    () => Boolean(wantsSample && intakeExample),
+  );
+  const [sampleKey, setSampleKey] = useState(
+    () => `${wantsSample}|${intakeExample ? "1" : "0"}`,
+  );
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
 
@@ -34,12 +53,52 @@ export function EngineCheckoutForm({
     [priceInUSD, humanReview],
   );
 
+  const ready = userInput.trim().length >= 10 && email.trim().includes("@");
+
+  const nextSampleKey = `${wantsSample}|${intakeExample ? "1" : "0"}`;
+  if (nextSampleKey !== sampleKey) {
+    setSampleKey(nextSampleKey);
+    if (wantsSample && intakeExample) {
+      setUserInput(intakeExample);
+      setUsedSample(true);
+    }
+  }
+
+  function applySample() {
+    if (!intakeExample) return;
+    setUserInput(intakeExample);
+    setUsedSample(true);
+    setShowExample(false);
+    setError("");
+  }
+
+  useEffect(() => {
+    if (searchParams.get("focus") !== "intake") return;
+    requestAnimationFrame(() => {
+      document
+        .getElementById("intake")
+        ?.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  }, [searchParams]);
+
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
     setSubmitting(true);
     setError("");
 
     try {
+      window.fbq?.("track", "InitiateCheckout", {
+        content_ids: [slug],
+        content_type: "product",
+        value: total,
+        currency: "USD",
+      });
+      window.gtag?.("event", "begin_checkout", {
+        currency: "USD",
+        value: total,
+        items: [{ item_id: slug, price: priceInUSD }],
+      });
+
       const cookies = document.cookie;
       const attribution = {
         ...parseAttributionCookie(cookies),
@@ -72,6 +131,25 @@ export function EngineCheckoutForm({
 
   return (
     <form onSubmit={onSubmit} className="space-y-4">
+      {intakeExample ? (
+        <div className="rounded-lg border border-[#c9a227]/40 bg-[#c9a227]/10 p-3">
+          <p className="text-xs font-bold text-[#0b1f3a]">
+            Fastest path to checkout
+          </p>
+          <p className="mt-1 text-[11px] leading-relaxed text-[#1c2230]/65">
+            Load a solid sample intake, swap in your facts, add email, pay.
+            {usedSample ? " Sample loaded — edit anything before paying." : ""}
+          </p>
+          <button
+            type="button"
+            onClick={applySample}
+            className="mt-2 w-full rounded-lg bg-[#c9a227] px-3 py-2.5 text-sm font-bold text-[#0b1f3a] transition hover:bg-[#e0b93a]"
+          >
+            {usedSample ? "Reload sample intake" : "Use sample intake — 1 tap"}
+          </button>
+        </div>
+      ) : null}
+
       <div>
         <label className="mb-1 block text-xs font-bold uppercase tracking-wider text-[#0b1f3a]/60">
           Email (required for delivery)
@@ -110,10 +188,7 @@ export function EngineCheckoutForm({
             </pre>
             <button
               type="button"
-              onClick={() => {
-                setUserInput(intakeExample);
-                setShowExample(false);
-              }}
+              onClick={applySample}
               className="mt-2 text-[11px] font-bold text-[#0b1f3a] underline underline-offset-2"
             >
               Use this as a starting point
@@ -161,12 +236,16 @@ export function EngineCheckoutForm({
       ) : null}
       <button
         type="submit"
-        disabled={submitting || userInput.trim().length < 10}
+        disabled={submitting || !ready}
         className="w-full rounded-lg bg-[#0b1f3a] px-4 py-3 text-sm font-bold text-[#f7f5f0] shadow-sm transition hover:bg-[#14335c] disabled:bg-[#0b1f3a]/30"
       >
         {submitting
           ? "Starting checkout..."
-          : `Continue to secure checkout — $${total}`}
+          : ready
+            ? `Continue to secure checkout — $${total}`
+            : userInput.trim().length < 10
+              ? "Add intake (or tap sample) to continue"
+              : "Add your email to continue"}
       </button>
       <p className="text-center text-[11px] text-[#1c2230]/45">
         Payments processed by Stripe. We never store card numbers.

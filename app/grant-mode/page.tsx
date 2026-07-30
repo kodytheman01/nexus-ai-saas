@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { FLAGSHIP_ENGINES } from "@/config/flagship";
+import { GRANT_NARRATIVE_SLUG } from "@/config/conversion";
 import { HUMAN_REVIEW_USD } from "@/lib/offer";
 
 const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://apexcapitaladmin.com";
@@ -36,6 +37,7 @@ const faqs = [
 ];
 
 const grantFlagships = FLAGSHIP_ENGINES.filter((f) => f.badge === "Grant Mode");
+const moneyHref = `/engine/${GRANT_NARRATIVE_SLUG}?sample=1&focus=intake`;
 
 function GrantFaqJsonLd() {
   const data = {
@@ -60,53 +62,63 @@ export default function GrantModePage() {
     <div>
       <GrantFaqJsonLd />
       <section className="border-b border-[#0b1f3a]/10 bg-[#0b1f3a]">
-        <div className="mx-auto max-w-6xl px-4 py-16 sm:py-20">
+        <div className="mx-auto max-w-6xl px-4 py-14 sm:py-20">
           <p className="mb-4 text-xs font-semibold uppercase tracking-[0.25em] text-[#c9a227]">
             Grant Mode
           </p>
           <h1 className="max-w-3xl font-display text-4xl font-semibold tracking-tight text-[#f7f5f0] sm:text-5xl">
-            First-pass grant drafts that respect how funders read.
+            Blank FOA page → funder-style narrative draft.
           </h1>
           <p className="mt-4 max-w-2xl text-base leading-relaxed text-white/70">
-            Narrative, outline, budget allocation, and compliance engines —
-            built for grant writers, program managers, and nonprofit ops who
-            need structure before polish.
+            Built for grant writers and nonprofit ops on a deadline. Pay once,
+            get a first-pass draft in about a minute — then edit with your team
+            or add human review (+${HUMAN_REVIEW_USD}).
           </p>
-          <div className="mt-8 flex flex-wrap gap-3">
+          <div className="mt-8 flex flex-wrap items-center gap-3">
             <Link
-              href="/engine/grant-proposal-narrative-generator"
+              href={moneyHref}
               className="rounded-lg bg-[#c9a227] px-5 py-3 text-sm font-bold text-[#0b1f3a] transition hover:bg-[#e0b93a]"
             >
-              Start with narrative draft
+              Start narrative draft — $24
             </Link>
             <Link
-              href="/engine/nonprofit-budget-allocation-calculator"
+              href="/engine/nonprofit-budget-allocation-calculator?sample=1&focus=intake"
               className="rounded-lg border border-white/25 bg-white/5 px-5 py-3 text-sm font-bold text-[#f7f5f0] transition hover:bg-white/10"
             >
-              Pair with budget narrative
+              Or budget narrative — $19
             </Link>
           </div>
           <p className="mt-4 max-w-xl text-xs leading-relaxed text-white/50">
-            One primary path for ads: narrative engine. Outline, budget, and
-            compliance stay below for specialists who already know the workflow.
+            Sample intake loads in one tap. Swap your facts, add email, checkout
+            on Stripe. Ads should deep-link via /go/grant.
           </p>
         </div>
       </section>
 
       <section className="border-b border-[#0b1f3a]/10 bg-[#f7f5f0]">
-        <div className="mx-auto max-w-6xl px-4 py-14">
-          <h2 className="font-display text-2xl font-semibold text-[#0b1f3a]">
-            Core Grant Mode engines
-          </h2>
-          <p className="mt-2 max-w-2xl text-sm text-[#1c2230]/65">
-            Each page includes an illustrative sample excerpt and anonymized
-            scenario. No fake testimonials. No guaranteed awards.
-          </p>
-          <div className="mt-8 grid gap-4 sm:grid-cols-2">
+        <div className="mx-auto max-w-6xl px-4 py-12">
+          <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
+            <div>
+              <h2 className="font-display text-2xl font-semibold text-[#0b1f3a]">
+                Core Grant Mode engines
+              </h2>
+              <p className="mt-1 max-w-2xl text-sm text-[#1c2230]/65">
+                Primary path is narrative. Outline, budget, and compliance stay
+                for specialists who already know the workflow.
+              </p>
+            </div>
+            <Link
+              href={moneyHref}
+              className="text-sm font-semibold text-[#0b1f3a] underline decoration-[#c9a227] decoration-2 underline-offset-2"
+            >
+              Go to checkout →
+            </Link>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2">
             {grantFlagships.map((f) => (
               <Link
                 key={f.slug}
-                href={`/engine/${f.slug}`}
+                href={`/engine/${f.slug}?sample=1&focus=intake`}
                 className="rounded-lg border border-[#0b1f3a]/10 bg-white p-5 transition hover:border-[#c9a227]/50"
               >
                 <span className="text-[10px] font-bold uppercase tracking-wider text-[#8a6d13]">
@@ -116,10 +128,10 @@ export default function GrantModePage() {
                   {f.hook}
                 </h3>
                 <p className="mt-2 text-xs leading-relaxed text-[#1c2230]/60">
-                  {f.scenarioTitle}. {f.scenarioBody}
+                  {f.scenarioTitle}
                 </p>
                 <p className="mt-3 text-xs font-bold text-[#0b1f3a]">
-                  View sample →
+                  Open with sample intake →
                 </p>
               </Link>
             ))}
@@ -128,7 +140,7 @@ export default function GrantModePage() {
       </section>
 
       <section className="border-b border-[#0b1f3a]/10 bg-white">
-        <div className="mx-auto max-w-3xl px-4 py-14">
+        <div className="mx-auto max-w-3xl px-4 py-12">
           <h2 className="font-display text-2xl font-semibold text-[#0b1f3a]">
             How specialists typically use Grant Mode
           </h2>
@@ -152,15 +164,21 @@ export default function GrantModePage() {
             </li>
             <li>
               <span className="font-semibold text-[#0b1f3a]">5. Optional human review.</span>{" "}
-              Add +${HUMAN_REVIEW_USD} when the draft will go to a board or near-final
-              filing.
+              Add +${HUMAN_REVIEW_USD} when the draft will go to a board or
+              near-final filing.
             </li>
           </ol>
+          <Link
+            href={moneyHref}
+            className="mt-8 inline-flex rounded-lg bg-[#0b1f3a] px-5 py-3 text-sm font-bold text-[#f7f5f0] transition hover:bg-[#14335c]"
+          >
+            Start narrative checkout — $24
+          </Link>
         </div>
       </section>
 
       <section className="bg-[#f7f5f0]">
-        <div className="mx-auto max-w-3xl px-4 py-14">
+        <div className="mx-auto max-w-3xl px-4 py-12">
           <h2 className="font-display text-2xl font-semibold text-[#0b1f3a]">
             FAQ for grant specialists
           </h2>

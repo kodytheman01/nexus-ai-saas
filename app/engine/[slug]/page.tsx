@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import { db } from "@/lib/db";
 import { EngineCheckoutForm } from "@/app/components/EngineCheckoutForm";
+import { EnginePixelEvents } from "@/app/components/EnginePixelEvents";
 import { ProductJsonLd } from "@/app/components/JsonLd";
 import { getFlagship } from "@/config/flagship";
 import {
@@ -96,6 +98,11 @@ export default async function EnginePage({ params, searchParams }: Props) {
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-10 sm:py-12">
+      <EnginePixelEvents
+        slug={engine.slug}
+        name={name}
+        priceInUSD={engine.priceInUSD}
+      />
       <ProductJsonLd
         name={name}
         description={engine.description}
@@ -150,13 +157,21 @@ export default async function EnginePage({ params, searchParams }: Props) {
                 1 regen token
               </li>
             </ul>
-            <EngineCheckoutForm
-              slug={engine.slug}
-              inputLabel={engine.inputLabel}
-              inputPlaceholder={engine.inputPlaceholder}
-              priceInUSD={engine.priceInUSD}
-              intakeExample={intakeExample}
-            />
+            <Suspense
+              fallback={
+                <div className="rounded-lg border border-[#0b1f3a]/10 bg-[#f7f5f0] p-4 text-sm text-[#1c2230]/50">
+                  Loading checkout…
+                </div>
+              }
+            >
+              <EngineCheckoutForm
+                slug={engine.slug}
+                inputLabel={engine.inputLabel}
+                inputPlaceholder={engine.inputPlaceholder}
+                priceInUSD={engine.priceInUSD}
+                intakeExample={intakeExample}
+              />
+            </Suspense>
             <p className="mt-4 text-[11px] leading-relaxed text-[#1c2230]/55">
               Not a substitute for a licensed attorney, CPA, grant officer, or
               your program team. Drafts are first-pass structure

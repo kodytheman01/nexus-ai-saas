@@ -1,15 +1,33 @@
 import Link from "next/link";
 import { Suspense } from "react";
+import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
 import { FLAGSHIP_ENGINES } from "@/config/flagship";
+import {
+  grantMoneyLandingPath,
+  isGrantPaidTraffic,
+} from "@/config/conversion";
 import { ANONYMIZED_WINS } from "@/config/wins";
 import { displayTitle } from "@/lib/display";
 import { HUMAN_REVIEW_USD } from "@/lib/offer";
 import { ClientCatalogView } from "./components/ClientCatalogView";
+import { FindEnginePrompt } from "./components/FindEnginePrompt";
 
 export const dynamic = "force-dynamic";
 
-export default async function CatalogPage() {
+type Props = {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+};
+
+export default async function CatalogPage({ searchParams }: Props) {
+  const sp = await searchParams;
+
+  // Paid Grant Mode ads should not dump into the 500-engine wall —
+  // send them straight to the money engine with sample intake ready.
+  if (isGrantPaidTraffic(sp)) {
+    redirect(grantMoneyLandingPath(sp));
+  }
+
   const engines = await db.calculationEngine.findMany({
     where: { isActive: true },
     orderBy: { title: "asc" },
@@ -55,12 +73,12 @@ export default async function CatalogPage() {
               {`500 specialized engines. Stripe-secured checkout. Instant on-page delivery plus email copy. Optional human specialist review (+$${HUMAN_REVIEW_USD}) when the stakes are high.`}
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
-              <a
-                href="/grant-mode"
+              <Link
+                href="/engine/grant-proposal-narrative-generator?sample=1&focus=intake"
                 className="rounded-lg bg-[#c9a227] px-5 py-3 text-sm font-bold text-[#0b1f3a] transition hover:bg-[#e0b93a]"
               >
                 Start with Grant Mode
-              </a>
+              </Link>
               <Link
                 href="/?view=all#catalog"
                 className="rounded-lg border border-white/25 bg-white/5 px-5 py-3 text-sm font-bold text-[#f7f5f0] transition hover:bg-white/10"
@@ -68,6 +86,10 @@ export default async function CatalogPage() {
                 Browse all 500 engines
               </Link>
             </div>
+          </div>
+
+          <div className="mt-10 max-w-xl">
+            <FindEnginePrompt variant="dark" />
           </div>
 
           <div className="mt-12 grid grid-cols-2 gap-3 sm:grid-cols-4">
@@ -125,7 +147,7 @@ export default async function CatalogPage() {
               {grantFlagships.map((f) => (
                 <Link
                   key={f.slug}
-                  href={`/engine/${f.slug}`}
+                  href={`/engine/${f.slug}?sample=1&focus=intake`}
                   className="group rounded-lg border border-[#0b1f3a]/10 bg-white p-4 transition hover:border-[#c9a227]/50 hover:shadow-sm"
                 >
                   <span className="text-[10px] font-bold uppercase tracking-wider text-[#8a6d13]">

@@ -2,7 +2,8 @@
  * Launch Wave 1: Grant Mode flagships + premium creatives.
  *
  * Packages upload-ready folders (does NOT post to Meta/TikTok — needs your accounts).
- * Grant creatives land on /grant-mode; premium lands on their engine pages.
+ * Grant creatives land on /go/grant → narrative engine + sample intake.
+ * Premium lands on their engine pages.
  *
  * Usage:
  *   npx tsx scripts/launch-grant-premium.ts
@@ -64,10 +65,11 @@ function videoFor(slug: string): { path: string; tier: "premium" | "standard" } 
 }
 
 function grantCaption(title: string, url: string): string {
-  return `Grant Mode — ${title}
+  return `Grant deadline? Get a funder-style narrative draft in ~60 seconds.
 
-Funder-style narrative drafts, FOA outlines, budget language, and compliance checklists.
-Optional human review when the stakes are high.
+${title} — $24 · Stripe checkout · optional human review.
+
+Tap → sample intake loads → swap your facts → pay.
 
 👉 ${url}
 
@@ -126,7 +128,7 @@ function main() {
     const title = ad?.engineTitle || slug;
     const campaign = isGrant ? "apex_wave1_grant" : "apex_wave1_premium";
     const landingBase = isGrant
-      ? `${SITE}/grant-mode`
+      ? `${SITE}/go/grant`
       : ad?.targetUrl || `${SITE}/engine/${slug}`;
 
     const links = {
@@ -241,7 +243,7 @@ function main() {
 Generated: ${new Date().toISOString()}
 
 ## What's in this pack
-- **${GRANT_SLUGS.length} Grant Mode** creatives → land on \`${SITE}/grant-mode\`
+- **${GRANT_SLUGS.length} Grant Mode** creatives → land on \`${SITE}/go/grant\` (narrative + sample intake)
 - **${premium.length} Premium** creatives → land on engine pages
 - **${ordered.length} total** upload kits in this folder
 - **TODAY/** = first 4 posts ready to upload now
