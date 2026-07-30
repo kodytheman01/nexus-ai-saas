@@ -11,6 +11,8 @@ import {
   ENTITY,
   FOA_COVERAGE_CHECKLIST,
   GRANT_PAIRINGS,
+  HOUSING_LEGAL_DISCLAIMER,
+  NOTICE_PRE_SERVE_CHECKLIST,
 } from "@/config/trust";
 import { displayTitle, isGrantRelated } from "@/lib/display";
 import { getIntakeExample } from "@/lib/intake-examples";
@@ -83,6 +85,12 @@ export default async function EnginePage({ params, searchParams }: Props) {
       title: engine.title,
       category: engine.category,
     });
+  const isNotice =
+    flagship?.badge === "Notice Mode" ||
+    flagship?.badge === "Tenant Mode" ||
+    engine.category === "landlord-notice" ||
+    engine.category === "tenant-letter" ||
+    engine.category === "landlord-ops";
   const pairings = isGrant ? (GRANT_PAIRINGS[engine.slug] ?? []) : [];
 
   const related = await db.calculationEngine.findMany({
@@ -123,6 +131,14 @@ export default async function EnginePage({ params, searchParams }: Props) {
             <span aria-hidden>/</span>
             <Link href="/#grant-mode" className="hover:text-[#0b1f3a]">
               Grant Mode
+            </Link>
+          </>
+        ) : null}
+        {isNotice ? (
+          <>
+            <span aria-hidden>/</span>
+            <Link href="/notice-mode" className="hover:text-[#0b1f3a]">
+              {flagship?.badge === "Tenant Mode" ? "Tenant Mode" : "Notice Mode"}
             </Link>
           </>
         ) : null}
@@ -173,12 +189,12 @@ export default async function EnginePage({ params, searchParams }: Props) {
               />
             </Suspense>
             <p className="mt-4 text-[11px] leading-relaxed text-[#1c2230]/55">
-              Not a substitute for a licensed attorney, CPA, grant officer, or
-              your program team. Drafts are first-pass structure
-              {isGrant
-                ? " — verify against the live FOA before submit"
-                : " — verify with your counsel or program team before relying on them"}
-              . Support: {ENTITY.email} · {ENTITY.supportHours}.
+              {isNotice
+                ? HOUSING_LEGAL_DISCLAIMER
+                : isGrant
+                  ? "Not a substitute for a licensed attorney, CPA, grant officer, or your program team. Drafts are first-pass structure — verify against the live FOA before submit."
+                  : "Not a substitute for a licensed attorney, CPA, or your program team. Drafts are first-pass structure — verify with counsel before relying on them."}{" "}
+              Support: {ENTITY.email} · {ENTITY.supportHours}.
             </p>
           </div>
         </div>
@@ -280,6 +296,35 @@ export default async function EnginePage({ params, searchParams }: Props) {
               </p>
               <ul className="mt-3 space-y-2">
                 {FOA_COVERAGE_CHECKLIST.map((row) => (
+                  <li
+                    key={row.section}
+                    className="flex gap-2 text-sm leading-relaxed text-[#1c2230]/75"
+                  >
+                    <span className="mt-0.5 shrink-0 font-mono text-[10px] text-[#c9a227]">
+                      [ ]
+                    </span>
+                    <span>
+                      <span className="font-semibold text-[#0b1f3a]">
+                        {row.section}.
+                      </span>{" "}
+                      {row.tip}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : null}
+
+          {isNotice ? (
+            <div className="mb-8 rounded-lg border border-[#0b1f3a]/10 bg-white p-5">
+              <h2 className="text-xs font-bold uppercase tracking-wider text-[#0b1f3a]/50">
+                Before you serve or send
+              </h2>
+              <p className="mt-1 text-xs text-[#1c2230]/55">
+                {HOUSING_LEGAL_DISCLAIMER}
+              </p>
+              <ul className="mt-3 space-y-2">
+                {NOTICE_PRE_SERVE_CHECKLIST.map((row) => (
                   <li
                     key={row.section}
                     className="flex gap-2 text-sm leading-relaxed text-[#1c2230]/75"

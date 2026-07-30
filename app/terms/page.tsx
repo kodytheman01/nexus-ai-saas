@@ -19,7 +19,7 @@ export default function TermsPage() {
         Terms of Service
       </h1>
       <p className="mt-3 text-xs text-[#1c2230]/50">
-        Last updated: July 28, 2026
+        Last updated: July 30, 2026
       </p>
 
       <div className="mt-10 space-y-8">
@@ -37,12 +37,23 @@ export default function TermsPage() {
             software. Unless you purchase the optional human specialist review
             add-on, outputs are not reviewed by a licensed professional prior
             to delivery. Even with human review, outputs remain informational
-            drafts and do not constitute legal, financial, tax, medical, or
-            certified engineering advice, and no advisor-client, fiduciary, or
-            professional relationship is created by using this service. You
-            should have any deliverable reviewed by a qualified, licensed
-            professional before relying on it for a regulated or consequential
-            decision.
+            drafts and do not constitute legal, financial, tax, medical,
+            housing, or certified engineering advice, and no advisor-client,
+            fiduciary, or professional relationship is created by using this
+            service. You should have any deliverable reviewed by a qualified,
+            licensed professional before relying on it for a regulated or
+            consequential decision.
+          </p>
+          <p className="mt-3 text-sm leading-relaxed text-[#1c2230]/70">
+            <strong className="text-[#0b1f3a]">Landlord-tenant / Notice Mode:</strong>{" "}
+            Notice and letter engines produce drafts only. They are not legal
+            advice, not court-ready filings, and not a substitute for an
+            attorney. Landlord-tenant laws (including notice periods, required
+            wording, and service methods) vary by state and city. You must
+            confirm compliance locally before serving, filing, or taking adverse
+            action. Rent withholding and similar remedies are illegal or
+            restricted in many jurisdictions — do not rely on a draft as
+            permission to act.
           </p>
         </section>
 

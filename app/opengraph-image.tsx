@@ -44,7 +44,7 @@ export default function OpenGraphImage() {
               maxWidth: 980,
             }}
           >
-            Draft-ready grant, contract, and ops deliverables.
+            Draft-ready grants, notices, contracts, and ops.
           </div>
           <div
             style={{
@@ -54,8 +54,8 @@ export default function OpenGraphImage() {
               fontFamily: "sans-serif",
             }}
           >
-            500 engines · Stripe checkout · Instant draft + email · Optional
-            human review
+            Grant Mode · Notice Mode · 500+ engines · Stripe · optional human
+            review
           </div>
         </div>
         <div

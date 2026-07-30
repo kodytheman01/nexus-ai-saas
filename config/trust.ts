@@ -72,3 +72,29 @@ export const ENTITY = {
   retention:
     "Order records (email, engine, deliverable reference) are kept as needed for support, accounting, and legal obligations. Intake text is retained only as long as needed to generate, deliver, and support your order, then may be deleted or anonymized.",
 };
+
+/** Housing / landlord-tenant — required on Notice Mode surfaces. */
+export const HOUSING_LEGAL_DISCLAIMER =
+  "Drafts only — not legal advice and not a substitute for an attorney. Landlord-tenant laws vary by state and city. Confirm notices, timelines, and required language with local counsel or a licensed housing professional before you serve or file anything.";
+
+/** Alias used by Notice Mode pages. */
+export const LEGAL_DISCLAIMER = HOUSING_LEGAL_DISCLAIMER;
+
+export const NOTICE_PRE_SERVE_CHECKLIST: { section: string; tip: string }[] = [
+  {
+    section: "Notice period",
+    tip: "Confirm statutory / local days for pay-or-quit, vacate, or cure",
+  },
+  {
+    section: "Required wording",
+    tip: "Match any mandatory state or city language before serving",
+  },
+  {
+    section: "Service method",
+    tip: "Personal delivery, certified mail, posting — follow local rules",
+  },
+  {
+    section: "Counsel check",
+    tip: "Have an attorney or housing professional review when stakes are high",
+  },
+];

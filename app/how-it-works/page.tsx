@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 const steps = [
   {
     title: "Choose an engine",
-    body: "Browse 500 specialized engines — or start in Grant Mode for narrative, outline, budget, and compliance drafts.",
+    body: "Browse 500+ specialized engines — or start in Grant Mode (narratives) or Notice Mode (landlord/tenant letters).",
   },
   {
     title: "Write a real intake",
@@ -92,10 +92,10 @@ export default function HowItWorksPage() {
             Start Grant Mode
           </Link>
           <Link
-            href="/#catalog"
+            href="/notice-mode"
             className="rounded-lg border border-[#0b1f3a]/15 px-4 py-2.5 text-sm font-bold text-[#0b1f3a]"
           >
-            Browse catalog
+            Start Notice Mode
           </Link>
         </div>
       </div>

@@ -6,6 +6,8 @@ import { FLAGSHIP_ENGINES } from "@/config/flagship";
 import {
   grantMoneyLandingPath,
   isGrantPaidTraffic,
+  noticeMoneyLandingPath,
+  isNoticePaidTraffic,
 } from "@/config/conversion";
 import { ANONYMIZED_WINS } from "@/config/wins";
 import { displayTitle } from "@/lib/display";
@@ -22,8 +24,11 @@ type Props = {
 export default async function CatalogPage({ searchParams }: Props) {
   const sp = await searchParams;
 
-  // Paid Grant Mode ads should not dump into the 500-engine wall —
+  // Paid Mode ads should not dump into the 500-engine wall —
   // send them straight to the money engine with sample intake ready.
+  if (isNoticePaidTraffic(sp)) {
+    redirect(noticeMoneyLandingPath(sp));
+  }
   if (isGrantPaidTraffic(sp)) {
     redirect(grantMoneyLandingPath(sp));
   }
@@ -48,6 +53,9 @@ export default async function CatalogPage({ searchParams }: Props) {
   })).filter((f) => f.engine);
 
   const grantFlagships = flagships.filter((f) => f.badge === "Grant Mode");
+  const noticeFlagships = flagships.filter(
+    (f) => f.badge === "Notice Mode" || f.badge === "Tenant Mode",
+  );
 
   return (
     <>
@@ -66,24 +74,24 @@ export default async function CatalogPage({ searchParams }: Props) {
               Apex Capital Admin Services
             </p>
             <h1 className="font-display text-4xl font-semibold tracking-tight text-[#f7f5f0] sm:text-5xl">
-              Draft-ready grant, contract, and ops deliverables — from intake to
+              Draft-ready grants, notices, contracts, and ops — from intake to
               output.
             </h1>
             <p className="mt-4 text-base leading-relaxed text-white/70">
-              {`500 specialized engines. Stripe-secured checkout. Instant on-page delivery plus email copy. Optional human specialist review (+$${HUMAN_REVIEW_USD}) when the stakes are high.`}
+              {`500+ specialized engines. Stripe-secured checkout. Instant on-page delivery plus email copy. Optional human specialist review (+$${HUMAN_REVIEW_USD}) when the stakes are high.`}
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link
                 href="/engine/grant-proposal-narrative-generator?sample=1&focus=intake"
                 className="rounded-lg bg-[#c9a227] px-5 py-3 text-sm font-bold text-[#0b1f3a] transition hover:bg-[#e0b93a]"
               >
-                Start with Grant Mode
+                Start Grant Mode
               </Link>
               <Link
-                href="/?view=all#catalog"
+                href="/engine/pay-or-quit-notice-drafter?sample=1&focus=intake"
                 className="rounded-lg border border-white/25 bg-white/5 px-5 py-3 text-sm font-bold text-[#f7f5f0] transition hover:bg-white/10"
               >
-                Browse all 500 engines
+                Start Notice Mode
               </Link>
             </div>
           </div>
@@ -166,14 +174,59 @@ export default async function CatalogPage({ searchParams }: Props) {
         </section>
       ) : null}
 
+      {noticeFlagships.length > 0 ? (
+        <section
+          id="notice-mode"
+          className="scroll-mt-24 border-b border-[#0b1f3a]/10 bg-white"
+        >
+          <div className="mx-auto max-w-6xl px-4 py-10">
+            <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
+              <div className="max-w-xl">
+                <p className="text-xs font-semibold uppercase tracking-[0.25em] text-[#8a6d13]">
+                  Notice Mode · Tenant Mode
+                </p>
+                <h2 className="mt-1 font-display text-xl font-semibold text-[#0b1f3a] sm:text-2xl">
+                  Landlord notices and tenant letters — same Apex draft engine
+                </h2>
+              </div>
+              <Link
+                href="/notice-mode"
+                className="text-sm font-semibold text-[#0b1f3a] underline decoration-[#c9a227] decoration-2 underline-offset-2"
+              >
+                Full guide →
+              </Link>
+            </div>
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+              {noticeFlagships.map((f) => (
+                <Link
+                  key={f.slug}
+                  href={`/engine/${f.slug}?sample=1&focus=intake`}
+                  className="group rounded-lg border border-[#0b1f3a]/10 bg-[#f7f5f0] p-4 transition hover:border-[#c9a227]/50 hover:shadow-sm"
+                >
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#8a6d13]">
+                    {f.badge}
+                  </span>
+                  <h3 className="mt-1.5 font-display text-sm font-semibold text-[#0b1f3a] group-hover:text-[#14335c]">
+                    {displayTitle(f.engine!.title)}
+                  </h3>
+                  <p className="mt-2 font-mono text-sm font-bold text-[#0b1f3a]">
+                    ${f.engine!.priceInUSD}
+                  </p>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+      ) : null}
+
       <div id="catalog" className="scroll-mt-24 mx-auto max-w-6xl px-4 py-10">
         <div className="mb-5">
           <h2 className="font-display text-2xl font-semibold text-[#0b1f3a]">
             Catalog — flagships first
           </h2>
           <p className="mt-1 text-sm text-[#1c2230]/60">
-            Start with Flagships. Tap All or search anytime — all{" "}
-            {engines.length || 500} engines stay available.
+            Start with Grant Mode or Notice Mode. Tap All or search anytime —
+            all {engines.length || 500} engines stay available.
           </p>
         </div>
         {engines.length === 0 ? (

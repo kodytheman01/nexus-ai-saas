@@ -12,11 +12,11 @@ export const OPEN_CONCIERGE_EVENT = "apex-open-concierge";
 
 const QUICK_PROMPTS = [
   "I need a grant proposal narrative",
-  "Mutual NDA for a vendor",
+  "Pay or quit / rent demand notice",
+  "Tenant repair request letter",
   "Nonprofit budget allocation",
-  "Sales proposal for a client",
-  "Privacy policy draft",
-  "Startup runway / burn rate",
+  "Mutual NDA for a vendor",
+  "Notice to vacate",
 ];
 
 function getSessionId() {
@@ -228,13 +228,22 @@ export function SupportChatWidget() {
                     </span>
                   </Link>
                 ))}
-                <Link
-                  href="/grant-mode"
-                  className="block text-[11px] font-semibold text-[#0b1f3a] underline decoration-[#c9a227] underline-offset-2"
-                  onClick={() => setOpen(false)}
-                >
-                  Or open Grant Mode hub →
-                </Link>
+                <div className="flex flex-wrap gap-x-3 gap-y-1">
+                  <Link
+                    href="/grant-mode"
+                    className="text-[11px] font-semibold text-[#0b1f3a] underline decoration-[#c9a227] underline-offset-2"
+                    onClick={() => setOpen(false)}
+                  >
+                    Grant Mode →
+                  </Link>
+                  <Link
+                    href="/notice-mode"
+                    className="text-[11px] font-semibold text-[#0b1f3a] underline decoration-[#c9a227] underline-offset-2"
+                    onClick={() => setOpen(false)}
+                  >
+                    Notice Mode →
+                  </Link>
+                </div>
               </div>
             ) : null}
             <div ref={bottomRef} />

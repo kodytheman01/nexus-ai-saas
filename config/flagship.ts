@@ -285,6 +285,158 @@ Access, correction, and deletion requests via the contact email below.`,
       "Attorney markup starting point",
     ],
   },
+  // —— Notice Mode (landlords) ——
+  {
+    slug: "pay-or-quit-notice-drafter",
+    badge: "Notice Mode",
+    hook: "Draft a pay-or-quit / rent demand notice from your lease facts in minutes.",
+    scenarioTitle: "Scenario: Small landlord, 10 days unpaid rent",
+    scenarioBody:
+      "An owner with two duplexes needed a first-pass rent demand before calling counsel. They entered lease dates, amount owed, and property address — and got structured notice language to review against state rules.",
+    sampleExcerpt: `## Pay or Quit — Draft (illustrative)
+
+TO: [Tenant Name(s)]
+PROPERTY: [Street], [City], [State] [ZIP]
+LEASE DATED: [Date]
+
+You are hereby notified that rent in the amount of $[Amount] is past due for the period [Start]–[End].
+
+DEMAND: Pay the full amount owed OR quit and surrender the premises within the time required by applicable law (confirm local deadline).
+
+PAYMENT INSTRUCTIONS: [Method / address]
+OWNER/AGENT: [Name] · [Phone] · [Email]
+
+This draft is not legal advice. Confirm statutory wording and service method for your jurisdiction.`,
+    whatYouGet: [
+      "Structured rent-demand / pay-or-quit draft",
+      "Fields mapped from your intake",
+      "Reminder to verify state/city timelines",
+      "Optional human review before you serve",
+    ],
+  },
+  {
+    slug: "notice-to-vacate-drafter",
+    badge: "Notice Mode",
+    hook: "Generate a clear notice to vacate / non-renewal draft from your dates.",
+    scenarioTitle: "Scenario: Month-to-month ending",
+    scenarioBody:
+      "A landlord ending a month-to-month needed clean non-renewal language and a move-out date line — without starting from a blank Word doc.",
+    sampleExcerpt: `## Notice to Vacate — Draft (illustrative)
+
+Effective [Date], tenancy at [Address] will terminate. Please vacate and return keys by [Time] on [Date].
+Forwarding address requested for deposit accounting.
+State/city notice period: CONFIRM LOCALLY.`,
+    whatYouGet: [
+      "Vacate / non-renewal draft",
+      "Key return + deposit cue lines",
+      "Jurisdiction confirmation checklist",
+    ],
+  },
+  {
+    slug: "lease-renewal-offer-letter",
+    badge: "Notice Mode",
+    hook: "Offer a renewal term, rent, and deadline in one clean letter draft.",
+    scenarioTitle: "Scenario: Renewal with modest increase",
+    scenarioBody:
+      "Owner wanted a professional renewal offer with new rent and response deadline before peak season.",
+    sampleExcerpt: `## Lease Renewal Offer — Draft
+
+We offer to renew your lease at [Address] for [Term] beginning [Start] at $[New Rent]/mo.
+Please accept in writing by [Deadline].`,
+    whatYouGet: ["Renewal offer draft", "Rent + term + deadline block"],
+  },
+  {
+    slug: "entry-notice-drafter",
+    badge: "Notice Mode",
+    hook: "Draft an entry / inspection notice with date, window, and purpose.",
+    scenarioTitle: "Scenario: HVAC inspection",
+    scenarioBody:
+      "Property manager needed a polite entry notice with a 24–48h window cue for local rules.",
+    sampleExcerpt: `## Entry Notice — Draft
+
+We will enter [Address] on [Date] between [Start]–[End] for [Purpose].
+Contact: [Phone].`,
+    whatYouGet: ["Entry notice draft", "Purpose + time window fields"],
+  },
+  {
+    slug: "security-deposit-itemization-letter",
+    badge: "Notice Mode",
+    hook: "Itemize deductions and return timing in a deposit accounting draft.",
+    scenarioTitle: "Scenario: Move-out damage dispute risk",
+    scenarioBody:
+      "Landlord needed a clear itemization letter before mailing the deposit balance.",
+    sampleExcerpt: `## Deposit Itemization — Draft
+
+Original deposit: $[X]
+Deductions: [Line items]
+Balance due to tenant: $[Y] by [Date — confirm statute].`,
+    whatYouGet: ["Itemization draft", "Deadline reminder to verify statute"],
+  },
+  // —— Tenant Mode ——
+  {
+    slug: "tenant-repair-request-letter",
+    badge: "Tenant Mode",
+    hook: "Document habitability / repair requests in a dated written draft.",
+    scenarioTitle: "Scenario: Persistent leak",
+    scenarioBody:
+      "Tenant needed a firm, dated repair request to create a paper trail before escalation.",
+    sampleExcerpt: `## Repair Request — Draft
+
+I request repair of [Issue] at [Address], first reported [Date].
+Please confirm schedule within [X] days.`,
+    whatYouGet: ["Repair request draft", "Paper-trail dated structure"],
+  },
+  {
+    slug: "tenant-rent-withholding-notice",
+    badge: "Tenant Mode",
+    hook: "Draft careful rent-withholding / escrow language — with strong legal warnings.",
+    scenarioTitle: "Scenario: Unresolved habitability claim",
+    scenarioBody:
+      "Tenant exploring options needed a first-pass notice structure and a clear warning to get local legal aid.",
+    sampleExcerpt: `## Notice — Draft ONLY
+
+WARNING: Rent withholding is illegal or restricted in many places. This is not advice.
+Issue: [Habitability claim]. Requested cure by [Date].`,
+    whatYouGet: [
+      "Cautious notice scaffold",
+      "Hardcoded legal warning block",
+      "Prompt to contact legal aid / counsel",
+    ],
+  },
+  {
+    slug: "roommate-agreement-outline",
+    badge: "Tenant Mode",
+    hook: "Outline rent split, chores, guests, and move-out rules for roommates.",
+    scenarioTitle: "Scenario: Three roommates, one lease",
+    scenarioBody:
+      "Group needed a shared-house outline before anyone moved in.",
+    sampleExcerpt: `## Roommate Outline
+Rent share · utilities · quiet hours · guests · security deposit · exit notice.`,
+    whatYouGet: ["Roommate agreement outline", "Conflict-prevention sections"],
+  },
+  {
+    slug: "tenant-move-out-checklist",
+    badge: "Tenant Mode",
+    hook: "Generate a move-out checklist to protect deposit return odds.",
+    scenarioTitle: "Scenario: First apartment exit",
+    scenarioBody:
+      "Renter wanted a punch-list before walkthrough photos.",
+    sampleExcerpt: `## Move-Out Checklist
+Clean · patch · photos · keys · forwarding address · utilities.`,
+    whatYouGet: ["Move-out checklist draft", "Photo / keys reminders"],
+  },
+  {
+    slug: "lease-break-request-letter",
+    badge: "Tenant Mode",
+    hook: "Draft a lease-break / early termination request with reasons and dates.",
+    scenarioTitle: "Scenario: Job relocation",
+    scenarioBody:
+      "Tenant needed a professional early-termination request letter draft.",
+    sampleExcerpt: `## Early Termination Request — Draft
+Request to terminate lease at [Address] effective [Date] due to [Reason].
+Propose [Buyout / replacement / military clause — confirm eligibility].`,
+    whatYouGet: ["Lease-break request draft", "Negotiation cue lines"],
+  },
 ];
 
 export const FLAGSHIP_SLUGS = FLAGSHIP_ENGINES.map((f) => f.slug);

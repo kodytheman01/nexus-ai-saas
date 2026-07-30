@@ -1,12 +1,14 @@
 import { PrismaClient } from "@prisma/client";
 import { ENGINES_SEED_DATA } from "../config/engines";
+import { NOTICE_ENGINES_SEED } from "../config/notice-engines";
 
 const prisma = new PrismaClient();
 
 async function main() {
+  const all = [...ENGINES_SEED_DATA, ...NOTICE_ENGINES_SEED];
   console.log("Seeding engines...");
 
-  for (const engine of ENGINES_SEED_DATA) {
+  for (const engine of all) {
     await prisma.calculationEngine.upsert({
       where: { slug: engine.slug },
       update: {
@@ -35,7 +37,9 @@ async function main() {
     });
   }
 
-  console.log(`Seeded ${ENGINES_SEED_DATA.length} engines.`);
+  console.log(
+    `Seeded ${all.length} engines (${ENGINES_SEED_DATA.length} core + ${NOTICE_ENGINES_SEED.length} notice/tenant).`,
+  );
 }
 
 main()

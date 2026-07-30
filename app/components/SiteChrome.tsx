@@ -28,10 +28,13 @@ export function SiteNav() {
           <Link href="/grant-mode" className="transition hover:text-[#0b1f3a]">
             Grant Mode
           </Link>
+          <Link href="/notice-mode" className="transition hover:text-[#0b1f3a]">
+            Notice Mode
+          </Link>
           <Link href="/how-it-works" className="hidden transition hover:text-[#0b1f3a] sm:inline">
             How it works
           </Link>
-          <Link href="/#catalog" className="transition hover:text-[#0b1f3a]">
+          <Link href="/#catalog" className="hidden transition hover:text-[#0b1f3a] lg:inline">
             Engines
           </Link>
           <Link href="/about" className="transition hover:text-[#0b1f3a]">
@@ -55,9 +58,10 @@ export function DisclaimerFooter() {
         <p>
           <strong className="text-white/90">Disclaimer:</strong> Outputs are
           informational drafts for structural reference. They are not licensed
-          legal, financial, tax, medical, or engineering advice, and no
-          advisor-client relationship is created. Have a qualified professional
-          review before regulated use.
+          legal, financial, tax, medical, housing, or engineering advice, and no
+          advisor-client relationship is created. Landlord-tenant and grant
+          rules vary by jurisdiction — confirm with a qualified professional
+          before serving, filing, or submitting.
         </p>
         <p className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-white/40">
           <span>
@@ -66,6 +70,9 @@ export function DisclaimerFooter() {
           </span>
           <Link href="/grant-mode" className="transition hover:text-white/70">
             Grant Mode
+          </Link>
+          <Link href="/notice-mode" className="transition hover:text-white/70">
+            Notice Mode
           </Link>
           <Link href="/how-it-works" className="transition hover:text-white/70">
             How it works

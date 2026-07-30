@@ -19,9 +19,10 @@ const sans = DM_Sans({
 });
 
 const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://apexcapitaladmin.com";
-const siteTitle = "Apex Capital Admin Services | Automated Advisory & Deliverable Engines";
+const siteTitle =
+  "Apex Capital Admin Services | Grants, Notices, Contracts & Ops Drafts";
 const siteDescription =
-  "Apex Capital Admin Services — 500 specialized engines that turn your intake into structured drafts. Stripe checkout, instant delivery, optional human review.";
+  "Apex Capital Admin Services — draft-ready grants, landlord/tenant notices, contracts, and ops. 500+ engines. Stripe checkout, instant delivery, optional human review. Not legal advice.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(appUrl),
@@ -36,6 +37,9 @@ export const metadata: Metadata = {
     "grant narrative generator",
     "FOA outline",
     "nonprofit budget narrative",
+    "pay or quit notice",
+    "notice to vacate",
+    "tenant repair request",
     "NDA generator",
     "automated deliverables",
     "Stripe checkout engines",

@@ -208,6 +208,28 @@ export default function GrantModePage() {
           </div>
         </div>
       </section>
+
+      <section className="border-t border-[#0b1f3a]/10 bg-white">
+        <div className="mx-auto max-w-3xl px-4 py-12">
+          <p className="text-xs font-semibold uppercase tracking-[0.25em] text-[#8a6d13]">
+            Also on Apex
+          </p>
+          <h2 className="mt-2 font-display text-2xl font-semibold text-[#0b1f3a]">
+            Need a landlord or tenant letter instead?
+          </h2>
+          <p className="mt-2 text-sm leading-relaxed text-[#1c2230]/70">
+            Notice Mode covers pay-or-quit, vacate, renewal, deposit, and tenant
+            repair / lease-break drafts — same Stripe checkout and delivery as
+            Grant Mode. Drafts only; not legal advice.
+          </p>
+          <Link
+            href="/notice-mode"
+            className="mt-6 inline-flex rounded-lg bg-[#0b1f3a] px-5 py-3 text-sm font-bold text-[#f7f5f0] transition hover:bg-[#14335c]"
+          >
+            Open Notice Mode →
+          </Link>
+        </div>
+      </section>
     </div>
   );
 }
