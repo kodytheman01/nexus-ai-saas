@@ -3,6 +3,7 @@ import { ENGINES_SEED_DATA } from "../config/engines";
 import { NOTICE_ENGINES_SEED } from "../config/notice-engines";
 import { BID_ENGINES_SEED } from "../config/bid-engines";
 import { OFFER_ENGINES_SEED } from "../config/offer-engines";
+import { normalizeEngineSeed } from "../lib/engine-quality";
 
 const prisma = new PrismaClient();
 
@@ -12,8 +13,9 @@ async function main() {
     ...NOTICE_ENGINES_SEED,
     ...BID_ENGINES_SEED,
     ...OFFER_ENGINES_SEED,
-  ];
-  console.log("Seeding engines...");
+  ].map(normalizeEngineSeed);
+
+  console.log("Seeding engines (quality-normalized)...");
 
   for (const engine of all) {
     await prisma.calculationEngine.upsert({
@@ -45,7 +47,7 @@ async function main() {
   }
 
   console.log(
-    `Seeded ${all.length} engines (${ENGINES_SEED_DATA.length} core + ${NOTICE_ENGINES_SEED.length} notice/tenant + ${BID_ENGINES_SEED.length} bid + ${OFFER_ENGINES_SEED.length} offer).`,
+    `Seeded ${all.length} engines (${ENGINES_SEED_DATA.length} core + ${NOTICE_ENGINES_SEED.length} notice/tenant + ${BID_ENGINES_SEED.length} bid + ${OFFER_ENGINES_SEED.length} offer) with quality floor.`,
   );
 }
 

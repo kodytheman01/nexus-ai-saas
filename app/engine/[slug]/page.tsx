@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { db } from "@/lib/db";
+import { canonicalEngineSlug } from "@/config/engine-redirects";
 import { EngineCheckoutForm } from "@/app/components/EngineCheckoutForm";
 import { EnginePixelEvents } from "@/app/components/EnginePixelEvents";
 import { ProductJsonLd } from "@/app/components/JsonLd";
@@ -65,6 +66,17 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function EnginePage({ params, searchParams }: Props) {
   const { slug } = await params;
   const sp = await searchParams;
+
+  const canonical = canonicalEngineSlug(slug);
+  if (canonical) {
+    const q = new URLSearchParams();
+    q.set("sample", "1");
+    q.set("focus", "intake");
+    if (sp.canceled === "1") q.set("canceled", "1");
+    if (sp.state) q.set("state", String(sp.state));
+    redirect(`/engine/${canonical}?${q.toString()}`);
+  }
+
   const engine = await db.calculationEngine.findUnique({ where: { slug } });
   if (!engine || !engine.isActive) notFound();
 

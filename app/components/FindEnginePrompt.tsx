@@ -42,8 +42,8 @@ export function FindEnginePrompt({
             : "mt-1 text-xs leading-relaxed text-[#1c2230]/60"
         }
       >
-        Grant narrative, NDA, budget, proposal, privacy policy — the site AI
-        routes you to the right checkout.
+        Grant, notice, bid, offer, NDA — the site AI routes you to the right
+        Mode checkout with sample intake.
       </p>
       <div className="mt-3 flex flex-wrap gap-2">
         <button
@@ -66,18 +66,40 @@ export function FindEnginePrompt({
               : "rounded-lg border border-[#0b1f3a]/15 px-4 py-2 text-xs font-bold text-[#0b1f3a] hover:border-[#c9a227]/40"
           }
         >
-          Grant narrative
+          Grant
         </button>
         <button
           type="button"
-          onClick={() => openConcierge("I need an NDA")}
+          onClick={() => openConcierge("Pay or quit / rent demand notice")}
           className={
             dark
               ? "rounded-lg border border-white/25 px-4 py-2 text-xs font-bold text-[#f7f5f0] hover:bg-white/10"
               : "rounded-lg border border-[#0b1f3a]/15 px-4 py-2 text-xs font-bold text-[#0b1f3a] hover:border-[#c9a227]/40"
           }
         >
-          NDA
+          Notice
+        </button>
+        <button
+          type="button"
+          onClick={() => openConcierge("Contractor proposal / bid letter")}
+          className={
+            dark
+              ? "rounded-lg border border-white/25 px-4 py-2 text-xs font-bold text-[#f7f5f0] hover:bg-white/10"
+              : "rounded-lg border border-[#0b1f3a]/15 px-4 py-2 text-xs font-bold text-[#0b1f3a] hover:border-[#c9a227]/40"
+          }
+        >
+          Bid
+        </button>
+        <button
+          type="button"
+          onClick={() => openConcierge("Job offer letter draft")}
+          className={
+            dark
+              ? "rounded-lg border border-white/25 px-4 py-2 text-xs font-bold text-[#f7f5f0] hover:bg-white/10"
+              : "rounded-lg border border-[#0b1f3a]/15 px-4 py-2 text-xs font-bold text-[#0b1f3a] hover:border-[#c9a227]/40"
+          }
+        >
+          Offer
         </button>
       </div>
     </div>

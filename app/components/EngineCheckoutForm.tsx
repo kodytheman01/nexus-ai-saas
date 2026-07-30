@@ -17,6 +17,10 @@ declare global {
   }
 }
 
+const DRAFT_KEY = (slug: string) => `apex_intake_draft_${slug}`;
+const EMAIL_KEY = "apex_checkout_email";
+const MIN_INTAKE = 40;
+
 export function EngineCheckoutForm({
   slug,
   inputLabel,
@@ -33,18 +37,14 @@ export function EngineCheckoutForm({
   const searchParams = useSearchParams();
   const wantsSample =
     searchParams.get("sample") === "1" || searchParams.get("sample") === "true";
-  const [userInput, setUserInput] = useState(() =>
-    wantsSample && intakeExample ? intakeExample : "",
-  );
+  const canceled = searchParams.get("canceled") === "1";
+
+  const [userInput, setUserInput] = useState("");
   const [email, setEmail] = useState("");
   const [humanReview, setHumanReview] = useState(false);
   const [showExample, setShowExample] = useState(false);
-  const [usedSample, setUsedSample] = useState(
-    () => Boolean(wantsSample && intakeExample),
-  );
-  const [sampleKey, setSampleKey] = useState(
-    () => `${wantsSample}|${intakeExample ? "1" : "0"}`,
-  );
+  const [usedSample, setUsedSample] = useState(false);
+  const [hydrated, setHydrated] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
 
@@ -53,24 +53,56 @@ export function EngineCheckoutForm({
     [priceInUSD, humanReview],
   );
 
-  const ready = userInput.trim().length >= 10 && email.trim().includes("@");
+  const intakeOk = userInput.trim().length >= MIN_INTAKE;
+  const ready = intakeOk && email.trim().includes("@");
 
-  const nextSampleKey = `${wantsSample}|${intakeExample ? "1" : "0"}`;
-  if (nextSampleKey !== sampleKey) {
-    setSampleKey(nextSampleKey);
-    if (wantsSample && intakeExample) {
-      setUserInput(intakeExample);
-      setUsedSample(true);
+  // Hydrate: restored draft (cancel) → sample → empty
+  useEffect(() => {
+    if (hydrated) return;
+    let nextInput = "";
+    let nextEmail = "";
+    let sample = false;
+    try {
+      const saved = sessionStorage.getItem(DRAFT_KEY(slug));
+      const savedEmail = sessionStorage.getItem(EMAIL_KEY);
+      if (savedEmail) nextEmail = savedEmail;
+      if (canceled && saved && saved.trim().length >= 10) {
+        nextInput = saved;
+      } else if (wantsSample && intakeExample) {
+        nextInput = intakeExample;
+        sample = true;
+      } else if (intakeExample && !saved) {
+        // Auto-load specialist sample so every engine starts strong
+        nextInput = intakeExample;
+        sample = true;
+      } else if (saved) {
+        nextInput = saved;
+      }
+    } catch {
+      if (intakeExample) {
+        nextInput = intakeExample;
+        sample = true;
+      }
     }
-  }
+    setUserInput(nextInput);
+    setEmail(nextEmail);
+    setUsedSample(sample);
+    setHydrated(true);
+  }, [hydrated, slug, canceled, wantsSample, intakeExample]);
 
-  function applySample() {
-    if (!intakeExample) return;
-    setUserInput(intakeExample);
-    setUsedSample(true);
-    setShowExample(false);
-    setError("");
-  }
+  useEffect(() => {
+    if (!hydrated) return;
+    try {
+      if (userInput.trim().length >= 10) {
+        sessionStorage.setItem(DRAFT_KEY(slug), userInput);
+      }
+      if (email.trim().includes("@")) {
+        sessionStorage.setItem(EMAIL_KEY, email.trim());
+      }
+    } catch {
+      // ignore quota / private mode
+    }
+  }, [userInput, email, slug, hydrated]);
 
   useEffect(() => {
     if (searchParams.get("focus") !== "intake") return;
@@ -81,8 +113,22 @@ export function EngineCheckoutForm({
     });
   }, [searchParams]);
 
+  function applySample() {
+    if (!intakeExample) return;
+    setUserInput(intakeExample);
+    setUsedSample(true);
+    setShowExample(false);
+    setError("");
+  }
+
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
+    if (!intakeOk) {
+      setError(
+        `Add a bit more detail (${MIN_INTAKE}+ characters) or tap “Use sample intake”.`,
+      );
+      return;
+    }
     setSubmitting(true);
     setError("");
 
@@ -129,16 +175,26 @@ export function EngineCheckoutForm({
     }
   }
 
+  if (!hydrated) {
+    return (
+      <div className="rounded-lg border border-[#0b1f3a]/10 bg-[#f7f5f0] p-4 text-sm text-[#1c2230]/50">
+        Loading intake…
+      </div>
+    );
+  }
+
   return (
     <form onSubmit={onSubmit} className="space-y-4">
       {intakeExample ? (
         <div className="rounded-lg border border-[#c9a227]/40 bg-[#c9a227]/10 p-3">
           <p className="text-xs font-bold text-[#0b1f3a]">
-            Fastest path to checkout
+            Specialist sample loaded — swap your facts
           </p>
           <p className="mt-1 text-[11px] leading-relaxed text-[#1c2230]/65">
-            Load a solid sample intake, swap in your facts, add email, pay.
-            {usedSample ? " Sample loaded — edit anything before paying." : ""}
+            Every engine starts with a filled example. Edit names, dates, and
+            amounts, add email, pay.
+            {usedSample ? " Sample is in the box below." : ""}
+            {canceled ? " Your prior draft was restored after cancel." : ""}
           </p>
           <button
             type="button"
@@ -204,8 +260,8 @@ export function EngineCheckoutForm({
           className="w-full rounded-lg border border-[#0b1f3a]/15 bg-[#f7f5f0] px-3 py-3 text-sm leading-relaxed text-[#0b1f3a] outline-none focus:ring-2 focus:ring-[#c9a227]/40"
         />
         <p className="mt-1.5 text-[11px] leading-relaxed text-[#8a6d13]">
-          Do not paste SSNs, medical PHI, passwords, API keys, or other secrets.
-          Intake is processed to generate your draft.
+          Aim for {MIN_INTAKE}+ characters of real facts. Do not paste SSNs,
+          medical PHI, passwords, API keys, or other secrets.
         </p>
       </div>
 
@@ -222,7 +278,7 @@ export function EngineCheckoutForm({
           </span>
           <span className="mt-0.5 block text-[11px] leading-relaxed text-[#1c2230]/65">
             After generation, Apex ops reviews your draft within 1 business day
-            and emails notes. Recommended for grant filings, contracts, and
+            and emails notes. Recommended for filings, notices, contracts, and
             board-facing docs. Does not create an attorney–client or CPA
             relationship.
           </span>
@@ -243,8 +299,8 @@ export function EngineCheckoutForm({
           ? "Starting checkout..."
           : ready
             ? `Continue to secure checkout — $${total}`
-            : userInput.trim().length < 10
-              ? "Add intake (or tap sample) to continue"
+            : !intakeOk
+              ? "Add more intake detail (or reload sample)"
               : "Add your email to continue"}
       </button>
       <p className="text-center text-[11px] text-[#1c2230]/45">

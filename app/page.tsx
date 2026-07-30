@@ -95,16 +95,28 @@ export default async function CatalogPage({ searchParams }: Props) {
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link
-                href="/engine/grant-proposal-narrative-generator?sample=1&focus=intake"
+                href="/go/grant"
                 className="rounded-lg bg-[#c9a227] px-5 py-3 text-sm font-bold text-[#0b1f3a] transition hover:bg-[#e0b93a]"
               >
-                Start Grant Mode
+                Grant Mode
               </Link>
               <Link
-                href="/engine/pay-or-quit-notice-drafter?sample=1&focus=intake"
+                href="/go/notice"
                 className="rounded-lg border border-white/25 bg-white/5 px-5 py-3 text-sm font-bold text-[#f7f5f0] transition hover:bg-white/10"
               >
-                Start Notice Mode
+                Notice Mode
+              </Link>
+              <Link
+                href="/go/bid"
+                className="rounded-lg border border-white/25 bg-white/5 px-5 py-3 text-sm font-bold text-[#f7f5f0] transition hover:bg-white/10"
+              >
+                Bid Mode
+              </Link>
+              <Link
+                href="/go/offer"
+                className="rounded-lg border border-white/25 bg-white/5 px-5 py-3 text-sm font-bold text-[#f7f5f0] transition hover:bg-white/10"
+              >
+                Offer Mode
               </Link>
             </div>
           </div>

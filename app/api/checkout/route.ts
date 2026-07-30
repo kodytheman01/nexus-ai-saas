@@ -33,9 +33,12 @@ export async function POST(request: Request) {
       );
     }
 
-    if (userInput.length < 10) {
+    if (userInput.length < 40) {
       return NextResponse.json(
-        { error: "Please provide a more detailed input (10+ characters)." },
+        {
+          error:
+            "Please provide a more detailed input (40+ characters). Use the sample intake and swap in your facts.",
+        },
         { status: 400 },
       );
     }
