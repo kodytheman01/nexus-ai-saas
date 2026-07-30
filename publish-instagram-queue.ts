@@ -149,8 +149,36 @@ async function main() {
   const now = Date.now();
   const gapMs = (queue.rules?.minGapMinutes || 120) * 60 * 1000;
 
+  // Heal drift: if a slug was posted outside the queue (or status was reset),
+  // keep QUEUE + posted-slugs aligned so --force-due / retries cannot re-post.
+  let healed = 0;
+  for (const item of queue.items) {
+    const alreadyPosted =
+      posted.has(item.slug) ||
+      item.status === "posted" ||
+      Boolean(item.mediaId);
+    if (!alreadyPosted) continue;
+    if (!posted.has(item.slug)) {
+      posted.add(item.slug);
+      healed++;
+    }
+    if (item.status !== "posted") {
+      item.status = "posted";
+      healed++;
+    }
+  }
+  if (healed > 0) {
+    savePosted(posted);
+    fs.writeFileSync(QUEUE_FILE, JSON.stringify(queue, null, 2));
+    console.log(`Healed ${healed} already-posted slug sync(s) before selecting due items.`);
+  }
+
   const due = queue.items.filter((item) => {
-    if (item.status === "posted" || posted.has(item.slug)) return false;
+    // Never re-post a slug that is already in posted-slugs, marked posted,
+    // or already has a mediaId — even with --force-due.
+    if (item.status === "posted" || posted.has(item.slug) || item.mediaId) {
+      return false;
+    }
     if (args.forceDue) return true;
     return new Date(item.scheduledLocal).getTime() <= now;
   });
