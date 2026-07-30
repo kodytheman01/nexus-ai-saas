@@ -17,6 +17,13 @@ const TIMEOUT_MS = 20_000;
 const STATIC_PATHS = [
   "/",
   "/grant-mode",
+  "/notice-mode",
+  "/bid-mode",
+  "/offer-mode",
+  "/go/grant",
+  "/go/notice",
+  "/go/bid",
+  "/go/offer",
   "/about",
   "/privacy",
   "/terms",
@@ -39,6 +46,14 @@ const FLAGSHIP_SLUGS = [
   "startup-runway-and-burn-rate-calculator",
   "privacy-policy-generator",
   "ironclad-contract-factory",
+  "pay-or-quit-notice-drafter",
+  "notice-to-vacate-drafter",
+  "security-deposit-itemization-letter",
+  "tenant-repair-request-letter",
+  "contractor-proposal-drafter",
+  "change-order-drafter",
+  "job-offer-letter-drafter",
+  "offer-rejection-letter",
 ];
 
 type Result = {
@@ -76,8 +91,12 @@ async function fetchOne(path: string): Promise<Result> {
       if (path === "/" && !body.includes("Flagships") && !body.includes("flagships")) {
         notes.push("homepage missing Flagships chip text");
       }
-      if (path === "/" && !body.includes("500 specialized engines")) {
-        notes.push("homepage missing restored hero copy");
+      if (
+        path === "/" &&
+        !body.includes("500 specialized engines") &&
+        !body.includes("500+ specialized engines")
+      ) {
+        notes.push("homepage missing engines hero copy");
       }
       if (
         path.startsWith("/engine/nda") &&
