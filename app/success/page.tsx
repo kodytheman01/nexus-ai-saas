@@ -45,10 +45,11 @@ function SuccessContent() {
           if (data.engineSlug) setEngineSlug(String(data.engineSlug));
           clearInterval(pollInterval);
 
-          // Client-side purchase events, fired once, in addition to the
-          // server-side GA4/Meta events sent from the Stripe webhook. The
-          // shared eventID (`sessionId`) lets Meta dedup pixel vs. CAPI.
-          if (!conversionFired.current) {
+          // Client-side purchase events only after a real Stripe Checkout
+          // session (not demo_ / cs_test_mock_ unpaid overrides). Server-side
+          // GA4/Meta events already fire from the Stripe webhook on
+          // checkout.session.completed; shared eventID dedups Meta pixel vs CAPI.
+          if (!conversionFired.current && data.paid === true) {
             conversionFired.current = true;
             const value = typeof data.priceInUSD === "number" ? data.priceInUSD : undefined;
             window.gtag?.("event", "purchase", {

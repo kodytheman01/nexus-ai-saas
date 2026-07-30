@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { displayTitle } from "@/lib/display";
 import { HUMAN_REVIEW_USD } from "@/lib/offer";
+import { isConfirmedStripeCheckoutSession } from "@/lib/stripe-session";
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -28,11 +29,16 @@ export async function GET(request: Request) {
     });
 
     if (!run) {
-      return NextResponse.json({ status: "pending" });
+      return NextResponse.json({
+        status: "pending",
+        paid: isConfirmedStripeCheckoutSession(sessionId),
+      });
     }
 
     const basePrice = run.engine?.priceInUSD ?? 0;
     const totalValue = basePrice + (run.humanReview ? HUMAN_REVIEW_USD : 0);
+    // Demo / checkout-override runs complete without Stripe money — never treat as paid.
+    const paid = isConfirmedStripeCheckoutSession(sessionId);
 
     return NextResponse.json({
       status: run.status,
@@ -44,6 +50,7 @@ export async function GET(request: Request) {
         : undefined,
       priceInUSD: totalValue,
       humanReview: run.humanReview,
+      paid,
     });
   } catch (error) {
     const message =
