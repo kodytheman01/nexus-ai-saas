@@ -300,15 +300,21 @@ export default async function EnginePage({ params, searchParams }: Props) {
               />
             </Suspense>
             <p className="mt-4 text-[11px] leading-relaxed text-[#1c2230]/55">
-              {isNotice || isTenant
+              {isNotice || isTenant || isEviction
                 ? HOUSING_LEGAL_DISCLAIMER
-                : isGrant
-                  ? "Not a substitute for a licensed attorney, CPA, grant officer, or your program team. Drafts are first-pass structure — verify against the live FOA before submit."
-                  : isPolicy || isOffer
-                    ? "Not employment counsel. Drafts are first-pass structure — have HR/counsel review before issuing or publishing."
-                    : isCollect
-                      ? "Not legal advice or licensed debt collection. Have counsel review before sending demand letters."
-                      : "Not a substitute for a licensed attorney, CPA, or your program team. Drafts are first-pass structure — verify with counsel before relying on them."}{" "}
+                : isLien
+                  ? "Not legal advice. Lien deadlines and forms are state-specific — counsel/recorder review required before serving or recording."
+                  : isGrant
+                    ? "Not a substitute for a licensed attorney, CPA, grant officer, or your program team. Drafts are first-pass structure — verify against the live FOA before submit."
+                    : isPolicy || isOffer
+                      ? "Not employment counsel. Drafts are first-pass structure — have HR/counsel review before issuing or publishing."
+                      : isCollect
+                        ? "Not legal advice or licensed debt collection. Have counsel review before sending demand letters."
+                        : isCreator
+                          ? "Not entertainment or IP counsel. Have counsel review before signing or canceling deals."
+                          : isDeal
+                            ? "Not transactional or securities counsel. Binding terms need licensed review."
+                            : "Not a substitute for a licensed attorney, CPA, or your program team. Drafts are first-pass structure — verify with counsel before relying on them."}{" "}
               Support: {ENTITY.email} · {ENTITY.supportHours}.
             </p>
           </div>
