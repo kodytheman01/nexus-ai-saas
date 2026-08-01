@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+import { MODE_AD_CATALOG } from "@/config/mode-catalog";
 import { db } from "@/lib/db";
 
 const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://apexcapitaladmin.com";
@@ -15,6 +16,21 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     changeFrequency: "weekly",
     priority: 0.7,
   }));
+
+  const modeEntries: MetadataRoute.Sitemap = MODE_AD_CATALOG.flatMap((m) => [
+    {
+      url: `${appUrl}${m.hubPath}`,
+      lastModified: new Date(),
+      changeFrequency: "weekly" as const,
+      priority: 0.9,
+    },
+    {
+      url: `${appUrl}${m.goPath}`,
+      lastModified: new Date(),
+      changeFrequency: "weekly" as const,
+      priority: 0.95,
+    },
+  ]);
 
   return [
     {
@@ -60,54 +76,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "monthly",
       priority: 0.5,
     },
-    {
-      url: `${appUrl}/grant-mode`,
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 0.9,
-    },
-    {
-      url: `${appUrl}/go/grant`,
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 0.95,
-    },
-    {
-      url: `${appUrl}/notice-mode`,
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 0.9,
-    },
-    {
-      url: `${appUrl}/bid-mode`,
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 0.9,
-    },
-    {
-      url: `${appUrl}/offer-mode`,
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 0.9,
-    },
-    {
-      url: `${appUrl}/go/notice`,
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 0.95,
-    },
-    {
-      url: `${appUrl}/go/bid`,
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 0.95,
-    },
-    {
-      url: `${appUrl}/go/offer`,
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 0.95,
-    },
+    ...modeEntries,
     {
       url: `${appUrl}/how-it-works`,
       lastModified: new Date(),

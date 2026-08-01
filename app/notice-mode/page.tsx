@@ -6,12 +6,14 @@ import { NOTICE_STATE_PACKS, NOTICE_STATE_CODES } from "@/config/state-packs";
 import { LEGAL_DISCLAIMER } from "@/config/trust";
 import { HUMAN_REVIEW_USD } from "@/lib/offer";
 
+const tenantPack = getModeAdPack("tenant")!;
+
 const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://apexcapitaladmin.com";
 
 export const metadata: Metadata = {
   title: "Notice Mode",
   description:
-    "Notice Mode for Apex Capital Admin Services — landlord pay-or-quit, vacate, renewal, entry, deposit drafts plus tenant repair, move-out, and lease-break letters. Optional human review. Not legal advice.",
+    "Notice Mode for Apex Capital Admin Services — landlord pay-or-quit, vacate, renewal, entry, and deposit drafts. Optional human review. Not legal advice. Tenant letters live in Tenant Mode.",
   alternates: { canonical: `${appUrl}/notice-mode` },
 };
 
@@ -26,7 +28,7 @@ const faqs = [
   },
   {
     q: "Is this separate from Grant Mode?",
-    a: "Same Apex platform and checkout. Grant Mode is for funder narratives; Notice Mode is for landlord and tenant letters. Pick the Mode that matches your deliverable.",
+    a: "Same Apex platform and checkout. Grant Mode is for funder narratives; Notice Mode is for landlord letters; Tenant Mode is for renter letters. Pick the Mode that matches your deliverable.",
   },
   {
     q: "Will a pay-or-quit from here hold up in court?",
@@ -39,16 +41,7 @@ const faqs = [
 ];
 
 const noticePack = getModeAdPack("notice")!;
-const landlordEngines = noticePack.engines.filter(
-  (e) =>
-    e.audience.includes("Landlords") ||
-    e.audience === "Landlords · PMs",
-);
-const tenantEngines = noticePack.engines.filter(
-  (e) =>
-    e.audience.includes("Tenants") ||
-    e.audience.includes("Roommates"),
-);
+const landlordEngines = noticePack.engines;
 const moneyHref = `/engine/${NOTICE_PRIMARY_SLUG}?sample=1&focus=intake`;
 
 function NoticeFaqJsonLd() {
@@ -79,13 +72,13 @@ export default function NoticeModePage() {
             Apex · Notice Mode
           </p>
           <h1 className="max-w-3xl font-display text-4xl font-semibold tracking-tight text-[#f7f5f0] sm:text-5xl">
-            Blank page → structured landlord or tenant draft.
+            Blank page → structured landlord notice draft.
           </h1>
           <p className="mt-4 max-w-2xl text-base leading-relaxed text-white/70">
             Same Apex Capital Admin Services platform as Grant Mode — built for
-            owners, PMs, and renters on a deadline. Pay once, get a first-pass
-            draft in about a minute — then edit or add human review (+$
-            {HUMAN_REVIEW_USD}).
+            owners and PMs on a deadline. Pay once, get a first-pass draft in
+            about a minute — then edit or add human review (+${HUMAN_REVIEW_USD}
+            ). Renters: use Tenant Mode.
           </p>
           <div className="mt-8 flex flex-wrap items-center gap-3">
             <Link
@@ -95,10 +88,10 @@ export default function NoticeModePage() {
               Start pay-or-quit draft — $24
             </Link>
             <Link
-              href="/engine/tenant-repair-request-letter?sample=1&focus=intake"
+              href="/tenant-mode"
               className="rounded-lg border border-white/25 bg-white/5 px-5 py-3 text-sm font-bold text-[#f7f5f0] transition hover:bg-white/10"
             >
-              Or tenant repair letter — $15
+              Need a tenant letter? →
             </Link>
           </div>
           <p className="mt-4 max-w-xl text-xs leading-relaxed text-white/50">
@@ -205,39 +198,18 @@ export default function NoticeModePage() {
       >
         <div className="mx-auto max-w-6xl px-4 py-12">
           <h2 className="font-display text-2xl font-semibold text-[#0b1f3a]">
-            Tenant Mode — everything inside
+            Looking for tenant letters?
           </h2>
           <p className="mt-1 max-w-2xl text-sm text-[#1c2230]/65">
-            {tenantEngines.length} tenant engines — paper-trail letters and
-            checklists. Still drafts, still not legal advice.
+            {tenantPack.engines.length} renter engines now live in Tenant Mode —
+            repair requests, lease-break, move-out, roommates. Same checkout.
           </p>
-          <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {tenantEngines.map((e) => (
-              <Link
-                key={e.slug}
-                href={`/engine/${e.slug}?sample=1&focus=intake`}
-                className="rounded-lg border border-[#0b1f3a]/10 bg-[#f7f5f0] p-5 transition hover:border-[#c9a227]/50"
-              >
-                <div className="flex items-start justify-between gap-2">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#8a6d13]">
-                    Tenant
-                  </span>
-                  <span className="font-mono text-sm font-bold text-[#0b1f3a]">
-                    ${e.price}
-                  </span>
-                </div>
-                <h3 className="mt-2 font-display text-lg font-semibold text-[#0b1f3a]">
-                  {e.title}
-                </h3>
-                <p className="mt-2 text-xs leading-relaxed text-[#1c2230]/60">
-                  {e.hook}
-                </p>
-                <p className="mt-3 text-xs font-bold text-[#0b1f3a]">
-                  Open with sample intake →
-                </p>
-              </Link>
-            ))}
-          </div>
+          <Link
+            href="/go/tenant"
+            className="mt-6 inline-flex rounded-lg bg-[#0b1f3a] px-5 py-3 text-sm font-bold text-[#f7f5f0] transition hover:bg-[#14335c]"
+          >
+            Open Tenant Mode →
+          </Link>
         </div>
       </section>
 
@@ -248,8 +220,8 @@ export default function NoticeModePage() {
           </h2>
           <ol className="mt-6 space-y-4 text-sm leading-relaxed text-[#1c2230]/75">
             <li>
-              <span className="font-semibold text-[#0b1f3a]">1. Pick the side.</span>{" "}
-              Landlord notice or tenant letter — don&apos;t mix facts.
+              <span className="font-semibold text-[#0b1f3a]">1. Pick the Mode.</span>{" "}
+              Landlord notices stay here; renter letters go to Tenant Mode.
             </li>
             <li>
               <span className="font-semibold text-[#0b1f3a]">2. Load sample.</span>{" "}

@@ -110,11 +110,32 @@ export function DisclaimerFooter() {
           <Link href="/notice-mode" className="transition hover:text-white/70">
             Notice Mode
           </Link>
+          <Link href="/tenant-mode" className="transition hover:text-white/70">
+            Tenant Mode
+          </Link>
           <Link href="/bid-mode" className="transition hover:text-white/70">
             Bid Mode
           </Link>
           <Link href="/offer-mode" className="transition hover:text-white/70">
             Offer Mode
+          </Link>
+          <Link href="/policy-mode" className="transition hover:text-white/70">
+            Policy Mode
+          </Link>
+          <Link href="/collect-mode" className="transition hover:text-white/70">
+            Collect Mode
+          </Link>
+          <Link href="/lien-mode" className="transition hover:text-white/70">
+            Lien Mode
+          </Link>
+          <Link href="/eviction-mode" className="transition hover:text-white/70">
+            Eviction Mode
+          </Link>
+          <Link href="/creator-mode" className="transition hover:text-white/70">
+            Creator Mode
+          </Link>
+          <Link href="/deal-mode" className="transition hover:text-white/70">
+            Deal Mode
           </Link>
           <Link href="/platform" className="transition hover:text-white/70">
             Platform

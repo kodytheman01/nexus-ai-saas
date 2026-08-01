@@ -101,17 +101,29 @@ export default async function EnginePage({ params, searchParams }: Props) {
       title: engine.title,
       category: engine.category,
     });
+  const isTenant =
+    flagship?.badge === "Tenant Mode" || engine.category === "tenant-letter";
   const isNotice =
-    flagship?.badge === "Notice Mode" ||
-    flagship?.badge === "Tenant Mode" ||
-    engine.category === "landlord-notice" ||
-    engine.category === "tenant-letter" ||
-    engine.category === "landlord-ops";
+    !isTenant &&
+    (flagship?.badge === "Notice Mode" ||
+      engine.category === "landlord-notice" ||
+      engine.category === "landlord-ops");
   const isBid =
     flagship?.badge === "Bid Mode" || engine.category === "contractor-bid";
   const isOffer =
     flagship?.badge === "Offer Mode" || engine.category === "hr-offer";
-  const statePack = isNotice ? parseNoticeState(sp.state) : null;
+  const isPolicy = flagship?.badge === "Policy Mode";
+  const isCollect = flagship?.badge === "Collect Mode";
+  const isLien =
+    flagship?.badge === "Lien Mode" || engine.category === "lien-notice";
+  const isEviction =
+    flagship?.badge === "Eviction Mode" || engine.category === "eviction-ops";
+  const isCreator =
+    flagship?.badge === "Creator Mode" || engine.category === "creator-ops";
+  const isDeal =
+    flagship?.badge === "Deal Mode" || engine.category === "deal-ops";
+  const statePack =
+    isNotice || isTenant ? parseNoticeState(sp.state) : null;
   const statePackData = statePack ? NOTICE_STATE_PACKS[statePack] : null;
   const pairings =
     GRANT_PAIRINGS[engine.slug] ??
@@ -165,7 +177,15 @@ export default async function EnginePage({ params, searchParams }: Props) {
           <>
             <span aria-hidden>/</span>
             <Link href="/notice-mode" className="hover:text-[#0b1f3a]">
-              {flagship?.badge === "Tenant Mode" ? "Tenant Mode" : "Notice Mode"}
+              Notice Mode
+            </Link>
+          </>
+        ) : null}
+        {isTenant ? (
+          <>
+            <span aria-hidden>/</span>
+            <Link href="/tenant-mode" className="hover:text-[#0b1f3a]">
+              Tenant Mode
             </Link>
           </>
         ) : null}
@@ -182,6 +202,54 @@ export default async function EnginePage({ params, searchParams }: Props) {
             <span aria-hidden>/</span>
             <Link href="/offer-mode" className="hover:text-[#0b1f3a]">
               Offer Mode
+            </Link>
+          </>
+        ) : null}
+        {isPolicy ? (
+          <>
+            <span aria-hidden>/</span>
+            <Link href="/policy-mode" className="hover:text-[#0b1f3a]">
+              Policy Mode
+            </Link>
+          </>
+        ) : null}
+        {isCollect ? (
+          <>
+            <span aria-hidden>/</span>
+            <Link href="/collect-mode" className="hover:text-[#0b1f3a]">
+              Collect Mode
+            </Link>
+          </>
+        ) : null}
+        {isLien ? (
+          <>
+            <span aria-hidden>/</span>
+            <Link href="/lien-mode" className="hover:text-[#0b1f3a]">
+              Lien Mode
+            </Link>
+          </>
+        ) : null}
+        {isEviction ? (
+          <>
+            <span aria-hidden>/</span>
+            <Link href="/eviction-mode" className="hover:text-[#0b1f3a]">
+              Eviction Mode
+            </Link>
+          </>
+        ) : null}
+        {isCreator ? (
+          <>
+            <span aria-hidden>/</span>
+            <Link href="/creator-mode" className="hover:text-[#0b1f3a]">
+              Creator Mode
+            </Link>
+          </>
+        ) : null}
+        {isDeal ? (
+          <>
+            <span aria-hidden>/</span>
+            <Link href="/deal-mode" className="hover:text-[#0b1f3a]">
+              Deal Mode
             </Link>
           </>
         ) : null}
@@ -232,11 +300,15 @@ export default async function EnginePage({ params, searchParams }: Props) {
               />
             </Suspense>
             <p className="mt-4 text-[11px] leading-relaxed text-[#1c2230]/55">
-              {isNotice
+              {isNotice || isTenant
                 ? HOUSING_LEGAL_DISCLAIMER
                 : isGrant
                   ? "Not a substitute for a licensed attorney, CPA, grant officer, or your program team. Drafts are first-pass structure — verify against the live FOA before submit."
-                  : "Not a substitute for a licensed attorney, CPA, or your program team. Drafts are first-pass structure — verify with counsel before relying on them."}{" "}
+                  : isPolicy || isOffer
+                    ? "Not employment counsel. Drafts are first-pass structure — have HR/counsel review before issuing or publishing."
+                    : isCollect
+                      ? "Not legal advice or licensed debt collection. Have counsel review before sending demand letters."
+                      : "Not a substitute for a licensed attorney, CPA, or your program team. Drafts are first-pass structure — verify with counsel before relying on them."}{" "}
               Support: {ENTITY.email} · {ENTITY.supportHours}.
             </p>
           </div>
@@ -358,7 +430,7 @@ export default async function EnginePage({ params, searchParams }: Props) {
             </div>
           ) : null}
 
-          {isNotice ? (
+          {isNotice || isTenant ? (
             <div className="mb-8 rounded-lg border border-[#0b1f3a]/10 bg-white p-5">
               <h2 className="text-xs font-bold uppercase tracking-wider text-[#0b1f3a]/50">
                 Before you serve or send

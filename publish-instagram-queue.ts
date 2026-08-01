@@ -25,12 +25,15 @@ type QueueItem = {
   day: number;
   slot: number;
   scheduledLocal: string;
+  /** Unique queue id (used for posted-slugs dedupe). */
   slug: string;
   title: string;
   videoPath: string;
+  /** Optional: public MP4 filename without .mp4. Defaults to basename(videoPath) or slug. */
+  videoSlug?: string;
   caption: string;
   instagramUrl: string;
-  status: "queued" | "posted" | "skipped" | "failed";
+  status: "queued" | "posted" | "skipped" | "failed" | "cancelled";
   containerId?: string;
   mediaId?: string;
   error?: string;
@@ -208,7 +211,12 @@ async function main() {
       break;
     }
 
-    const videoUrl = `${publicBase}/${item.slug}.mp4`;
+    const fileSlug =
+      item.videoSlug ||
+      (item.videoPath
+        ? path.basename(item.videoPath, path.extname(item.videoPath))
+        : item.slug);
+    const videoUrl = `${publicBase}/${fileSlug}.mp4`;
     console.log(
       `\n[${published + 1}] ${item.slug}\n  when: ${item.scheduledLocal}\n  video: ${videoUrl}`,
     );

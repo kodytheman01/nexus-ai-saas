@@ -54,7 +54,7 @@ export default function OpenGraphImage() {
               fontFamily: "sans-serif",
             }}
           >
-            Grant Mode · Notice Mode · 500+ engines · Stripe · optional human
+            11 Modes · 500+ engines · Stripe · optional human
             review
           </div>
         </div>

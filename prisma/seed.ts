@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { ENGINES_SEED_DATA } from "../config/engines";
+import { EXPANSION_ENGINES_SEED } from "../config/expansion-engines";
 import { NOTICE_ENGINES_SEED } from "../config/notice-engines";
 import { BID_ENGINES_SEED } from "../config/bid-engines";
 import { OFFER_ENGINES_SEED } from "../config/offer-engines";
@@ -13,6 +14,7 @@ async function main() {
     ...NOTICE_ENGINES_SEED,
     ...BID_ENGINES_SEED,
     ...OFFER_ENGINES_SEED,
+    ...EXPANSION_ENGINES_SEED,
   ].map(normalizeEngineSeed);
 
   console.log("Seeding engines (quality-normalized)...");
@@ -47,7 +49,7 @@ async function main() {
   }
 
   console.log(
-    `Seeded ${all.length} engines (${ENGINES_SEED_DATA.length} core + ${NOTICE_ENGINES_SEED.length} notice/tenant + ${BID_ENGINES_SEED.length} bid + ${OFFER_ENGINES_SEED.length} offer) with quality floor.`,
+    `Seeded ${all.length} engines (${ENGINES_SEED_DATA.length} core + ${NOTICE_ENGINES_SEED.length} notice/tenant + ${BID_ENGINES_SEED.length} bid + ${OFFER_ENGINES_SEED.length} offer + ${EXPANSION_ENGINES_SEED.length} expansion) with quality floor.`,
   );
 }
 

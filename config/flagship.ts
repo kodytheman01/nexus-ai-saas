@@ -532,6 +532,152 @@ Optional keep-warm line. Contact: [Email].`,
 New title · effective date · compensation · reporting · acknowledgment.`,
     whatYouGet: ["Promotion letter draft", "Effective-date + comp block"],
   },
+  // —— Policy Mode ——
+  {
+    slug: "performance-improvement-plan-pip-generator",
+    badge: "Policy Mode",
+    hook: "Structured PIP with expectations, timeline, support, and checkpoints.",
+    scenarioTitle: "Scenario: Missed deadlines this quarter",
+    scenarioBody:
+      "Manager needed a fair first-pass PIP before the HR conversation.",
+    sampleExcerpt: `## PIP — Draft (illustrative)
+Expectations · timeline · support offered · review dates · consequences of non-improvement.
+Draft only — HR/counsel review required.`,
+    whatYouGet: ["PIP draft scaffold", "Checkpoint + support block"],
+  },
+  {
+    slug: "employee-handbook-section-generator",
+    badge: "Policy Mode",
+    hook: "One handbook policy section ready for legal/HR review.",
+    scenarioTitle: "Scenario: Remote-work section missing",
+    scenarioBody:
+      "People ops needed a clean handbook section before all-hands.",
+    sampleExcerpt: `## Handbook Section — Draft
+Purpose · eligibility · expectations · exceptions · acknowledgment.`,
+    whatYouGet: ["Handbook section draft", "Acknowledgment cue"],
+  },
+  {
+    slug: "performance-review-write-up-generator",
+    badge: "Policy Mode",
+    hook: "Balanced review narrative with strengths and next steps.",
+    scenarioTitle: "Scenario: Annual review week",
+    scenarioBody:
+      "Manager had notes in Slack and needed a structured write-up.",
+    sampleExcerpt: `## Review — Draft
+Strengths · growth areas · goals · support plan.`,
+    whatYouGet: ["Review write-up draft", "Goal / next-step block"],
+  },
+  // —— Collect Mode ——
+  {
+    slug: "demand-letter-for-unpaid-invoice-generator",
+    badge: "Collect Mode",
+    hook: "Firm unpaid-invoice demand citing amount, due date, and prior notices.",
+    scenarioTitle: "Scenario: $8,400 · 60 days overdue",
+    scenarioBody:
+      "Freelancer had sent two soft reminders and needed a real demand draft.",
+    sampleExcerpt: `## Demand Letter — Draft ONLY
+Amount · invoice # · due date · prior notices · cure deadline.
+Not legal advice — counsel review before send.`,
+    whatYouGet: ["Demand letter draft", "Prior-notice timeline block"],
+  },
+  {
+    slug: "invoice-to-payment-reconciliation-automation-designer",
+    badge: "Collect Mode",
+    hook: "Design the ops flow from invoice to cash application.",
+    scenarioTitle: "Scenario: Messy AR spreadsheet",
+    scenarioBody:
+      "Ops lead wanted a reconciliation plan before hiring a bookkeeper.",
+    sampleExcerpt: `## Reconciliation Plan — Draft
+Invoice → payment match · exceptions · weekly close checklist.`,
+    whatYouGet: ["Reconciliation plan outline", "Exception handling cues"],
+  },
+  // —— Lien Mode ——
+  {
+    slug: "preliminary-notice-drafter",
+    badge: "Lien Mode",
+    hook: "Pre-lien / prelim notice scaffold from job and payment facts.",
+    scenarioTitle: "Scenario: Electrical rough-in unpaid",
+    scenarioBody:
+      "Trade needed a prelim notice draft before deadlines slipped.",
+    sampleExcerpt: `## Preliminary Notice — Draft ONLY
+Property · parties · work · amount · dates · delivery blanks.
+Confirm state deadlines with counsel.`,
+    whatYouGet: ["Prelim notice scaffold", "Delivery / deadline blanks"],
+  },
+  {
+    slug: "intent-to-lien-notice",
+    badge: "Lien Mode",
+    hook: "Final-demand style intent-to-lien before escalation.",
+    scenarioTitle: "Scenario: Soft reminders ignored",
+    scenarioBody: "Supplier wanted a firm intent notice before counsel.",
+    sampleExcerpt: `## Intent to Lien — Draft ONLY
+Amount · invoices · cure window · next-step blanks.`,
+    whatYouGet: ["Intent notice draft", "Cure-window blank"],
+  },
+  // —— Eviction Mode ——
+  {
+    slug: "possession-demand-pack-outline",
+    badge: "Eviction Mode",
+    hook: "Organize possession demand facts after notice period ends.",
+    scenarioTitle: "Scenario: Pay-or-quit expired",
+    scenarioBody:
+      "PM needed a pack outline before calling the filing attorney.",
+    sampleExcerpt: `## Possession Pack — Outline
+Tenancy · default · prior notices · demand · exhibits checklist.`,
+    whatYouGet: ["Pack outline", "Exhibit checklist"],
+  },
+  {
+    slug: "eviction-filing-checklist",
+    badge: "Eviction Mode",
+    hook: "Educational filing checklist — local forms still required.",
+    scenarioTitle: "Scenario: First residential filing",
+    scenarioBody: "Owner wanted a gap checklist before the clerk.",
+    sampleExcerpt: `## Filing Checklist — Educational
+Notices · docs · clerk questions · service · hearing prep.`,
+    whatYouGet: ["Filing checklist", "Counsel prompts"],
+  },
+  // —— Creator Mode ——
+  {
+    slug: "brand-deal-terms-drafter",
+    badge: "Creator Mode",
+    hook: "Deliverables, fee, usage, and FTC disclosure in one draft.",
+    scenarioTitle: "Scenario: Reel + Stories for GlowCo",
+    scenarioBody: "Creator had a DM handshake and needed written terms.",
+    sampleExcerpt: `## Brand Deal — Draft
+Deliverables · fee · usage window · #ad disclosure · signatures.`,
+    whatYouGet: ["Deal terms draft", "Usage + disclosure block"],
+  },
+  {
+    slug: "content-usage-license-drafter",
+    badge: "Creator Mode",
+    hook: "Limited paid-usage grant — platforms, term, fee.",
+    scenarioTitle: "Scenario: Brand wants ads rights",
+    scenarioBody: "Agency needed a 6-month non-exclusive license draft.",
+    sampleExcerpt: `## Usage License — Draft
+Grant · platforms · term · fee · credit · restrictions.`,
+    whatYouGet: ["License draft", "Scope / term blanks"],
+  },
+  // —— Deal Mode ——
+  {
+    slug: "letter-of-intent-outline",
+    badge: "Deal Mode",
+    hook: "Non-binding LOI outline with binding-clause cues.",
+    scenarioTitle: "Scenario: Asset purchase handshake",
+    scenarioBody: "Buyer needed an LOI scaffold before counsel redlines.",
+    sampleExcerpt: `## LOI — Outline
+Parties · price · diligence · exclusivity · binding vs non-binding.`,
+    whatYouGet: ["LOI outline", "Binding-clause cues"],
+  },
+  {
+    slug: "term-sheet-outline",
+    badge: "Deal Mode",
+    hook: "Economics and conditions outlined — not closed.",
+    scenarioTitle: "Scenario: Seed conversation",
+    scenarioBody: "Founder wanted a term-sheet skeleton before the call.",
+    sampleExcerpt: `## Term Sheet — Outline
+Economics · governance · conditions · exclusivity · close target.`,
+    whatYouGet: ["Term sheet outline", "Section blanks"],
+  },
 ];
 
 export const FLAGSHIP_SLUGS = FLAGSHIP_ENGINES.map((f) => f.slug);

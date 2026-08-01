@@ -145,6 +145,64 @@ Signer: Taylor Morgan · Ask: Internal promotion / title-change letter draft.`,
 Current rent: $1,850 · New rent: $1,950 · Effective: Oct 1
 Notice date: today · Contact: Sam Rivera
 Ask: Rent increase notice draft — CONFIRM LOCAL NOTICE PERIOD before serving.`,
+
+  "preliminary-notice-drafter": `Trade: Apex Electric LLC · Project: 412 Oak St, Dallas TX
+Owner: Jordan Lee · GC: Northstar Build · Work: electrical rough-in
+Unpaid: $8,400 · First work: 2026-03-01 · Prior invoices: #1040–1042
+Ask: Preliminary / pre-lien notice draft — CONFIRM STATE DEADLINES before serving.`,
+
+  "mechanics-lien-claim-outline": `Claimant: Apex Electric LLC · Property: 88 Pine · Owner: Sam Rivera · GC: Northstar
+Unpaid: $12,200 · Work period: Jan–Mar 2026 · Prior prelim mailed Feb 10
+Ask: Mechanic's lien claim OUTLINE (not a recordable form) + recorder checklist cues.`,
+
+  "lien-waiver-release-drafter": `Type: Progress · Payee: Apex Electric · Payer: Northstar GC
+Job: 88 Pine · Amount: $4,000 · Through: 2026-03-15 · Conditional on clearance
+Ask: Lien waiver / release draft — confirm state form requirements.`,
+
+  "intent-to-lien-notice": `Company: Apex Electric · Property: 412 Oak · Owner: Jordan Lee
+Unpaid: $6,800 · Invoice #1042 · Propose 10-day cure · Prelim already sent
+Ask: Intent-to-lien / final-demand notice draft.`,
+
+  "possession-demand-pack-outline": `Property: 12 Elm #2 · Landlord: Apex Housing · Tenant: Rivera
+Default: nonpay $2,100 + late · Pay-or-quit served 7 days ago · Still unpaid
+Ask: Possession demand pack outline + exhibits checklist — not a court form.`,
+
+  "eviction-filing-checklist": `State: TX · County: Harris · Residential · Notices: pay-or-quit + 3-day
+Amount: $1,850 rent · Counsel: not yet retained
+Ask: Educational eviction filing checklist + gap list for counsel/clerk.`,
+
+  "eviction-service-log": `Document: Pay-or-quit · Posted door 2026-04-01 10:12am · Mailed same day
+Server: Sam Rivera · Photos on phone · Witness: none
+Ask: Clean service log table for audit trail.`,
+
+  "court-calendar-brief": `Hearing: JP Tue 9am · Apex Housing v Rivera · Claim: nonpay
+Notices: pay-or-quit Apr 1 · Rent $1,850 · Exhibits: lease + ledger
+Ask: One-page court calendar brief outline — not a pleading.`,
+
+  "brand-deal-terms-drafter": `Brand: GlowCo · Creator: @creator · Deliverables: 1 Reel + 3 Stories
+Fee: $2,500 · Usage: 90-day paid · Exclusivity: none · Due: Apr 15 · Disclose #ad
+Ask: Brand deal terms draft with FTC disclosure and signature block.`,
+
+  "content-usage-license-drafter": `Licensor: Creator · Licensee: GlowCo · Content: 1 Reel
+Platforms: IG/TikTok/paid ads · Territory: US · Term: 6 months · Non-exclusive · Fee: $1,000 · Credit @handle
+Ask: Limited content usage license draft.`,
+
+  "creator-deliverable-invoice": `Payee: Rivera Media LLC · Brand: GlowCo Spring · Deliverable: 1 Reel delivered
+Amount: $2,500 · Terms: Net 15 · ACH · Campaign: SPR26
+Ask: Professional creator invoice with usage note.`,
+
+  "creator-cancellation-notice": `Parties: GlowCo / Creator · Campaign: Apr Reel · Reason: product delay
+Kill fee: 50% of $2,500 · Effective: today · No further posts
+Ask: Careful cancellation / kill-fee notice draft.`,
+
+  "letter-of-intent-outline": `Deal: Asset purchase · Buyer: Northstar · Seller: Apex Shop
+Price: $180k assets · Diligence: 30 days · Exclusivity: 21 days
+Non-binding except confidentiality / exclusivity
+Ask: LOI outline marking typically binding vs non-binding sections.`,
+
+  "term-sheet-outline": `Type: Seed conversation · Investor: Fund Z · Company: Apex Ops
+Economics: $500k (instrument TBD) · Observer seat · Exclusivity: 45 days
+Ask: Term sheet outline — not securities advice.`,
 };
 
 const BY_CATEGORY: Record<string, string> = {

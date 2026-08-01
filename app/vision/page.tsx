@@ -25,7 +25,7 @@ const pillars = [
   },
   {
     title: "A factory that scales good",
-    body: "Four Modes today. 500+ engines. The same Stripe-secured delivery muscle — so impact can grow without becoming a spammy marketplace of empty promises.",
+    body: "Eleven Modes today — and growing. 500+ engines. The same Stripe-secured delivery muscle — so impact can grow without becoming a spammy marketplace of empty promises.",
   },
 ];
 

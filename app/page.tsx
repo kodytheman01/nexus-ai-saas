@@ -5,14 +5,29 @@ import { db } from "@/lib/db";
 import { FLAGSHIP_ENGINES } from "@/config/flagship";
 import {
   bidMoneyLandingPath,
+  collectMoneyLandingPath,
+  creatorMoneyLandingPath,
+  dealMoneyLandingPath,
+  evictionMoneyLandingPath,
   grantMoneyLandingPath,
   isBidPaidTraffic,
+  isCollectPaidTraffic,
+  isCreatorPaidTraffic,
+  isDealPaidTraffic,
+  isEvictionPaidTraffic,
   isGrantPaidTraffic,
+  isLienPaidTraffic,
   isNoticePaidTraffic,
   isOfferPaidTraffic,
+  isPolicyPaidTraffic,
+  isTenantPaidTraffic,
+  lienMoneyLandingPath,
   noticeMoneyLandingPath,
   offerMoneyLandingPath,
+  policyMoneyLandingPath,
+  tenantMoneyLandingPath,
 } from "@/config/conversion";
+import { MODE_AD_CATALOG } from "@/config/mode-catalog";
 import { displayTitle } from "@/lib/display";
 import { getProofWins } from "@/lib/paid-wins";
 import { HUMAN_REVIEW_USD } from "@/lib/offer";
@@ -30,11 +45,32 @@ export default async function CatalogPage({ searchParams }: Props) {
 
   // Paid Mode ads should not dump into the 500-engine wall —
   // send them straight to the money engine with sample intake ready.
+  if (isDealPaidTraffic(sp)) {
+    redirect(dealMoneyLandingPath(sp));
+  }
+  if (isCreatorPaidTraffic(sp)) {
+    redirect(creatorMoneyLandingPath(sp));
+  }
+  if (isEvictionPaidTraffic(sp)) {
+    redirect(evictionMoneyLandingPath(sp));
+  }
+  if (isLienPaidTraffic(sp)) {
+    redirect(lienMoneyLandingPath(sp));
+  }
+  if (isCollectPaidTraffic(sp)) {
+    redirect(collectMoneyLandingPath(sp));
+  }
+  if (isPolicyPaidTraffic(sp)) {
+    redirect(policyMoneyLandingPath(sp));
+  }
   if (isOfferPaidTraffic(sp)) {
     redirect(offerMoneyLandingPath(sp));
   }
   if (isBidPaidTraffic(sp)) {
     redirect(bidMoneyLandingPath(sp));
+  }
+  if (isTenantPaidTraffic(sp)) {
+    redirect(tenantMoneyLandingPath(sp));
   }
   if (isNoticePaidTraffic(sp)) {
     redirect(noticeMoneyLandingPath(sp));
@@ -63,11 +99,12 @@ export default async function CatalogPage({ searchParams }: Props) {
   })).filter((f) => f.engine);
 
   const grantFlagships = flagships.filter((f) => f.badge === "Grant Mode");
-  const noticeFlagships = flagships.filter(
-    (f) => f.badge === "Notice Mode" || f.badge === "Tenant Mode",
-  );
+  const noticeFlagships = flagships.filter((f) => f.badge === "Notice Mode");
+  const tenantFlagships = flagships.filter((f) => f.badge === "Tenant Mode");
   const bidFlagships = flagships.filter((f) => f.badge === "Bid Mode");
   const offerFlagships = flagships.filter((f) => f.badge === "Offer Mode");
+  const policyFlagships = flagships.filter((f) => f.badge === "Policy Mode");
+  const collectFlagships = flagships.filter((f) => f.badge === "Collect Mode");
   const proofWins = await getProofWins(6);
 
   return (
@@ -87,11 +124,10 @@ export default async function CatalogPage({ searchParams }: Props) {
               Apex Capital Admin Services
             </p>
             <h1 className="font-display text-4xl font-semibold tracking-tight text-[#f7f5f0] sm:text-5xl">
-              Draft-ready grants, notices, bids, offers, and ops — from intake
-              to output.
+              The all-in-one draft desk — every Mode, one checkout.
             </h1>
             <p className="mt-4 text-base leading-relaxed text-white/70">
-              {`500+ specialized engines. Stripe-secured checkout. Instant on-page delivery plus email copy. Optional human specialist review (+$${HUMAN_REVIEW_USD}) when the stakes are high.`}
+              {`${MODE_AD_CATALOG.length} Modes · ${engines.length || 500}+ engines. Stripe-secured checkout. Instant on-page delivery plus email copy. Optional human specialist review (+$${HUMAN_REVIEW_USD}) when the stakes are high.`}
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link
@@ -107,16 +143,10 @@ export default async function CatalogPage({ searchParams }: Props) {
                 Notice Mode
               </Link>
               <Link
-                href="/go/bid"
+                href="/modes"
                 className="rounded-lg border border-white/25 bg-white/5 px-5 py-3 text-sm font-bold text-[#f7f5f0] transition hover:bg-white/10"
               >
-                Bid Mode
-              </Link>
-              <Link
-                href="/go/offer"
-                className="rounded-lg border border-white/25 bg-white/5 px-5 py-3 text-sm font-bold text-[#f7f5f0] transition hover:bg-white/10"
-              >
-                Offer Mode
+                All {MODE_AD_CATALOG.length} Modes
               </Link>
             </div>
           </div>
@@ -176,6 +206,52 @@ export default async function CatalogPage({ searchParams }: Props) {
         </div>
       </section>
 
+      <section className="border-b border-[#0b1f3a]/10 bg-[#f7f5f0]">
+        <div className="mx-auto max-w-6xl px-4 py-10">
+          <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
+            <div className="max-w-xl">
+              <p className="text-xs font-semibold uppercase tracking-[0.25em] text-[#8a6d13]">
+                All-in-one desk
+              </p>
+              <h2 className="mt-1 font-display text-xl font-semibold text-[#0b1f3a] sm:text-2xl">
+                {MODE_AD_CATALOG.length} Modes — every field we play in
+              </h2>
+            </div>
+            <Link
+              href="/modes"
+              className="text-sm font-semibold text-[#0b1f3a] underline decoration-[#c9a227] decoration-2 underline-offset-2"
+            >
+              Explore every engine →
+            </Link>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            {MODE_AD_CATALOG.map((m) => {
+              const primary = m.engines.find((e) => e.isPrimary) ?? m.engines[0];
+              return (
+                <Link
+                  key={m.id}
+                  href={m.goPath}
+                  className="rounded-lg border border-[#0b1f3a]/10 bg-white p-4 transition hover:border-[#c9a227]/50"
+                >
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-[#8a6d13]">
+                    {m.engines.length} engines · {m.priceRange}
+                  </p>
+                  <h3 className="mt-1 font-display text-base font-semibold text-[#0b1f3a]">
+                    {m.name}
+                  </h3>
+                  <p className="mt-1 text-xs leading-relaxed text-[#1c2230]/65">
+                    {m.tagline}
+                  </p>
+                  <p className="mt-3 text-xs font-semibold text-[#0b1f3a]">
+                    Start {primary.title} →
+                  </p>
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
       <section className="border-b border-[#0b1f3a]/10 bg-white">
         <div className="mx-auto max-w-6xl px-4 py-10">
           <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
@@ -198,7 +274,7 @@ export default async function CatalogPage({ searchParams }: Props) {
             {[
               {
                 t: "Modes for speed",
-                d: "Grant, Notice, Bid, Offer — deep-linked money paths with sample intake loaded.",
+                d: `${MODE_AD_CATALOG.length} Modes — deep-linked money paths with sample intake loaded.`,
               },
               {
                 t: "Stripe checkout",
@@ -283,10 +359,10 @@ export default async function CatalogPage({ searchParams }: Props) {
             <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
               <div className="max-w-xl">
                 <p className="text-xs font-semibold uppercase tracking-[0.25em] text-[#8a6d13]">
-                  Notice Mode · Tenant Mode
+                  Notice Mode
                 </p>
                 <h2 className="mt-1 font-display text-xl font-semibold text-[#0b1f3a] sm:text-2xl">
-                  Landlord notices and tenant letters — same Apex draft engine
+                  Landlord notices — structured from lease facts
                 </h2>
               </div>
               <Link
@@ -302,6 +378,51 @@ export default async function CatalogPage({ searchParams }: Props) {
                   key={f.slug}
                   href={`/engine/${f.slug}?sample=1&focus=intake`}
                   className="group rounded-lg border border-[#0b1f3a]/10 bg-[#f7f5f0] p-4 transition hover:border-[#c9a227]/50 hover:shadow-sm"
+                >
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#8a6d13]">
+                    {f.badge}
+                  </span>
+                  <h3 className="mt-1.5 font-display text-sm font-semibold text-[#0b1f3a] group-hover:text-[#14335c]">
+                    {displayTitle(f.engine!.title)}
+                  </h3>
+                  <p className="mt-2 font-mono text-sm font-bold text-[#0b1f3a]">
+                    ${f.engine!.priceInUSD}
+                  </p>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+      ) : null}
+
+      {tenantFlagships.length > 0 ? (
+        <section
+          id="tenant-mode"
+          className="scroll-mt-24 border-b border-[#0b1f3a]/10 bg-[#f7f5f0]"
+        >
+          <div className="mx-auto max-w-6xl px-4 py-10">
+            <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
+              <div className="max-w-xl">
+                <p className="text-xs font-semibold uppercase tracking-[0.25em] text-[#8a6d13]">
+                  Tenant Mode
+                </p>
+                <h2 className="mt-1 font-display text-xl font-semibold text-[#0b1f3a] sm:text-2xl">
+                  Repair, exit, and roommate drafts for renters
+                </h2>
+              </div>
+              <Link
+                href="/tenant-mode"
+                className="text-sm font-semibold text-[#0b1f3a] underline decoration-[#c9a227] decoration-2 underline-offset-2"
+              >
+                Full guide →
+              </Link>
+            </div>
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {tenantFlagships.map((f) => (
+                <Link
+                  key={f.slug}
+                  href={`/engine/${f.slug}?sample=1&focus=intake`}
+                  className="group rounded-lg border border-[#0b1f3a]/10 bg-white p-4 transition hover:border-[#c9a227]/50 hover:shadow-sm"
                 >
                   <span className="text-[10px] font-bold uppercase tracking-wider text-[#8a6d13]">
                     {f.badge}
@@ -388,6 +509,96 @@ export default async function CatalogPage({ searchParams }: Props) {
             </div>
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {offerFlagships.map((f) => (
+                <Link
+                  key={f.slug}
+                  href={`/engine/${f.slug}?sample=1&focus=intake`}
+                  className="group rounded-lg border border-[#0b1f3a]/10 bg-[#f7f5f0] p-4 transition hover:border-[#c9a227]/50 hover:shadow-sm"
+                >
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#8a6d13]">
+                    {f.badge}
+                  </span>
+                  <h3 className="mt-1.5 font-display text-sm font-semibold text-[#0b1f3a] group-hover:text-[#14335c]">
+                    {displayTitle(f.engine!.title)}
+                  </h3>
+                  <p className="mt-2 font-mono text-sm font-bold text-[#0b1f3a]">
+                    ${f.engine!.priceInUSD}
+                  </p>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+      ) : null}
+
+      {policyFlagships.length > 0 ? (
+        <section
+          id="policy-mode"
+          className="scroll-mt-24 border-b border-[#0b1f3a]/10 bg-[#f7f5f0]"
+        >
+          <div className="mx-auto max-w-6xl px-4 py-10">
+            <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
+              <div className="max-w-xl">
+                <p className="text-xs font-semibold uppercase tracking-[0.25em] text-[#8a6d13]">
+                  Policy Mode
+                </p>
+                <h2 className="mt-1 font-display text-xl font-semibold text-[#0b1f3a] sm:text-2xl">
+                  PIPs, handbook sections, and people-ops drafts
+                </h2>
+              </div>
+              <Link
+                href="/policy-mode"
+                className="text-sm font-semibold text-[#0b1f3a] underline decoration-[#c9a227] decoration-2 underline-offset-2"
+              >
+                Full guide →
+              </Link>
+            </div>
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {policyFlagships.map((f) => (
+                <Link
+                  key={f.slug}
+                  href={`/engine/${f.slug}?sample=1&focus=intake`}
+                  className="group rounded-lg border border-[#0b1f3a]/10 bg-white p-4 transition hover:border-[#c9a227]/50 hover:shadow-sm"
+                >
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#8a6d13]">
+                    {f.badge}
+                  </span>
+                  <h3 className="mt-1.5 font-display text-sm font-semibold text-[#0b1f3a] group-hover:text-[#14335c]">
+                    {displayTitle(f.engine!.title)}
+                  </h3>
+                  <p className="mt-2 font-mono text-sm font-bold text-[#0b1f3a]">
+                    ${f.engine!.priceInUSD}
+                  </p>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+      ) : null}
+
+      {collectFlagships.length > 0 ? (
+        <section
+          id="collect-mode"
+          className="scroll-mt-24 border-b border-[#0b1f3a]/10 bg-white"
+        >
+          <div className="mx-auto max-w-6xl px-4 py-10">
+            <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
+              <div className="max-w-xl">
+                <p className="text-xs font-semibold uppercase tracking-[0.25em] text-[#8a6d13]">
+                  Collect Mode
+                </p>
+                <h2 className="mt-1 font-display text-xl font-semibold text-[#0b1f3a] sm:text-2xl">
+                  Unpaid invoices → firm demand drafts
+                </h2>
+              </div>
+              <Link
+                href="/collect-mode"
+                className="text-sm font-semibold text-[#0b1f3a] underline decoration-[#c9a227] decoration-2 underline-offset-2"
+              >
+                Full guide →
+              </Link>
+            </div>
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {collectFlagships.map((f) => (
                 <Link
                   key={f.slug}
                   href={`/engine/${f.slug}?sample=1&focus=intake`}

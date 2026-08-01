@@ -8,7 +8,7 @@ const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://apexcapitaladmin.com"
 export const metadata: Metadata = {
   title: "Modes",
   description:
-    "Apex Modes — Grant, Notice, Bid, and Offer. See every engine inside each Mode. Sample intake, Stripe checkout, optional human review.",
+    "Apex Modes — Grant, Notice, Tenant, Bid, Offer, Policy, Collect, Lien, Eviction, Creator, and Deal. See every engine inside each Mode. Sample intake, Stripe checkout, optional human review.",
   alternates: { canonical: `${appUrl}/modes` },
 };
 
@@ -29,12 +29,13 @@ export default function ModesPage() {
             Apex Capital Admin Services
           </p>
           <h1 className="max-w-3xl font-display text-4xl font-semibold tracking-tight text-[#f7f5f0] sm:text-5xl">
-            Four Modes. Every engine inside.
+            {MODE_AD_CATALOG.length} Modes. Every engine inside.
           </h1>
           <p className="mt-4 max-w-2xl text-base leading-relaxed text-white/70">
-            Each Mode is a focused path — and every tool inside it is listed
-            below. Sample intake ready, Stripe checkout, on-page + email
-            delivery, optional human review (+${HUMAN_REVIEW_USD}).
+            The all-in-one Apex desk — each Mode is a focused money path, and
+            every tool inside it is listed below. Sample intake ready, Stripe
+            checkout, on-page + email delivery, optional human review (+$
+            {HUMAN_REVIEW_USD}).
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             {MODE_AD_CATALOG.map((m) => (

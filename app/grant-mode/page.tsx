@@ -223,16 +223,30 @@ export default function GrantModePage() {
             Need a landlord or tenant letter instead?
           </h2>
           <p className="mt-2 text-sm leading-relaxed text-[#1c2230]/70">
-            Notice Mode covers pay-or-quit, vacate, renewal, deposit, and tenant
-            repair / lease-break drafts — same Stripe checkout and delivery as
-            Grant Mode. Drafts only; not legal advice.
+            Notice Mode covers landlord pay-or-quit, vacate, renewal, and deposit
+            drafts. Tenant Mode covers repair, lease-break, and move-out drafts —
+            same Stripe checkout as Grant Mode. Drafts only; not legal advice.
           </p>
-          <Link
-            href="/notice-mode"
-            className="mt-6 inline-flex rounded-lg bg-[#0b1f3a] px-5 py-3 text-sm font-bold text-[#f7f5f0] transition hover:bg-[#14335c]"
-          >
-            Open Notice Mode →
-          </Link>
+          <div className="mt-6 flex flex-wrap gap-3">
+            <Link
+              href="/notice-mode"
+              className="inline-flex rounded-lg bg-[#0b1f3a] px-5 py-3 text-sm font-bold text-[#f7f5f0] transition hover:bg-[#14335c]"
+            >
+              Open Notice Mode →
+            </Link>
+            <Link
+              href="/tenant-mode"
+              className="inline-flex rounded-lg border border-[#0b1f3a]/15 bg-white px-5 py-3 text-sm font-bold text-[#0b1f3a] transition hover:border-[#c9a227]/50"
+            >
+              Open Tenant Mode →
+            </Link>
+            <Link
+              href="/modes"
+              className="inline-flex rounded-lg border border-[#0b1f3a]/15 bg-white px-5 py-3 text-sm font-bold text-[#0b1f3a] transition hover:border-[#c9a227]/50"
+            >
+              All Modes →
+            </Link>
+          </div>
         </div>
       </section>
     </div>
