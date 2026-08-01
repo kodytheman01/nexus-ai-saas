@@ -153,6 +153,10 @@ export default async function CatalogPage({ searchParams }: Props) {
           </div>
           <p className="mt-6 text-xs text-white/45">
             New here?{" "}
+            <Link href="/vision" className="underline underline-offset-2 hover:text-white/70">
+              Vision
+            </Link>
+            {" · "}
             <Link href="/modes" className="underline underline-offset-2 hover:text-white/70">
               All Modes
             </Link>

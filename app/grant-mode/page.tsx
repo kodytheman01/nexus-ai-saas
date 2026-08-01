@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { FLAGSHIP_ENGINES } from "@/config/flagship";
 import { GRANT_NARRATIVE_SLUG } from "@/config/conversion";
+import { getModeAdPack } from "@/config/mode-catalog";
 import { HUMAN_REVIEW_USD } from "@/lib/offer";
 
 const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://apexcapitaladmin.com";
@@ -36,7 +36,7 @@ const faqs = [
   },
 ];
 
-const grantFlagships = FLAGSHIP_ENGINES.filter((f) => f.badge === "Grant Mode");
+const grantPack = getModeAdPack("grant")!;
 const moneyHref = `/engine/${GRANT_NARRATIVE_SLUG}?sample=1&focus=intake`;
 
 function GrantFaqJsonLd() {
@@ -100,11 +100,11 @@ export default function GrantModePage() {
           <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
             <div>
               <h2 className="font-display text-2xl font-semibold text-[#0b1f3a]">
-                Core Grant Mode engines
+                Everything inside Grant Mode
               </h2>
               <p className="mt-1 max-w-2xl text-sm text-[#1c2230]/65">
-                Primary path is narrative. Outline, budget, and compliance stay
-                for specialists who already know the workflow.
+                {grantPack.engines.length} engines. Primary path is narrative —
+                outline, budget, and compliance for the rest of the workflow.
               </p>
             </div>
             <Link
@@ -115,20 +115,25 @@ export default function GrantModePage() {
             </Link>
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
-            {grantFlagships.map((f) => (
+            {grantPack.engines.map((e) => (
               <Link
-                key={f.slug}
-                href={`/engine/${f.slug}?sample=1&focus=intake`}
+                key={e.slug}
+                href={`/engine/${e.slug}?sample=1&focus=intake`}
                 className="rounded-lg border border-[#0b1f3a]/10 bg-white p-5 transition hover:border-[#c9a227]/50"
               >
-                <span className="text-[10px] font-bold uppercase tracking-wider text-[#8a6d13]">
-                  {f.badge}
-                </span>
+                <div className="flex items-start justify-between gap-2">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#8a6d13]">
+                    {e.isPrimary ? "Primary · /go/grant" : e.audience}
+                  </span>
+                  <span className="font-mono text-sm font-bold text-[#0b1f3a]">
+                    ${e.price}
+                  </span>
+                </div>
                 <h3 className="mt-2 font-display text-lg font-semibold text-[#0b1f3a]">
-                  {f.hook}
+                  {e.title}
                 </h3>
                 <p className="mt-2 text-xs leading-relaxed text-[#1c2230]/60">
-                  {f.scenarioTitle}
+                  {e.hook}
                 </p>
                 <p className="mt-3 text-xs font-bold text-[#0b1f3a]">
                   Open with sample intake →

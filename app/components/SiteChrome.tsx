@@ -41,8 +41,14 @@ export function SiteNav() {
             Notice
           </Link>
           <Link
-            href="/platform"
+            href="/vision"
             className="hidden transition hover:text-[#0b1f3a] md:inline"
+          >
+            Vision
+          </Link>
+          <Link
+            href="/platform"
+            className="hidden transition hover:text-[#0b1f3a] lg:inline"
           >
             Platform
           </Link>
@@ -94,6 +100,9 @@ export function DisclaimerFooter() {
           </span>
           <Link href="/modes" className="transition hover:text-white/70">
             Modes
+          </Link>
+          <Link href="/vision" className="transition hover:text-white/70">
+            Vision
           </Link>
           <Link href="/grant-mode" className="transition hover:text-white/70">
             Grant Mode
