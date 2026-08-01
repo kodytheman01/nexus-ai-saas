@@ -151,6 +151,77 @@ export default async function CatalogPage({ searchParams }: Props) {
               </div>
             ))}
           </div>
+          <p className="mt-6 text-xs text-white/45">
+            New here?{" "}
+            <Link href="/modes" className="underline underline-offset-2 hover:text-white/70">
+              All Modes
+            </Link>
+            {" · "}
+            <Link href="/platform" className="underline underline-offset-2 hover:text-white/70">
+              Platform
+            </Link>
+            {" · "}
+            <Link href="/how-it-works" className="underline underline-offset-2 hover:text-white/70">
+              How it works
+            </Link>
+            {" · "}
+            <Link href="/faq" className="underline underline-offset-2 hover:text-white/70">
+              FAQ
+            </Link>
+          </p>
+        </div>
+      </section>
+
+      <section className="border-b border-[#0b1f3a]/10 bg-white">
+        <div className="mx-auto max-w-6xl px-4 py-10">
+          <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
+            <div className="max-w-xl">
+              <p className="text-xs font-semibold uppercase tracking-[0.25em] text-[#8a6d13]">
+                Why operators use Apex
+              </p>
+              <h2 className="mt-1 font-display text-xl font-semibold text-[#0b1f3a] sm:text-2xl">
+                Production draft factory — not a chatbot wrapper
+              </h2>
+            </div>
+            <Link
+              href="/platform"
+              className="text-sm font-semibold text-[#0b1f3a] underline decoration-[#c9a227] decoration-2 underline-offset-2"
+            >
+              Platform details →
+            </Link>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            {[
+              {
+                t: "Modes for speed",
+                d: "Grant, Notice, Bid, Offer — deep-linked money paths with sample intake loaded.",
+              },
+              {
+                t: "Stripe checkout",
+                d: "Card data stays with Stripe. Email delivery + support on every paid order.",
+              },
+              {
+                t: "Specialist samples",
+                d: "Every engine can load a filled example so you see structure before you pay.",
+              },
+              {
+                t: "Honest governance",
+                d: "Informational drafts only. Optional human ops review. No fake testimonials.",
+              },
+            ].map((item) => (
+              <div
+                key={item.t}
+                className="rounded-lg border border-[#0b1f3a]/10 bg-[#f7f5f0] p-4"
+              >
+                <p className="font-display text-sm font-semibold text-[#0b1f3a]">
+                  {item.t}
+                </p>
+                <p className="mt-2 text-xs leading-relaxed text-[#1c2230]/65">
+                  {item.d}
+                </p>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -406,10 +477,22 @@ export default async function CatalogPage({ searchParams }: Props) {
           )}
           <div className="mt-5 flex flex-wrap items-center justify-center gap-4">
             <Link
-              href="/about"
+              href="/platform"
               className="text-sm font-semibold text-[#0b1f3a] underline decoration-[#c9a227] decoration-2 underline-offset-4"
             >
-              Platform &amp; governance
+              Platform
+            </Link>
+            <Link
+              href="/faq"
+              className="text-sm font-semibold text-[#0b1f3a]/60 underline underline-offset-4 hover:text-[#0b1f3a]"
+            >
+              FAQ
+            </Link>
+            <Link
+              href="/about"
+              className="text-sm font-semibold text-[#0b1f3a]/60 underline underline-offset-4 hover:text-[#0b1f3a]"
+            >
+              About &amp; governance
             </Link>
             <Link
               href="/privacy"

@@ -7,7 +7,7 @@ const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://apexcapitaladmin.com"
 export const metadata: Metadata = {
   title: "About",
   description:
-    "Apex Capital Admin Services operates 500 automated advisory engines — Stripe checkout, instant drafts, optional human review, and clear governance.",
+    "Apex Capital Admin Services operates 500+ automated deliverable engines across Grant, Notice, Bid, and Offer Modes — Stripe checkout, instant drafts, optional human review, and clear governance.",
   alternates: { canonical: `${appUrl}/about` },
 };
 
@@ -21,12 +21,33 @@ export default function AboutPage() {
         Apex Capital Admin Services
       </h1>
       <p className="mt-4 text-base leading-relaxed text-[#1c2230]/70">
-        Apex Capital Admin Services designs and operates a catalog of 500
-        automated advisory and deliverable engines. Each engine is a
-        purpose-built pipeline that takes a client&apos;s written description of
-        a problem and returns a structured draft — narrative, checklist,
-        outline, or report — without waiting on a manual queue.
+        Apex Capital Admin Services designs and operates a catalog of 500+
+        automated advisory and deliverable engines — plus focused Modes for
+        grants, landlord/tenant notices, contractor bids, and HR offer letters.
+        Each engine is a purpose-built pipeline that takes a written description
+        of a problem and returns a structured draft — narrative, checklist,
+        outline, or letter — without waiting on a manual queue.
       </p>
+      <div className="mt-6 flex flex-wrap gap-3">
+        <Link
+          href="/platform"
+          className="rounded-lg bg-[#0b1f3a] px-4 py-2.5 text-sm font-bold text-[#f7f5f0]"
+        >
+          Platform overview
+        </Link>
+        <Link
+          href="/modes"
+          className="rounded-lg border border-[#0b1f3a]/15 px-4 py-2.5 text-sm font-bold text-[#0b1f3a]"
+        >
+          All Modes
+        </Link>
+        <Link
+          href="/brand"
+          className="rounded-lg border border-[#0b1f3a]/15 px-4 py-2.5 text-sm font-bold text-[#0b1f3a]"
+        >
+          Brand kit
+        </Link>
+      </div>
 
       <div className="mt-10 space-y-8">
         <section>
@@ -208,10 +229,22 @@ export default function AboutPage() {
         </p>
         <div className="mt-4 flex flex-wrap gap-4 text-sm">
           <Link
-            href="/grant-mode"
+            href="/modes"
             className="font-semibold text-[#0b1f3a] underline decoration-[#c9a227] decoration-2 underline-offset-4"
           >
-            Grant Mode
+            Modes
+          </Link>
+          <Link
+            href="/platform"
+            className="font-semibold text-[#0b1f3a]/70 underline underline-offset-4"
+          >
+            Platform
+          </Link>
+          <Link
+            href="/faq"
+            className="font-semibold text-[#0b1f3a]/70 underline underline-offset-4"
+          >
+            FAQ
           </Link>
           <Link
             href="/how-it-works"

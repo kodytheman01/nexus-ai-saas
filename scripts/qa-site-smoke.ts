@@ -16,6 +16,10 @@ const TIMEOUT_MS = 20_000;
 
 const STATIC_PATHS = [
   "/",
+  "/modes",
+  "/platform",
+  "/faq",
+  "/brand",
   "/grant-mode",
   "/notice-mode",
   "/bid-mode",

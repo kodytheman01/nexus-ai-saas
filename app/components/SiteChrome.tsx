@@ -25,26 +25,38 @@ export function SiteNav() {
         </Suspense>
 
         <nav className="ml-auto flex shrink-0 items-center gap-2.5 text-sm font-medium text-[#0b1f3a]/70 sm:gap-4">
-          <Link href="/grant-mode" className="transition hover:text-[#0b1f3a]">
+          <Link href="/modes" className="transition hover:text-[#0b1f3a]">
+            Modes
+          </Link>
+          <Link
+            href="/grant-mode"
+            className="hidden transition hover:text-[#0b1f3a] sm:inline"
+          >
             Grant
           </Link>
-          <Link href="/notice-mode" className="transition hover:text-[#0b1f3a]">
+          <Link
+            href="/notice-mode"
+            className="hidden transition hover:text-[#0b1f3a] sm:inline"
+          >
             Notice
           </Link>
           <Link
-            href="/bid-mode"
-            className="hidden transition hover:text-[#0b1f3a] sm:inline"
-          >
-            Bid
-          </Link>
-          <Link
-            href="/offer-mode"
+            href="/platform"
             className="hidden transition hover:text-[#0b1f3a] md:inline"
           >
-            Offer
+            Platform
           </Link>
-          <Link href="/how-it-works" className="hidden transition hover:text-[#0b1f3a] lg:inline">
+          <Link
+            href="/how-it-works"
+            className="hidden transition hover:text-[#0b1f3a] lg:inline"
+          >
             How it works
+          </Link>
+          <Link
+            href="/faq"
+            className="hidden transition hover:text-[#0b1f3a] xl:inline"
+          >
+            FAQ
           </Link>
           <Link href="/#catalog" className="hidden transition hover:text-[#0b1f3a] xl:inline">
             Engines
@@ -80,6 +92,9 @@ export function DisclaimerFooter() {
             © {new Date().getFullYear()} Apex Capital Admin Services. All
             rights reserved.
           </span>
+          <Link href="/modes" className="transition hover:text-white/70">
+            Modes
+          </Link>
           <Link href="/grant-mode" className="transition hover:text-white/70">
             Grant Mode
           </Link>
@@ -92,8 +107,20 @@ export function DisclaimerFooter() {
           <Link href="/offer-mode" className="transition hover:text-white/70">
             Offer Mode
           </Link>
+          <Link href="/platform" className="transition hover:text-white/70">
+            Platform
+          </Link>
           <Link href="/how-it-works" className="transition hover:text-white/70">
             How it works
+          </Link>
+          <Link href="/faq" className="transition hover:text-white/70">
+            FAQ
+          </Link>
+          <Link href="/brand" className="transition hover:text-white/70">
+            Brand
+          </Link>
+          <Link href="/about" className="transition hover:text-white/70">
+            About
           </Link>
           <Link href="/terms" className="transition hover:text-white/70">
             Terms of Service
